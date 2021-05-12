@@ -27,7 +27,7 @@ class GCPLogParser {
         return pre;
     }
 
-    VNPAY_websocket_laravel() {
+    vnpay_websocket_laravel() {
         this.deleteTimestampUTCString();
 
         this.getContentsDom().forEach(contentDom => {
@@ -53,7 +53,7 @@ class GCPLogParser {
         });
     }
 
-    VNPAY_outgoing_vn_bank_web() {
+    vnpay_outgoing_vn_bank_web() {
         this.deleteTimestampUTCString();
 
         this.getContentsDom().forEach(contentDom => {
