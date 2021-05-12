@@ -100,7 +100,7 @@ class GCPLogParser {
         this.deleteTimestampUTCString();
 
         this.getRowsDom().forEach(contentDom => {
-            const parser = new KeyboardLogParser(contentDom);
+            const parser = new KeyboardRowParser(contentDom);
 
             if (parser.hasParsed() === true) {
                 return;
