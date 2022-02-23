@@ -41,7 +41,7 @@ class KeyboardRowParser {
             destinationBankAccountName,
             destinationBankAccountNumber,
             destinationBankCode,
-            amount
+            amount,
         } = this.getOrder();
         return `${destinationBankAccountName} - ${destinationBankAccountNumber}(${destinationBankCode}) $${amount}`;
     }
@@ -71,7 +71,7 @@ class KeyboardRowParser {
     }
 
     replace404Text(jsonText) {
-        return jsonText.replace(/无回应画面\(\d+\)：(...+"}]|\[\])/, `⏰ 无回应画面`);
+        return jsonText.replace(/无回应画面\(\d+\)：(...+"}]|\[\])/, '⏰ 无回应画面');
     }
 
     hasSuccessText() {
@@ -79,7 +79,7 @@ class KeyboardRowParser {
     }
 
     replaceSuccessText(jsonText) {
-        return jsonText.replace(/成功出款/g, `✅ 成功出款`);
+        return jsonText.replace(/成功出款/g, '✅ 成功出款');
     }
 
     hasFailedText() {
@@ -87,7 +87,7 @@ class KeyboardRowParser {
     }
 
     replaceFailedText(jsonText) {
-        return jsonText.replace(/出款失败/g, `❌ 出款失败`);
+        return jsonText.replace(/出款失败/g, '❌ 出款失败');
     }
 
     isPermissionsGranted(json) {
@@ -105,7 +105,7 @@ class KeyboardRowParser {
             return 'N9';
         }
         return model;
-    };
+    }
 
     rewriteSummaryDom(json) {
         const { labels, mobile, payload } = json;
@@ -116,10 +116,10 @@ class KeyboardRowParser {
         this.getSummaryDom().innerHTML = `
             <div style="display: flex;justify-content: space-between;">
                 <div>
-                    ${name ? name + ' - ' : ''}${message}
+                    ${name ? `${name} - ` : ''}${message}
                 </div>
                 <div>
-                    ${bankCode ? ' 💳  ' + bankCode : ''}
+                    ${bankCode ? ` 💳  ${bankCode}` : ''}
                     📱 ${shortenModelName}
                 </div>
             </div>`;
@@ -137,17 +137,17 @@ class GCPLogParser {
     }
 
     deleteTimestampUTCString() {
-        document.querySelectorAll("logs-timestamp-field").forEach(timestampDom => {
+        document.querySelectorAll('logs-timestamp-field').forEach((timestampDom) => {
             timestampDom.innerHTML = timestampDom.innerHTML.replace(' UTC+8', '');
         });
     }
 
     getContentsDom() {
-        return document.querySelectorAll( '[path="entry.payload"]');
+        return document.querySelectorAll('[path="entry.payload"]');
     }
 
     getRowsDom() {
-        return document.querySelectorAll( 'div.p6n-logs-flex-row.p6n-logs-entry-summary');
+        return document.querySelectorAll('div.p6n-logs-flex-row.p6n-logs-entry-summary');
     }
 
     generatePreDom(json) {
@@ -162,7 +162,7 @@ class GCPLogParser {
     vnpay_websocket_laravel() {
         this.deleteTimestampUTCString();
 
-        this.getContentsDom().forEach(contentDom => {
+        this.getContentsDom().forEach((contentDom) => {
             const contentText = contentDom.innerText;
             const matches = contentText.match(/\[\d+-\d+-\d+\s\d+:\d+:\d+\]\sproduction.[A-Z]+:(?<title>...+)\s(?<jsonString>{...+})/);
 
@@ -171,9 +171,9 @@ class GCPLogParser {
             }
 
             if (this.isJson(matches.groups.jsonString)) {
-                const { title, jsonString } = matches.groups
+                const { title, jsonString } = matches.groups;
 
-                const pre = this.generatePreDom(JSON.parse(jsonString))
+                const pre = this.generatePreDom(JSON.parse(jsonString));
                 const div = document.createElement('div');
                 div.style.fontWeight = 'bold';
                 div.innerText = title;
@@ -188,7 +188,7 @@ class GCPLogParser {
     vnpay_outgoing_vn_bank_web() {
         this.deleteTimestampUTCString();
 
-        this.getContentsDom().forEach(contentDom => {
+        this.getContentsDom().forEach((contentDom) => {
             const contentText = contentDom.innerText;
 
             if (contentText.includes('html')) {
@@ -200,7 +200,7 @@ class GCPLogParser {
                     contentDom.innerHTML = '...';
                     const newWindow = window.open();
                     newWindow.document.write(contentText);
-                }
+                };
                 return;
             }
 
@@ -209,17 +209,16 @@ class GCPLogParser {
                 const image = document.createElement('img');
                 image.width = 75;
                 image.height = 75;
-                image.src = json['parameters']['image'];
+                image.src = json.parameters.image;
                 contentDom.innerHTML = '';
                 contentDom.append(image);
                 return;
             }
 
             if (this.isJson(contentText)) {
-                const pre = this.generatePreDom(JSON.parse(contentText))
+                const pre = this.generatePreDom(JSON.parse(contentText));
                 contentDom.innerHTML = '';
                 contentDom.appendChild(pre);
-                return;
             }
         });
     }
@@ -227,7 +226,7 @@ class GCPLogParser {
     vnpay_outgoing_api_laravel_http_access() {
         this.deleteTimestampUTCString();
 
-        this.getRowsDom().forEach(contentDom => {
+        this.getRowsDom().forEach((contentDom) => {
             const parser = new KeyboardRowParser(contentDom);
 
             if (parser.hasParsed() === true) {
