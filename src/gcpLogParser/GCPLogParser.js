@@ -4,11 +4,11 @@ class KeyboardRowParser {
     }
 
     getSummaryDom() {
-        return this.rowDom.querySelector('logs-summary.p6n-logs-flex-col-stretch.p6n-logs-message');
+        return this.rowDom.querySelector('.summary.short-summary');
     }
 
     getJsonDom() {
-        return this.getSummaryDom().querySelector('span[dir="ltr"]');
+        return this.getSummaryDom().querySelector('logs-truncated-text div');
     }
 
     hasParsed() {
@@ -16,7 +16,7 @@ class KeyboardRowParser {
     }
 
     getJsonText() {
-        return this.getJsonDom().innerText.replace(/\\/g, '');
+        return this.getJsonDom().getAttribute('aria-label').replace(/\\/g, '');
     }
 
     isJsonParsable(jsonText) {
@@ -148,7 +148,7 @@ class GCPLogParser {
     }
 
     getRowsDom() {
-        return document.querySelectorAll('div.p6n-logs-flex-row.p6n-logs-entry-summary');
+        return document.querySelectorAll('.log-entry-container');
     }
 
     generatePreDom(json) {
