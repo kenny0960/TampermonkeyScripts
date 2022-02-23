@@ -1,0 +1,22 @@
+{
+  "name": "tampermonkeyscripts",
+  "version": "1.0.0",
+  "description": "",
+  "main": ".eslintrc.js",
+  "scripts": {
+    "lint": "npx eslint --fix ./src/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kenny0960/TampermonkeyScripts.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kenny0960/TampermonkeyScripts/issues"
+  },
+  "homepage": "https://github.com/kenny0960/TampermonkeyScripts#readme",
+  "devDependencies": {
+    "eslint": "^8.9.0"
+  }
+}
