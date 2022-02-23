@@ -137,13 +137,14 @@ class GCPLogParser {
     }
 
     deleteTimestampUTCString() {
-        document.querySelectorAll('logs-timestamp-field').forEach((timestampDom) => {
+        document.querySelectorAll('div.timestamp-container').forEach((timestampDom) => {
+            timestampDom.style.flex = '0 0 0px';
             timestampDom.innerHTML = timestampDom.innerHTML.replace(' UTC+8', '');
         });
     }
 
     getContentsDom() {
-        return document.querySelectorAll('[path="entry.payload"]');
+        return document.querySelectorAll('.summary.short-summary');
     }
 
     getRowsDom() {
@@ -189,7 +190,7 @@ class GCPLogParser {
         this.deleteTimestampUTCString();
 
         this.getContentsDom().forEach((contentDom) => {
-            const contentText = contentDom.innerText;
+            const contentText = contentDom.innerText.slice(1, -1);
 
             if (contentText.includes('html')) {
                 const html = document.createElement('html');
