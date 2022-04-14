@@ -215,8 +215,8 @@ class GCPLogParser {
                 return;
             }
 
-            if (contentText.includes('轉帳成功截圖')) {
-                const base64 = contentText.match(/轉帳成功截圖： b'(?<base64>.+)'/).groups.base64;
+            if (contentText.includes('截圖')) {
+                const base64 = contentText.match(/截圖： b'(?<base64>.+)'/).groups.base64;
                 const base64Image = `data:image/png;base64,${base64}`;
                 const image = document.createElement('img');
                 image.src = base64Image;
