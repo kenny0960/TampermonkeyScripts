@@ -160,8 +160,16 @@ class GCPLogParser {
         return pre;
     }
 
+    removeSideBar() {
+        const sidebarDom = document.querySelector('cfc-panel.pan-shell-section-nav-panel');
+        if (sidebarDom === null) {
+            return;
+        }
+        sidebarDom.remove();
+    }
+
     vnpay_websocket_laravel() {
-        this.deleteTimestampUTCString();
+        this.removeSideBar();
 
         this.getContentsDom().forEach((contentDom) => {
             const contentText = contentDom.innerText;
@@ -187,7 +195,7 @@ class GCPLogParser {
     }
 
     vnpay_outgoing_vn_bank_web() {
-        this.deleteTimestampUTCString();
+        this.removeSideBar();
 
         this.getContentsDom().forEach((contentDom) => {
             const contentText = contentDom.innerText.slice(1, -1);
@@ -225,7 +233,7 @@ class GCPLogParser {
     }
 
     vnpay_outgoing_api_laravel_http_access() {
-        this.deleteTimestampUTCString();
+        this.removeSideBar();
 
         this.getRowsDom().forEach((contentDom) => {
             const parser = new KeyboardRowParser(contentDom);
