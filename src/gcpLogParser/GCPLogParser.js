@@ -12,7 +12,7 @@ class KeyboardRowParser {
     }
 
     hasParsed() {
-        return this.getJsonDom() === null;
+        return this.getSummaryDom().querySelectorAll('logs-highlightable-text').item(1).innerText.includes('POST') === false;
     }
 
     getJsonText() {
@@ -113,16 +113,9 @@ class KeyboardRowParser {
         const { name, bankCode } = labels;
         const { message } = payload;
         const shortenModelName = this.shortenModel(model);
-        this.getSummaryDom().innerHTML = `
-            <div style="display: flex;justify-content: space-between;">
-                <div>
-                    ${name ? `${name} - ` : ''}${message}
-                </div>
-                <div>
-                    ${bankCode ? ` 💳  ${bankCode}` : ''}
-                    📱 ${shortenModelName}
-                </div>
-            </div>`;
+        this.getSummaryDom().querySelectorAll('logs-highlightable-text').item(1).innerText = `${bankCode ? ` 💳  ${bankCode}` : ''}📱 ${shortenModelName}`;
+        this.getSummaryDom().querySelectorAll('logs-highlightable-text').item(2).innerText = name;
+        this.getSummaryDom().querySelectorAll('logs-highlightable-text').item(3).innerText = message;
     }
 }
 
