@@ -4,7 +4,7 @@ class KeyboardRowParser {
     }
 
     getSummaryDom() {
-        return this.rowDom.querySelector('.summary.short-summary');
+        return this.rowDom.querySelector('.short-summary');
     }
 
     getJsonDom() {
