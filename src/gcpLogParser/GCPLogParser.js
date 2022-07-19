@@ -137,7 +137,7 @@ class GCPLogParser {
     }
 
     getContentsDom() {
-        return document.querySelectorAll('.summary.short-summary');
+        return document.querySelectorAll('.summary-container.short-summary');
     }
 
     getRowsDom() {
@@ -191,7 +191,7 @@ class GCPLogParser {
         this.removeSideBar();
 
         this.getContentsDom().forEach((contentDom) => {
-            const contentText = contentDom.innerText.slice(1, -1);
+            const contentText = contentDom.innerText;
 
             if (contentText.includes('html')) {
                 const html = document.createElement('html');
@@ -206,21 +206,22 @@ class GCPLogParser {
                 return;
             }
 
-            if (contentText.includes('data:image/png;base64')) {
-                const json = JSON.parse(contentText);
+            if (contentText.includes("b'/")) {
+                const base64 = contentText.match(/轉帳(失敗|成功)截圖： b'(?<base64>.+)'/).groups.base64;
+                const imageSource = `data:image/png;base64,${base64}`;
                 const image = document.createElement('img');
                 image.width = 75;
                 image.height = 75;
-                image.src = json.parameters.image;
+                image.src = imageSource;
                 contentDom.innerHTML = '';
                 contentDom.append(image);
+                contentDom.onclick = () => {
+                    const newWindow = window.open();
+                    const image = document.createElement('img');
+                    image.src = imageSource;
+                    newWindow.document.write(image.outerHTML);
+                };
                 return;
-            }
-
-            if (this.isJson(contentText)) {
-                const pre = this.generatePreDom(JSON.parse(contentText));
-                contentDom.innerHTML = '';
-                contentDom.appendChild(pre);
             }
         });
     }
