@@ -16,7 +16,7 @@ class KeyboardRowParser {
     }
 
     getJsonText() {
-        return this.getJsonDom().getAttribute('aria-label').replace(/\\/g, '');
+        return this.getJsonDom().getAttribute('aria-label').replace(/\\/g, '').slice(1, -1);
     }
 
     isJsonParsable(jsonText) {
