@@ -193,6 +193,25 @@ class GCPLogParser {
         this.getContentsDom().forEach((contentDom) => {
             const contentText = contentDom.innerText;
 
+            if (contentText.includes("b'/")) {
+                const base64 = contentText.match(/轉帳(失敗|成功)截圖： b'(?<base64>.+)'/).groups.base64;
+                const imageSource = `data:image/png;base64,${base64}`;
+                const image = document.createElement('img');
+                image.width = 150;
+                image.height = 150;
+                image.src = imageSource;
+                contentDom.innerHTML = '';
+                contentDom.append(image);
+                contentDom.onclick = () => {
+                    const newWindow = window.open();
+                    const image = document.createElement('img');
+                    image.src = imageSource;
+                    newWindow.document.write(image.outerHTML);
+                };
+                contentDom.parentNode.style.height = '155px';
+                return;
+            }
+
             if (contentText.includes('html')) {
                 const html = document.createElement('html');
                 html.innerHTML = contentText;
@@ -202,24 +221,6 @@ class GCPLogParser {
                     contentDom.innerHTML = '...';
                     const newWindow = window.open();
                     newWindow.document.write(contentText);
-                };
-                return;
-            }
-
-            if (contentText.includes("b'/")) {
-                const base64 = contentText.match(/轉帳(失敗|成功)截圖： b'(?<base64>.+)'/).groups.base64;
-                const imageSource = `data:image/png;base64,${base64}`;
-                const image = document.createElement('img');
-                image.width = 75;
-                image.height = 75;
-                image.src = imageSource;
-                contentDom.innerHTML = '';
-                contentDom.append(image);
-                contentDom.onclick = () => {
-                    const newWindow = window.open();
-                    const image = document.createElement('img');
-                    image.src = imageSource;
-                    newWindow.document.write(image.outerHTML);
                 };
                 return;
             }
