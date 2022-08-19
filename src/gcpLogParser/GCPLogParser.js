@@ -212,16 +212,16 @@ class GCPLogParser {
                 return;
             }
 
-            if (contentText.includes('html')) {
+            if (contentText.includes('body')) {
                 const html = document.createElement('html');
                 html.innerHTML = contentText;
                 contentDom.innerHTML = '';
                 contentDom.appendChild(html);
                 contentDom.onclick = () => {
-                    contentDom.innerHTML = '...';
                     const newWindow = window.open();
                     newWindow.document.write(contentText);
                 };
+                contentDom.parentNode.style.height = '100px';
                 return;
             }
         });
