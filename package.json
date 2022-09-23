@@ -4,7 +4,8 @@
   "description": "",
   "main": ".eslintrc.js",
   "scripts": {
-    "lint": "npx eslint --fix ./src/*"
+    "lint": "npx eslint --fix ./src/*",
+    "build-wrep": "webpack --config webpack.wrep.js"
   },
   "repository": {
     "type": "git",
