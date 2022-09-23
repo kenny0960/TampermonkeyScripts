@@ -37,12 +37,7 @@ class KeyboardRowParser {
     }
 
     getReadableOrderText() {
-        const {
-            destinationBankAccountName,
-            destinationBankAccountNumber,
-            destinationBankCode,
-            amount,
-        } = this.getOrder();
+        const { destinationBankAccountName, destinationBankAccountNumber, destinationBankCode, amount } = this.getOrder();
         return `${destinationBankAccountName} - ${destinationBankAccountNumber}(${destinationBankCode}) $${amount}`;
     }
 
@@ -55,7 +50,9 @@ class KeyboardRowParser {
     }
 
     getOrderSummary() {
-        return JSON.parse(this.getJsonText().match(/取得出款订单摘要 - (?<orderSummaryJson>...+"}})/).groups.orderSummaryJson);
+        return JSON.parse(
+            this.getJsonText().match(/取得出款订单摘要 - (?<orderSummaryJson>...+"}})/).groups.orderSummaryJson
+        );
     }
 
     replaceOrderSummaryText(jsonText) {
@@ -67,7 +64,9 @@ class KeyboardRowParser {
     }
 
     get404Json() {
-        return JSON.parse(this.getJsonText().match(/无回应画面\(\d+\)：(?<noResponseJson>...+"}]|\[\])/).groups.noResponseJson);
+        return JSON.parse(
+            this.getJsonText().match(/无回应画面\(\d+\)：(?<noResponseJson>...+"}]|\[\])/).groups.noResponseJson
+        );
     }
 
     replace404Text(jsonText) {
@@ -113,7 +112,9 @@ class KeyboardRowParser {
         const { name, bankCode } = labels;
         const { message } = payload;
         const shortenModelName = this.shortenModel(model);
-        this.getSummaryDom().querySelectorAll('logs-highlightable-text').item(1).innerText = `${bankCode ? ` 💳  ${bankCode}` : ''}📱 ${shortenModelName}`;
+        this.getSummaryDom().querySelectorAll('logs-highlightable-text').item(1).innerText = `${
+            bankCode ? ` 💳  ${bankCode}` : ''
+        }📱 ${shortenModelName}`;
         this.getSummaryDom().querySelectorAll('logs-highlightable-text').item(2).innerText = name;
         this.getSummaryDom().querySelectorAll('logs-highlightable-text').item(3).innerText = message;
     }
@@ -166,7 +167,9 @@ class GCPLogParser {
 
         this.getContentsDom().forEach((contentDom) => {
             const contentText = contentDom.innerText;
-            const matches = contentText.match(/\[\d+-\d+-\d+\s\d+:\d+:\d+\]\sproduction.[A-Z]+:(?<title>...+)\s(?<jsonString>{...+})/);
+            const matches = contentText.match(
+                /\[\d+-\d+-\d+\s\d+:\d+:\d+\]\sproduction.[A-Z]+:(?<title>...+)\s(?<jsonString>{...+})/
+            );
 
             if (matches === null) {
                 return;
