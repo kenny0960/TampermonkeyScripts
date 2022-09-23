@@ -4,7 +4,7 @@
   "description": "",
   "main": ".eslintrc.js",
   "scripts": {
-    "lint": "npx eslint --fix ./src/*",
+    "lint": "prettier --write \"src/**/*.{js,ts}\"",
     "build-wrep": "webpack --config webpack.wrep.js"
   },
   "repository": {
@@ -19,6 +19,7 @@
   "homepage": "https://github.com/kenny0960/TampermonkeyScripts#readme",
   "devDependencies": {
     "eslint": "^8.9.0",
+    "prettier": "^2.7.1",
     "ts-loader": "^9.4.1",
     "typescript": "^4.8.3",
     "webpack": "^5.74.0",
