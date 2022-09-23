@@ -5,5 +5,8 @@ module.exports = merge(config(), {
     entry: './src/werp/index.ts',
     output: {
         filename: 'werp.js',
+    },
+    externals: {
+        moment: 'moment',
     }
 });
