@@ -3,13 +3,19 @@ import * as moment from 'moment';
 import { updateFavicon } from '@/common/favicon';
 import { showNotification } from '@/common/notification';
 import { waitElementLoaded } from '@/common/dom';
+import { Moment } from '@/moment';
 
-const showSignInNotification = (dates) => {
-    const currentDate = moment();
-    const signInDate = dates[0][0];
-    const signOutDate = dates[0][2];
-    const todaySignInContent = signInDate.format('HH:mm', { trim: false });
-    const signOutLeftMinutes = signOutDate.diff(currentDate, 'minutes');
+interface Dates {
+    signInDate: Moment;
+    signOutDate: Moment;
+    predictedSignOutDate: Moment;
+}
+
+const showSignInNotification = (dates: Dates[]) => {
+    const currentDate: Moment = moment();
+    const { signInDate, signOutDate }: Dates = dates[0];
+    const todaySignInContent: string = signInDate.format('HH:mm', { trim: false });
+    const signOutLeftMinutes: number = signOutDate.diff(currentDate, 'minutes');
 
     if (todaySignInContent === '') {
         showNotification('記得簽到', {
@@ -41,38 +47,42 @@ const showSignInNotification = (dates) => {
     setTimeout(showSignInNotification, (5 * 60 * 1000 * signOutLeftMinutes) / 30);
 };
 
-const getTotalRemainMinutes = (dates) => {
-    let remainMinutes = 0;
+const getTotalRemainMinutes = (dates: Dates[]) => {
+    let remainMinutes: number = 0;
     for (const date of dates) {
         remainMinutes += getRemainMinutes(date);
     }
     return remainMinutes;
 };
 
-const getRemainMinutes = (date) => {
-    const diffMinutes = date[2].diff(date[0], 'minutes');
+const getRemainMinutes = ({ signOutDate, signInDate }: Dates) => {
+    const diffMinutes = signOutDate.diff(signInDate, 'minutes');
     if (diffMinutes === 0) {
         return 0;
     }
     return diffMinutes - 9 * 60;
 };
 
-const getDatesByTr = (tr) => {
-    const currentDate = moment();
+const getDatesByTr = (tr: HTMLTableRowElement): Dates => {
+    const currentDate: Moment = moment();
     // ['09/12 (一)', '09:38', '18:41']
-    const datetimeStrings = tr.innerText.split('\t');
-    const dateString = `${currentDate.year()}/${datetimeStrings[0].split(' ')[0]}`;
-    const signInDate = moment(`${dateString} ${datetimeStrings[1]}`);
-    const signOutDate = moment(`${dateString} ${datetimeStrings[2]}`);
-    const predictedSignOutDate = signInDate.clone().add(9, 'hours');
-    return [signInDate, predictedSignOutDate, signOutDate];
+    const datetimeStrings: string[] = tr.innerText.split('\t');
+    const dateString: string = `${currentDate.year()}/${datetimeStrings[0].split(' ')[0]}`;
+    const signInDate: Moment = moment(`${dateString} ${datetimeStrings[1]}`);
+    const signOutDate: Moment = moment(`${dateString} ${datetimeStrings[2]}`);
+    const predictedSignOutDate: Moment = signInDate.clone().add(9, 'hours');
+    return {
+        signInDate,
+        predictedSignOutDate,
+        signOutDate,
+    };
 };
 
-const getSignInSignOutDates = (trs) => {
-    const dates = [];
+const getSignInSignOutDates = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>) => {
+    const dates: Dates[] = [];
 
     for (let i = 0; i < trs.length; i++) {
-        const tr = trs[i];
+        const tr: HTMLTableRowElement = trs[i];
         // 無需計算上個禮拜
         if (/\([日|六]\)/.test(tr.innerText) === true) {
             break;
@@ -81,15 +91,18 @@ const getSignInSignOutDates = (trs) => {
         dates.push(getDatesByTr(tr));
     }
 
+    // 根據剩餘分鐘來更新當日的簽退時間
+    dates[0].signOutDate = dates[0].signOutDate.clone().subtract(getTotalRemainMinutes(dates), 'minutes');
+
     return dates;
 };
 
-const updateSignInSignOutContent = (trs, dates) => {
+const updateSignInSignOutContent = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, dates: Dates[]) => {
     for (let i = 0; i < dates.length; i++) {
-        const tr = trs[i];
-        const signOutDate = dates[i][2];
-        const remainMinutes = getRemainMinutes(dates[i]);
-        const td = tr.getElementsByTagName('td').item(2);
+        const tr: HTMLTableRowElement = trs[i];
+        const signOutDate: Moment = dates[i].signOutDate;
+        const remainMinutes: number = getRemainMinutes(dates[i]);
+        const td: HTMLTableCellElement = tr.getElementsByTagName('td').item(2);
         if (i !== 0) {
             // 顯示超過或不足的分鐘數
             td.innerHTML = signOutDate.format('HH:mm', { trim: false });
@@ -108,31 +121,33 @@ const updateSignInSignOutContent = (trs, dates) => {
     }, 60 * 1000);
 };
 
-const handleTableLoaded = (table) => {
-    const trs = table.getElementsByTagName('tr');
-    const dates = getSignInSignOutDates(trs);
-    // 根據剩餘分鐘來更新當日的簽退時間
-    dates[0][2] = dates[0][2].clone().subtract(getTotalRemainMinutes(dates), 'minutes');
+const handleTableLoaded = (table: HTMLTableElement) => {
+    const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = table.getElementsByTagName('tr');
+    const dates: Dates[] = getSignInSignOutDates(trs);
     updateSignInSignOutContent(trs, dates);
     showSignInNotification(dates);
 };
 
 const waitingTableLoaded = (callback) => {
-    if (window.MutationObserver) {
-        const observer = new MutationObserver(function (mutations) {
-            mutations.forEach((mutation) => {
-                if (mutation.type == 'childList') {
-                    if ((mutation.target as HTMLDivElement).id === 'formTemplate:attend_rec_panel_content') {
-                        waitElementLoaded('formTemplate:attend_rec_datatable_data').then(callback);
-                    }
-                }
-            });
-        });
-        observer.observe(document.querySelector('body'), {
-            childList: true,
-            subtree: true,
-        });
+    if (window.MutationObserver === undefined) {
+        console.warn('請檢查瀏覽器使否支援 MutationObserver');
+        return;
     }
+    const observer: MutationObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (
+                mutation.type !== 'childList' ||
+                (mutation.target as HTMLDivElement).id !== 'formTemplate:attend_rec_panel_content'
+            ) {
+                return;
+            }
+            waitElementLoaded('formTemplate:attend_rec_datatable_data').then(callback);
+        });
+    });
+    observer.observe(document.querySelector('body'), {
+        childList: true,
+        subtree: true,
+    });
 };
 
 (function () {
