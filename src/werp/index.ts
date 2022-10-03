@@ -5,15 +5,15 @@ import { showNotification } from '@/common/notification';
 import { waitElementLoaded } from '@/common/dom';
 import { Moment } from '@/moment';
 
-interface Dates {
+interface AttendanceDates {
     signInDate: Moment;
     signOutDate: Moment;
     predictedSignOutDate: Moment;
 }
 
-const showSignInNotification = (dates: Dates[]) => {
+const showSignInNotification = (attendanceDates: AttendanceDates[]) => {
     const currentDate: Moment = moment();
-    const { signInDate, signOutDate }: Dates = dates[0];
+    const { signInDate, signOutDate }: AttendanceDates = attendanceDates[0];
     const todaySignInContent: string = signInDate.format('HH:mm', { trim: false });
     const signOutLeftMinutes: number = signOutDate.diff(currentDate, 'minutes');
 
@@ -47,15 +47,15 @@ const showSignInNotification = (dates: Dates[]) => {
     setTimeout(showSignInNotification, (5 * 60 * 1000 * signOutLeftMinutes) / 30);
 };
 
-const getTotalRemainMinutes = (dates: Dates[]) => {
+const getTotalRemainMinutes = (attendanceDates: AttendanceDates[]) => {
     let remainMinutes: number = 0;
-    for (const date of dates) {
-        remainMinutes += getRemainMinutes(date);
+    for (const attendanceDate of attendanceDates) {
+        remainMinutes += getRemainMinutes(attendanceDate);
     }
     return remainMinutes;
 };
 
-const getRemainMinutes = ({ signOutDate, signInDate }: Dates) => {
+const getRemainMinutes = ({ signOutDate, signInDate }: AttendanceDates) => {
     const diffMinutes = signOutDate.diff(signInDate, 'minutes');
     if (diffMinutes === 0) {
         return 0;
@@ -63,7 +63,7 @@ const getRemainMinutes = ({ signOutDate, signInDate }: Dates) => {
     return diffMinutes - 9 * 60;
 };
 
-const getDatesByTr = (tr: HTMLTableRowElement): Dates => {
+const getAttendanceDatesByTr = (tr: HTMLTableRowElement): AttendanceDates => {
     const currentDate: Moment = moment();
     // ['09/12 (一)', '09:38', '18:41']
     const datetimeStrings: string[] = tr.innerText.split('\t');
@@ -78,8 +78,8 @@ const getDatesByTr = (tr: HTMLTableRowElement): Dates => {
     };
 };
 
-const getSignInSignOutDates = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>) => {
-    const dates: Dates[] = [];
+const getAttendanceDatesByTrs = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>) => {
+    const attendanceDates: AttendanceDates[] = [];
 
     for (let i = 0; i < trs.length; i++) {
         const tr: HTMLTableRowElement = trs[i];
@@ -88,47 +88,51 @@ const getSignInSignOutDates = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']
             break;
         }
 
-        dates.push(getDatesByTr(tr));
+        attendanceDates.push(getAttendanceDatesByTr(tr));
     }
 
     // 根據剩餘分鐘來更新當日的簽退時間
-    dates[0].signOutDate = dates[0].signOutDate.clone().subtract(getTotalRemainMinutes(dates), 'minutes');
+    attendanceDates[0].signOutDate = attendanceDates[0].signOutDate
+        .clone()
+        .subtract(getTotalRemainMinutes(attendanceDates), 'minutes');
 
-    return dates;
+    return attendanceDates;
 };
 
-const updateSignInSignOutContent = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, dates: Dates[]) => {
-    for (let i = 0; i < dates.length; i++) {
+const updateAttendanceContent = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, attendanceDates: AttendanceDates[]) => {
+    for (let i = 0; i < attendanceDates.length; i++) {
         const tr: HTMLTableRowElement = trs[i];
-        const signOutDate: Moment = dates[i].signOutDate;
-        const remainMinutes: number = getRemainMinutes(dates[i]);
         const td: HTMLTableCellElement = tr.getElementsByTagName('td').item(2);
-        if (i !== 0) {
+        const attendanceDate: AttendanceDates = attendanceDates[i];
+        const signOutDate: Moment = attendanceDate.signOutDate;
+
+        if (i === 0) {
+            td.innerHTML = `<h6> ${signOutDate.format('HH:mm', {
+                trim: false,
+            })} </h6>`;
+            td.innerHTML += `<div> ${signOutDate.fromNow()} </div>`;
+        } else {
+            const remainMinutes: number = getRemainMinutes(attendanceDate);
             // 顯示超過或不足的分鐘數
             td.innerHTML = signOutDate.format('HH:mm', { trim: false });
             td.innerHTML += ` <span style="letter-spacing:0.8px; font-weight:bold; color: ${
                 remainMinutes >= 0 ? 'green' : 'red'
             }">  (${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes})</span>`;
-        } else {
-            td.innerHTML = `<h6> ${signOutDate.format('HH:mm', {
-                trim: false,
-            })} </h6>`;
-            td.innerHTML += `<div> ${signOutDate.fromNow()} </div>`;
         }
     }
     setTimeout(() => {
-        updateSignInSignOutContent(trs, dates);
+        updateAttendanceContent(trs, attendanceDates);
     }, 60 * 1000);
 };
 
-const handleTableLoaded = (table: HTMLTableElement) => {
+const handleAttendanceTableLoaded = (table: HTMLTableElement) => {
     const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = table.getElementsByTagName('tr');
-    const dates: Dates[] = getSignInSignOutDates(trs);
-    updateSignInSignOutContent(trs, dates);
-    showSignInNotification(dates);
+    const attendanceDates: AttendanceDates[] = getAttendanceDatesByTrs(trs);
+    updateAttendanceContent(trs, attendanceDates);
+    showSignInNotification(attendanceDates);
 };
 
-const waitingTableLoaded = (callback) => {
+const waitingAttendanceTableLoaded = (callback) => {
     if (window.MutationObserver === undefined) {
         console.warn('請檢查瀏覽器使否支援 MutationObserver');
         return;
@@ -153,5 +157,5 @@ const waitingTableLoaded = (callback) => {
 (function () {
     moment.locale('zh-tw');
     updateFavicon('https://cy.iwerp.net/portal/images/chungyo.ico');
-    waitingTableLoaded(handleTableLoaded);
+    waitingAttendanceTableLoaded(handleAttendanceTableLoaded);
 })();
