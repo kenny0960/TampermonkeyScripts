@@ -146,6 +146,7 @@ const waitingAttendanceTableLoaded = (callback) => {
                 return;
             }
             waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then(callback);
+            observer.disconnect();
         });
     });
     observer.observe(document.querySelector('body'), {
