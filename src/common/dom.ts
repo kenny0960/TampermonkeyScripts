@@ -1,12 +1,12 @@
-export const waitElementLoaded = (selector: string): Promise<HTMLElement> => {
+export const waitElementLoaded = (selector: string): Promise<Element> => {
     return new Promise((resolve) => {
-        if (document.getElementById(selector)) {
-            return resolve(document.getElementById(selector));
+        if (document.querySelector(selector)) {
+            return resolve(document.querySelector(selector));
         }
 
         const observer = new MutationObserver((): void => {
-            if (document.getElementById(selector)) {
-                resolve(document.getElementById(selector));
+            if (document.querySelector(selector)) {
+                resolve(document.querySelector(selector));
                 observer.disconnect();
             }
         });
