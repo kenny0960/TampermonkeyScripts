@@ -204,12 +204,17 @@ const getAnnualLeaveTemplate = (annualLeave: AnnualLeave): string => {
     `;
 };
 
+const log = (message: string): void => {
+    console.log(`${moment().toLocaleString()}:${message}`);
+};
+
 const main = (): void => {
     // 出缺勤表格
     waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then((table: HTMLTableElement) => {
         if (table.innerText.includes('預計') === true) {
             return;
         }
+        log('出缺勤表格已經載入');
         const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = table.getElementsByTagName('tr');
         const attendanceDates: AttendanceDates[] = getAttendanceDatesByTrs(trs);
         updateAttendanceContent(trs, attendanceDates);
@@ -221,6 +226,7 @@ const main = (): void => {
         if (table.innerText.includes('特休狀況') === true) {
             return;
         }
+        log('待辦事項表格已經載入');
         const annualLeave: AnnualLeave = await fetchAnnualLeave();
         const annualTemplate: string = getAnnualLeaveTemplate(annualLeave);
         table.insertAdjacentHTML('afterbegin', annualTemplate);
@@ -231,4 +237,7 @@ const main = (): void => {
     moment.locale('zh-tw');
     updateFavicon('https://cy.iwerp.net/portal/images/chungyo.ico');
     main();
+    setInterval(() => {
+        main();
+    }, 5 * 1000);
 })();
