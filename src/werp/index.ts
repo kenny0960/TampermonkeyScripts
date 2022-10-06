@@ -156,7 +156,7 @@ const updateAttendanceContent = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr
             td.innerHTML = `<h6> ${signOutDate.format('HH:mm', {
                 trim: false,
             })} </h6>`;
-            td.innerHTML += `<div> ${signOutDate.fromNow()} </div>`;
+            td.innerHTML += `<div> 預計 ${signOutDate.fromNow()} </div>`;
         } else {
             const remainMinutes: number = getRemainMinutes(attendanceDate);
             // 顯示超過或不足的分鐘數
@@ -169,13 +169,6 @@ const updateAttendanceContent = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr
     setTimeout(() => {
         updateAttendanceContent(trs, attendanceDates);
     }, 60 * 1000);
-};
-
-const handleAttendanceTableLoaded = (table: HTMLTableElement) => {
-    const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = table.getElementsByTagName('tr');
-    const attendanceDates: AttendanceDates[] = getAttendanceDatesByTrs(trs);
-    updateAttendanceContent(trs, attendanceDates);
-    showSignInNotification(attendanceDates);
 };
 
 const getAnnualLeaveTemplate = (annualLeave: AnnualLeave): string => {
@@ -211,62 +204,31 @@ const getAnnualLeaveTemplate = (annualLeave: AnnualLeave): string => {
     `;
 };
 
-const handleTodoTableLoaded = async (table: HTMLTableElement): Promise<void> => {
-    const annualLeave: AnnualLeave = await fetchAnnualLeave();
-    const annualTemplate: string = getAnnualLeaveTemplate(annualLeave);
-    table.insertAdjacentHTML('afterbegin', annualTemplate);
-};
+const main = (): void => {
+    // 出缺勤表格
+    waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then((table: HTMLTableElement) => {
+        if (table.innerText.includes('預計') === true) {
+            return;
+        }
+        const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = table.getElementsByTagName('tr');
+        const attendanceDates: AttendanceDates[] = getAttendanceDatesByTrs(trs);
+        updateAttendanceContent(trs, attendanceDates);
+        showSignInNotification(attendanceDates);
+    });
 
-const waitingAttendanceTableLoaded = (callback) => {
-    if (window.MutationObserver === undefined) {
-        console.warn('請檢查瀏覽器使否支援 MutationObserver');
-        return;
-    }
-    const observer: MutationObserver = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (
-                mutation.type !== 'childList' ||
-                (mutation.target as HTMLDivElement).id !== 'formTemplate:attend_rec_panel_content'
-            ) {
-                return;
-            }
-            waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then(callback);
-            observer.disconnect();
-        });
-    });
-    observer.observe(document.querySelector('body'), {
-        childList: true,
-        subtree: true,
-    });
-};
-
-const waitingTodoTableLoaded = (callback) => {
-    if (window.MutationObserver === undefined) {
-        console.warn('請檢查瀏覽器使否支援 MutationObserver');
-        return;
-    }
-    const observer: MutationObserver = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (
-                mutation.type !== 'childList' ||
-                (mutation.target as HTMLDivElement).classList.contains('waitingTaskMClass') === false ||
-                mutation.addedNodes.length === 0
-            ) {
-                return;
-            }
-            waitElementLoaded('.waitingTaskMClass').then(callback);
-            observer.disconnect();
-        });
-    });
-    observer.observe(document.querySelector('body'), {
-        childList: true,
-        subtree: true,
+    // 待辦事項表格
+    waitElementLoaded('.waitingTaskMClass').then(async (table: HTMLTableElement): Promise<void> => {
+        if (table.innerText.includes('特休狀況') === true) {
+            return;
+        }
+        const annualLeave: AnnualLeave = await fetchAnnualLeave();
+        const annualTemplate: string = getAnnualLeaveTemplate(annualLeave);
+        table.insertAdjacentHTML('afterbegin', annualTemplate);
     });
 };
 
 (function () {
     moment.locale('zh-tw');
     updateFavicon('https://cy.iwerp.net/portal/images/chungyo.ico');
-    waitingAttendanceTableLoaded(handleAttendanceTableLoaded);
-    waitingTodoTableLoaded(handleTodoTableLoaded);
+    main();
 })();
