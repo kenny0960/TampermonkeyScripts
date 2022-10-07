@@ -4,6 +4,7 @@ import { updateFavicon } from '@/common/favicon';
 import { showNotification } from '@/common/notification';
 import { waitElementLoaded } from '@/common/dom';
 import { Moment } from '@/moment';
+import * as PackageJson from '@/../package.json';
 
 interface AttendanceDates {
     signInDate: Moment;
@@ -211,6 +212,13 @@ const log = (message: string): void => {
     console.log(`${moment().toLocaleString()}:${message}`);
 };
 
+const appendCopyrightAndVersion = (body: HTMLElement): void => {
+    const copyRightDiv: HTMLDivElement = document.createElement('div');
+    copyRightDiv.innerText = `Kenny design © V${PackageJson['wrep-version']}`;
+    copyRightDiv.style.textAlign = 'right';
+    body.append(copyRightDiv);
+};
+
 const main = (): void => {
     // 出缺勤表格
     waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then((table: HTMLTableElement) => {
@@ -222,6 +230,7 @@ const main = (): void => {
         const attendanceDates: AttendanceDates[] = getAttendanceDatesByTrs(trs);
         updateAttendanceContent(trs, attendanceDates);
         showSignInNotification(attendanceDates);
+        appendCopyrightAndVersion(table.parentElement.parentElement);
     });
 
     // 待辦事項表格
