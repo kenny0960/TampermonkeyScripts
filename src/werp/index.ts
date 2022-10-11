@@ -151,7 +151,14 @@ const updateAttendanceContent = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr
         const tr: HTMLTableRowElement = trs[i];
         const td: HTMLTableCellElement = tr.getElementsByTagName('td').item(2);
         const attendanceDate: AttendanceDates = attendanceDates[i];
+        const signInDate: Moment = attendanceDate.signInDate;
         const signOutDate: Moment = attendanceDate.signOutDate;
+        const signInTimeString: string = signInDate.format('HH:mm', {
+            trim: false,
+        });
+        const signOutTimeString: string = signOutDate.format('HH:mm', {
+            trim: false,
+        });
 
         if (i === 0) {
             td.innerHTML = `<h6> ${signOutDate.format('HH:mm', {
@@ -159,12 +166,17 @@ const updateAttendanceContent = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr
             })} </h6>`;
             td.innerHTML += `<div> 預計 ${signOutDate.fromNow()} </div>`;
         } else {
-            const remainMinutes: number = getRemainMinutes(attendanceDate);
-            // 顯示超過或不足的分鐘數
-            td.innerHTML = signOutDate.format('HH:mm', { trim: false });
-            td.innerHTML += ` <span style="letter-spacing:0.8px; font-weight:bold; color: ${
-                remainMinutes >= 0 ? 'green' : 'red'
-            }">  (${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes})</span>`;
+            // 國定假日或請假
+            if (signOutTimeString === '00:00' && signInTimeString === '00:00') {
+                td.innerHTML = '';
+            } else {
+                const remainMinutes: number = getRemainMinutes(attendanceDate);
+                // 顯示超過或不足的分鐘數
+                td.innerHTML = signOutTimeString;
+                td.innerHTML += ` <span style="letter-spacing:0.8px; font-weight:bold; color: ${
+                    remainMinutes >= 0 ? 'green' : 'red'
+                }">  (${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes})</span>`;
+            }
         }
     }
     setTimeout(() => {
