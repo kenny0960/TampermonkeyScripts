@@ -9,7 +9,6 @@ import * as PackageJson from '@/../package.json';
 interface AttendanceDates {
     signInDate: Moment;
     signOutDate: Moment;
-    predictedSignOutDate: Moment;
 }
 
 interface AnnualLeave {
@@ -120,10 +119,8 @@ const getAttendanceDatesByTr = (tr: HTMLTableRowElement): AttendanceDates => {
     const dateString: string = `${currentDate.year()}/${datetimeStrings[0].split(' ')[0]}`;
     const signInDate: Moment = moment(`${dateString} ${datetimeStrings[1]}`);
     const signOutDate: Moment = moment(`${dateString} ${datetimeStrings[2]}`);
-    const predictedSignOutDate: Moment = signInDate.clone().add(9, 'hours');
     return {
         signInDate,
-        predictedSignOutDate,
         signOutDate,
     };
 };
