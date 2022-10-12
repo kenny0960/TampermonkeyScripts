@@ -63,8 +63,10 @@ const fetchAnnualLeave = async (): Promise<AnnualLeave> => {
 const showSignInNotification = (attendanceDates: AttendanceDates[]) => {
     const currentDate: Moment = moment();
     const { signInDate, signOutDate }: AttendanceDates = attendanceDates[0];
+    // 根據剩餘分鐘來更新當日的預測可簽退時間
+    const predictedSignOutDate: Moment = signOutDate.clone().subtract(getTotalRemainMinutes(attendanceDates), 'minutes');
     const todaySignInContent: string = signInDate.format('HH:mm', { trim: false });
-    const signOutLeftMinutes: number = signOutDate.diff(currentDate, 'minutes');
+    const signOutLeftMinutes: number = predictedSignOutDate.diff(currentDate, 'minutes');
 
     if (todaySignInContent === '') {
         showNotification('記得簽到', {
@@ -138,50 +140,59 @@ const getAttendanceDatesByTrs = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr
         attendanceDates.push(getAttendanceDatesByTr(tr));
     }
 
-    // 根據剩餘分鐘來更新當日的簽退時間
-    attendanceDates[0].signOutDate = attendanceDates[0].signOutDate
+    return attendanceDates;
+};
+
+const updateTodayAttendanceContent = (td: HTMLTableCellElement, attendanceDates: AttendanceDates[]): void => {
+    const attendanceDate: AttendanceDates = attendanceDates[0];
+    // 根據剩餘分鐘來更新當日的預測可簽退時間
+    const predictedSignOutDate: Moment = attendanceDate.signOutDate
         .clone()
         .subtract(getTotalRemainMinutes(attendanceDates), 'minutes');
+    const predictedSignOutTimeString: string = predictedSignOutDate.format('HH:mm', {
+        trim: false,
+    });
+    td.innerHTML = `<h6> ${predictedSignOutTimeString} </h6>`;
+    td.innerHTML += `<div> 預計 ${predictedSignOutDate.fromNow()} </div>`;
 
-    return attendanceDates;
+    // 定時更新內容
+    setTimeout(() => {
+        log('更新預設當日下班內容');
+        updateTodayAttendanceContent(td, attendanceDates);
+    }, 60 * 1000);
+};
+
+const updatePastDayAttendanceContent = (td: HTMLTableCellElement, attendanceDate: AttendanceDates): void => {
+    const signInTimeString: string = attendanceDate.signInDate.format('HH:mm', {
+        trim: false,
+    });
+    const signOutTimeString: string = attendanceDate.signOutDate.format('HH:mm', {
+        trim: false,
+    });
+
+    // 國定假日或請假
+    if (signOutTimeString === '00:00' && signInTimeString === '00:00') {
+        td.innerHTML = '';
+        return;
+    }
+
+    const remainMinutes: number = getRemainMinutes(attendanceDate);
+    // 顯示超過或不足的分鐘數
+    td.innerHTML += ` <span style="letter-spacing:1px; font-weight:bold; color: ${
+        remainMinutes >= 0 ? 'green' : 'red'
+    }">  (${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes})</span>`;
 };
 
 const updateAttendanceContent = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, attendanceDates: AttendanceDates[]) => {
     for (let i = 0; i < attendanceDates.length; i++) {
         const tr: HTMLTableRowElement = trs[i];
         const td: HTMLTableCellElement = tr.getElementsByTagName('td').item(2);
-        const attendanceDate: AttendanceDates = attendanceDates[i];
-        const signInDate: Moment = attendanceDate.signInDate;
-        const signOutDate: Moment = attendanceDate.signOutDate;
-        const signInTimeString: string = signInDate.format('HH:mm', {
-            trim: false,
-        });
-        const signOutTimeString: string = signOutDate.format('HH:mm', {
-            trim: false,
-        });
-
         if (i === 0) {
-            td.innerHTML = `<h6> ${signOutDate.format('HH:mm', {
-                trim: false,
-            })} </h6>`;
-            td.innerHTML += `<div> 預計 ${signOutDate.fromNow()} </div>`;
+            updateTodayAttendanceContent(td, attendanceDates);
         } else {
-            // 國定假日或請假
-            if (signOutTimeString === '00:00' && signInTimeString === '00:00') {
-                td.innerHTML = '';
-            } else {
-                const remainMinutes: number = getRemainMinutes(attendanceDate);
-                // 顯示超過或不足的分鐘數
-                td.innerHTML = signOutTimeString;
-                td.innerHTML += ` <span style="letter-spacing:0.8px; font-weight:bold; color: ${
-                    remainMinutes >= 0 ? 'green' : 'red'
-                }">  (${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes})</span>`;
-            }
+            updatePastDayAttendanceContent(td, attendanceDates[i]);
         }
     }
-    setTimeout(() => {
-        updateAttendanceContent(trs, attendanceDates);
-    }, 60 * 1000);
 };
 
 const getAnnualLeaveTemplate = (annualLeave: AnnualLeave): string => {
