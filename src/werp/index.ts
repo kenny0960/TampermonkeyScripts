@@ -3,6 +3,7 @@ import * as moment from 'moment';
 import { updateFavicon } from '@/common/favicon';
 import { showNotification } from '@/common/notification';
 import { waitElementLoaded } from '@/common/dom';
+import SessionManager from '@/common/SessionManager';
 import { Moment } from '@/moment';
 import * as PackageJson from '@/../package.json';
 
@@ -69,33 +70,62 @@ const showSignInNotification = (attendanceDates: AttendanceDates[]) => {
     const signOutLeftMinutes: number = predictedSignOutDate.diff(currentDate, 'minutes');
 
     if (todaySignInContent === '') {
-        showNotification('記得簽到', {
-            body: '尚未有簽到的紀錄',
-            icon: 'https://cy.iwerp.net/portal/images/chungyo.ico',
-        });
-        setTimeout(showSignInNotification, 60 * 1000);
-        return;
+        const SIGN_NOTIFICATION_KEY: string = `${currentDate.format('YYYYMMDD', { trim: false })}_SIGN_NOTIFICATION`;
+
+        if (SessionManager.has(SIGN_NOTIFICATION_KEY)) {
+            return;
+        }
+
+        showNotification(
+            '記得簽到',
+            {
+                body: '尚未有簽到的紀錄',
+                icon: 'https://cy.iwerp.net/portal/images/chungyo.ico',
+            },
+            () => {
+                log(`已經關閉簽到通知`);
+                SessionManager.setByKey(SIGN_NOTIFICATION_KEY, 'true');
+            }
+        );
+    } else if (signOutLeftMinutes < 0) {
+        const OFF_WORK_NOTIFICATION_KEY: string = `${currentDate.format('YYYYMMDD', { trim: false })}_SIGN_OUT_NOTIFICATION`;
+
+        if (SessionManager.has(OFF_WORK_NOTIFICATION_KEY)) {
+            return;
+        }
+
+        showNotification(
+            '記得簽退',
+            {
+                body: `超時工作(${predictedSignOutDate.fromNow()})`,
+                icon: 'https://cy.iwerp.net/portal/images/chungyo.ico',
+            },
+            () => {
+                log(`已經關閉超時工作通知`);
+                SessionManager.setByKey(OFF_WORK_NOTIFICATION_KEY, 'true');
+            }
+        );
+    } else if (signOutLeftMinutes < 30) {
+        const SIGN_OUT_NOTIFICATION_KEY: string = `${currentDate.format('YYYYMMDD', { trim: false })}_SIGN_OUT_NOTIFICATION`;
+
+        if (SessionManager.has(SIGN_OUT_NOTIFICATION_KEY)) {
+            return;
+        }
+
+        showNotification(
+            '記得簽退',
+            {
+                body: `工作即將結束(${predictedSignOutDate.fromNow()})`,
+                icon: 'https://cy.iwerp.net/portal/images/chungyo.ico',
+            },
+            () => {
+                log(`已經關閉簽退通知`);
+                SessionManager.setByKey(SIGN_OUT_NOTIFICATION_KEY, 'true');
+            }
+        );
     }
 
-    if (signOutLeftMinutes < 0) {
-        showNotification('記得簽退', {
-            body: `超時工作(${signOutDate.fromNow()})`,
-            icon: 'https://cy.iwerp.net/portal/images/chungyo.ico',
-        });
-        setTimeout(showSignInNotification, 5 * 1000);
-        return;
-    }
-
-    if (signOutLeftMinutes < 30) {
-        showNotification('記得簽退', {
-            body: `工作即將結束(${signOutDate.fromNow()})`,
-            icon: 'https://cy.iwerp.net/portal/images/chungyo.ico',
-        });
-        setTimeout(showSignInNotification, (60 * 1000 * signOutLeftMinutes) / 30);
-        return;
-    }
-
-    setTimeout(showSignInNotification, (5 * 60 * 1000 * signOutLeftMinutes) / 30);
+    setTimeout(() => showSignInNotification(attendanceDates), 5 * 60 * 1000);
 };
 
 const getTotalRemainMinutes = (attendanceDates: AttendanceDates[]) => {
