@@ -262,10 +262,24 @@ const log = (message: string): void => {
     console.log(`${moment().toLocaleString()}:${message}`);
 };
 
+const getUpdateLogs = (): string[] => {
+    return [
+        'v2.3.2(20221013) 顯示更新日誌',
+        'v2.3.1(20221013) 新增每五分鐘(簽到、簽退、超時工作)通知訊息視窗',
+        'v2.3.1(20221013) 通知訊息視窗點擊「關閉」後當天不會再顯示',
+        'v2.2.0(20221012) 解決特休狀況失效的問題',
+        'v2.2.0(20221012) 顯示版號和版權資訊',
+        'v2.2.0(20221012) 忽略國定假日的簽退內容提示文字',
+        'v2.1.0(20221006) 解決每次 wrep 更新時畫面為空的問題',
+        'v2.0.0(20221003) 顯示特休狀況',
+    ];
+};
+
 const appendCopyrightAndVersion = (body: HTMLElement): void => {
     const copyRightDiv: HTMLDivElement = document.createElement('div');
-    copyRightDiv.innerText = `Kenny design © V${PackageJson['wrep-version']}`;
+    copyRightDiv.innerText = `ⓘ Kenny design © V${PackageJson['wrep-version']}`;
     copyRightDiv.style.textAlign = 'right';
+    copyRightDiv.title = getUpdateLogs().slice(0, 5).join('\n');
     body.append(copyRightDiv);
 };
 
