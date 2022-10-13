@@ -88,7 +88,7 @@ const showSignInNotification = (attendanceDates: AttendanceDates[]) => {
             }
         );
     } else if (signOutLeftMinutes < 0) {
-        const OFF_WORK_NOTIFICATION_KEY: string = `${currentDate.format('YYYYMMDD', { trim: false })}_SIGN_OUT_NOTIFICATION`;
+        const OFF_WORK_NOTIFICATION_KEY: string = `${currentDate.format('YYYYMMDD', { trim: false })}_OFF_WORK_NOTIFICATION`;
 
         if (SessionManager.has(OFF_WORK_NOTIFICATION_KEY)) {
             return;
