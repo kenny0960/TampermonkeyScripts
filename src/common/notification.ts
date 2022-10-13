@@ -1,9 +1,8 @@
-export const handleNotificationClick = (event: Event): void => {
-    event.preventDefault();
-    window.open('https://cy.iwerp.net/portal/');
-};
-
-export const showNotification = (title: string, options: NotificationOptions) => {
+export const showNotification = (
+    title: string,
+    options: NotificationOptions,
+    onclose?: ((this: Notification, ev: Event) => any) | null
+) => {
     const notification = new Notification(title, options);
-    notification.onclick = handleNotificationClick;
+    notification.onclose = onclose;
 };
