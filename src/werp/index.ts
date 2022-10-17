@@ -7,19 +7,8 @@ import { waitElementLoaded } from '@/common/dom';
 import SessionManager from '@/common/SessionManager';
 import { Moment } from '@/moment';
 import * as PackageJson from '@/../package.json';
-
-interface AttendanceDates {
-    signInDate: Moment;
-    signOutDate: Moment;
-}
-
-interface AnnualLeave {
-    totalHours: number;
-    leaveHours: number;
-    notLeaveHours: number;
-    startDatetime: string;
-    endDatetime: string;
-}
+import AttendanceDates from '@/werp/interfaces/AttendanceDates';
+import AnnualLeave from '@/werp/interfaces/AnnualLeave';
 
 const fetchAnnualLeave = async (): Promise<AnnualLeave> => {
     return await fetch('https://cy.iwerp.net/hr-attendance/leave/personal/personal-apply.xhtml', {
