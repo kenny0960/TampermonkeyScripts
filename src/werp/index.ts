@@ -9,6 +9,7 @@ import { Moment } from '@/moment';
 import * as PackageJson from '@/../package.json';
 import AttendanceDates from '@/werp/interfaces/AttendanceDates';
 import AnnualLeave from '@/werp/interfaces/AnnualLeave';
+import SessionKeys from '@/werp/enums/SessionKeys';
 
 const fetchAnnualLeave = async (): Promise<AnnualLeave> => {
     return await fetch('https://cy.iwerp.net/hr-attendance/leave/personal/personal-apply.xhtml', {
@@ -58,11 +59,10 @@ const showSignInNotification = (attendanceDates: AttendanceDates[]) => {
     const predictedSignOutDate: Moment = signOutDate.clone().subtract(getTotalRemainMinutes(attendanceDates), 'minutes');
     const todaySignInContent: string = signInDate.format('HH:mm', { trim: false });
     const signOutLeftMinutes: number = predictedSignOutDate.diff(currentDate, 'minutes');
+    const currentDateString: string = currentDate.format('YYYYMMDD', { trim: false });
 
     if (todaySignInContent === '') {
-        const SIGN_NOTIFICATION_KEY: string = `${currentDate.format('YYYYMMDD', { trim: false })}_SIGN_NOTIFICATION`;
-
-        if (SessionManager.has(SIGN_NOTIFICATION_KEY)) {
+        if (SessionManager.getByKey(SessionKeys.SIGN_IN_NOTIFICATION) === currentDateString) {
             return;
         }
 
@@ -74,13 +74,11 @@ const showSignInNotification = (attendanceDates: AttendanceDates[]) => {
             },
             () => {
                 log(`已經關閉簽到通知`);
-                SessionManager.setByKey(SIGN_NOTIFICATION_KEY, 'true');
+                SessionManager.setByKey(SessionKeys.SIGN_IN_NOTIFICATION, currentDateString);
             }
         );
     } else if (signOutLeftMinutes < 0) {
-        const OFF_WORK_NOTIFICATION_KEY: string = `${currentDate.format('YYYYMMDD', { trim: false })}_OFF_WORK_NOTIFICATION`;
-
-        if (SessionManager.has(OFF_WORK_NOTIFICATION_KEY)) {
+        if (SessionManager.getByKey(SessionKeys.OFF_WORK_NOTIFICATION) === currentDateString) {
             return;
         }
 
@@ -92,13 +90,11 @@ const showSignInNotification = (attendanceDates: AttendanceDates[]) => {
             },
             () => {
                 log(`已經關閉超時工作通知`);
-                SessionManager.setByKey(OFF_WORK_NOTIFICATION_KEY, 'true');
+                SessionManager.setByKey(SessionKeys.OFF_WORK_NOTIFICATION, currentDateString);
             }
         );
     } else if (signOutLeftMinutes < 30) {
-        const SIGN_OUT_NOTIFICATION_KEY: string = `${currentDate.format('YYYYMMDD', { trim: false })}_SIGN_OUT_NOTIFICATION`;
-
-        if (SessionManager.has(SIGN_OUT_NOTIFICATION_KEY)) {
+        if (SessionManager.getByKey(SessionKeys.SIGN_OUT_NOTIFICATION) === currentDateString) {
             return;
         }
 
@@ -110,7 +106,7 @@ const showSignInNotification = (attendanceDates: AttendanceDates[]) => {
             },
             () => {
                 log(`已經關閉簽退通知`);
-                SessionManager.setByKey(SIGN_OUT_NOTIFICATION_KEY, 'true');
+                SessionManager.setByKey(SessionKeys.SIGN_OUT_NOTIFICATION, currentDateString);
             }
         );
     }
@@ -119,7 +115,7 @@ const showSignInNotification = (attendanceDates: AttendanceDates[]) => {
         (): void => showSignInNotification(attendanceDates),
         5 * 60 * 1000
     );
-    SessionManager.setByKey('SIGN_IN_NOTIFICATION_TIMER', String(signInNotificationTimer));
+    SessionManager.setByKey(SessionKeys.SIGN_IN_NOTIFICATION_TIMER, String(signInNotificationTimer));
 };
 
 const getTotalRemainMinutes = (attendanceDates: AttendanceDates[]) => {
@@ -184,7 +180,7 @@ const updateTodayAttendanceContent = (td: HTMLTableCellElement, attendanceDates:
         log('更新預設當日下班內容');
         updateTodayAttendanceContent(td, attendanceDates);
     }, 60 * 1000);
-    SessionManager.setByKey('TODAY_ATTENDANCE_CONTENT_TIMER', String(todayAttendanceContentTimer));
+    SessionManager.setByKey(SessionKeys.TODAY_ATTENDANCE_CONTENT_TIMER, String(todayAttendanceContentTimer));
 };
 
 const updatePastDayAttendanceContent = (td: HTMLTableCellElement, attendanceDate: AttendanceDates): void => {
@@ -276,8 +272,8 @@ const appendCopyrightAndVersion = (body: HTMLElement): void => {
 };
 
 const resetAttendanceTimers = (): void => {
-    window.clearTimeout(Number(SessionManager.getByKey('SIGN_IN_NOTIFICATION_TIMER')));
-    window.clearTimeout(Number(SessionManager.getByKey('TODAY_ATTENDANCE_CONTENT_TIMER')));
+    window.clearTimeout(Number(SessionManager.getByKey(SessionKeys.SIGN_IN_NOTIFICATION_TIMER)));
+    window.clearTimeout(Number(SessionManager.getByKey(SessionKeys.TODAY_ATTENDANCE_CONTENT_TIMER)));
 };
 
 const main = (): void => {
