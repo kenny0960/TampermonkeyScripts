@@ -125,7 +125,7 @@ const showSignInNotification = (attendanceDates: AttendanceDates[]) => {
         );
     }
 
-    setTimeout(() => showSignInNotification(attendanceDates), 5 * 60 * 1000);
+    window.setTimeout((): void => showSignInNotification(attendanceDates), 5 * 60 * 1000);
 };
 
 const getTotalRemainMinutes = (attendanceDates: AttendanceDates[]) => {
@@ -186,7 +186,7 @@ const updateTodayAttendanceContent = (td: HTMLTableCellElement, attendanceDates:
     td.innerHTML += `<div> 預計 ${predictedSignOutDate.fromNow()} </div>`;
 
     // 定時更新內容
-    setTimeout(() => {
+    window.setTimeout((): void => {
         log('更新預設當日下班內容');
         updateTodayAttendanceContent(td, attendanceDates);
     }, 60 * 1000);
@@ -278,7 +278,7 @@ const getUpdateLogs = (): string[] => {
 
 const appendCopyrightAndVersion = (body: HTMLElement): void => {
     const copyRightDiv: HTMLDivElement = document.createElement('div');
-    copyRightDiv.innerText = `ⓘ Kenny design © V${PackageJson['wrep-version']}`;
+    copyRightDiv.innerText = `Kenny design © V${PackageJson['wrep-version']}`;
     copyRightDiv.style.textAlign = 'right';
     copyRightDiv.title = getUpdateLogs().slice(0, 5).join('\n');
     body.append(copyRightDiv);
@@ -314,7 +314,7 @@ const main = (): void => {
     moment.locale('zh-tw');
     updateFavicon('https://cy.iwerp.net/portal/images/chungyo.ico');
     main();
-    setInterval(() => {
+    window.setInterval((): void => {
         main();
     }, 5 * 1000);
 })();
