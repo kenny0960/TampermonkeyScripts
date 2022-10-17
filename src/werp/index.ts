@@ -1,5 +1,6 @@
 import * as moment from 'moment';
 
+import { log } from '@/common/logger';
 import { updateFavicon } from '@/common/favicon';
 import { showNotification } from '@/common/notification';
 import { waitElementLoaded } from '@/common/dom';
@@ -261,10 +262,6 @@ const getAnnualLeaveTemplate = (annualLeave: AnnualLeave): string => {
 </div>
 <table id="formTemplate:j_idt319" class="ui-panelgrid ui-widget" style=" width: 100%; border: none;margin-top: 2px;margin-bottom: 2px; " role="grid"><tbody><tr class="ui-widget-content ui-panelgrid-even" role="row"><td role="gridcell" class="ui-panelgrid-cell" style="border-bottom-color: #C4C4C4;border-bottom-width: 0.5px;border-top-color: white;                                border-left-color: white;border-right-color: white;"></td></tr></tbody></table>
     `;
-};
-
-const log = (message: string): void => {
-    console.log(`${moment().toLocaleString()}:${message}`);
 };
 
 const getUpdateLogs = (): string[] => {
