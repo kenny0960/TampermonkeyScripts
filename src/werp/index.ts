@@ -125,7 +125,11 @@ const showSignInNotification = (attendanceDates: AttendanceDates[]) => {
         );
     }
 
-    window.setTimeout((): void => showSignInNotification(attendanceDates), 5 * 60 * 1000);
+    const signInNotificationTimer: number = window.setTimeout(
+        (): void => showSignInNotification(attendanceDates),
+        5 * 60 * 1000
+    );
+    SessionManager.setByKey('SIGN_IN_NOTIFICATION_TIMER', String(signInNotificationTimer));
 };
 
 const getTotalRemainMinutes = (attendanceDates: AttendanceDates[]) => {
@@ -186,10 +190,11 @@ const updateTodayAttendanceContent = (td: HTMLTableCellElement, attendanceDates:
     td.innerHTML += `<div> 預計 ${predictedSignOutDate.fromNow()} </div>`;
 
     // 定時更新內容
-    window.setTimeout((): void => {
+    const todayAttendanceContentTimer: number = window.setTimeout((): void => {
         log('更新預設當日下班內容');
         updateTodayAttendanceContent(td, attendanceDates);
     }, 60 * 1000);
+    SessionManager.setByKey('TODAY_ATTENDANCE_CONTENT_TIMER', String(todayAttendanceContentTimer));
 };
 
 const updatePastDayAttendanceContent = (td: HTMLTableCellElement, attendanceDate: AttendanceDates): void => {
@@ -284,12 +289,18 @@ const appendCopyrightAndVersion = (body: HTMLElement): void => {
     body.append(copyRightDiv);
 };
 
+const resetAttendanceTimers = (): void => {
+    window.clearTimeout(Number(SessionManager.getByKey('SIGN_IN_NOTIFICATION_TIMER')));
+    window.clearTimeout(Number(SessionManager.getByKey('TODAY_ATTENDANCE_CONTENT_TIMER')));
+};
+
 const main = (): void => {
     // 出缺勤表格
     waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then((table: HTMLTableElement) => {
         if (table.innerText.includes('預計') === true) {
             return;
         }
+        resetAttendanceTimers();
         log('出缺勤表格已經載入');
         const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = table.getElementsByTagName('tr');
         const attendanceDates: AttendanceDates[] = getAttendanceDatesByTrs(trs);
