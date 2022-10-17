@@ -13,6 +13,12 @@ class SessionManager {
     static setByKey(key: string, value: string): void {
         sessionStorage.setItem(key, value);
     }
+
+    static resetByKey(key: string): void {
+        if (SessionManager.has(key) === true) {
+            sessionStorage.removeItem(key);
+        }
+    }
 }
 
 export default SessionManager;
