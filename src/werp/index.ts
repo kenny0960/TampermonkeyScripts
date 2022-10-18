@@ -54,10 +54,12 @@ const fetchAnnualLeave = async (): Promise<AnnualLeave> => {
 
 const showSignInNotification = (attendanceDates: AttendanceDates[]) => {
     const currentDate: Moment = moment();
-    const { signInDate, signOutDate }: AttendanceDates = attendanceDates[0];
+    const attendanceDate: AttendanceDates = attendanceDates[0];
     // 根據剩餘分鐘來更新當日的預測可簽退時間
-    const predictedSignOutDate: Moment = signOutDate.clone().subtract(getTotalRemainMinutes(attendanceDates), 'minutes');
-    const todaySignInContent: string = signInDate.format('HH:mm', { trim: false });
+    const predictedSignOutDate: Moment = attendanceDate.signOutDate
+        .clone()
+        .subtract(getTotalRemainMinutes(attendanceDates), 'minutes');
+    const todaySignInContent: string = attendanceDate.signInDate.format('HH:mm', { trim: false });
     const signOutLeftMinutes: number = predictedSignOutDate.diff(currentDate, 'minutes');
     const currentDateString: string = currentDate.format('YYYYMMDD', { trim: false });
 
@@ -82,10 +84,15 @@ const showSignInNotification = (attendanceDates: AttendanceDates[]) => {
             return;
         }
 
+        const remainMinutes: number = getRemainMinutes({
+            ...attendanceDate,
+            signOutDate: moment(),
+        });
+
         showNotification(
             '記得簽退',
             {
-                body: `超時工作(${predictedSignOutDate.fromNow()})`,
+                body: `超時工作(${remainMinutes})`,
                 icon: 'https://cy.iwerp.net/portal/images/chungyo.ico',
             },
             () => {
@@ -172,8 +179,23 @@ const updateTodayAttendanceContent = (td: HTMLTableCellElement, attendanceDates:
     const predictedSignOutTimeString: string = predictedSignOutDate.format('HH:mm', {
         trim: false,
     });
-    td.innerHTML = `<h6> ${predictedSignOutTimeString} </h6>`;
-    td.innerHTML += `<div> 預計 ${predictedSignOutDate.fromNow()} </div>`;
+    const signOutLeftMinutes: number = predictedSignOutDate.diff(moment(), 'minutes');
+
+    // 尚未下班
+    if (signOutLeftMinutes >= 0) {
+        td.innerHTML = `<h6> ${predictedSignOutTimeString} </h6>`;
+        td.innerHTML += `<div> 預計 ${predictedSignOutDate.fromNow()} </div>`;
+    }
+    // 已經下班
+    else {
+        const remainMinutes: number = getRemainMinutes({
+            ...attendanceDate,
+            signOutDate: moment(),
+        });
+        td.innerHTML = `<div> 超時工作 <span style="letter-spacing:1px; font-weight:bold; color: ${
+            remainMinutes >= 0 ? 'green' : 'red'
+        }">  (${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes})</span></div>`;
+    }
 
     // 定時更新內容
     const todayAttendanceContentTimer: number = window.setTimeout((): void => {
@@ -279,7 +301,7 @@ const resetAttendanceTimers = (): void => {
 const main = (): void => {
     // 出缺勤表格
     waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then((table: HTMLTableElement) => {
-        if (table.innerText.includes('預計') === true) {
+        if (table.innerText.includes('預計') === true || table.innerText.includes('超時工作') === true) {
             return;
         }
         resetAttendanceTimers();
