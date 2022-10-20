@@ -268,6 +268,7 @@ const getAnnualLeaveTemplate = (annualLeave: AnnualLeave): string => {
 
 const getUpdateLogs = (): string[] => {
     return [
+        'v2.3.5(20221020) 顯示「符合下班條件」資訊',
         'v2.3.4(20221018) 顯示超時工作的資訊',
         'v2.3.4(20221018) 清空重複執行的出缺勤 timer',
         'v2.3.3(20221014) 更新特休 TOKEN',
