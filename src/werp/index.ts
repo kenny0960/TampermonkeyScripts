@@ -107,7 +107,7 @@ const showSignInNotification = (attendanceDates: AttendanceDates[]) => {
         showNotification(
             '記得簽退',
             {
-                body: `工作即將結束(${predictedSignOutDate.fromNow()})`,
+                body: `${predictedSignOutLeftMinutes > 0 ? '即將' : ''}符合下班條件`,
                 icon: 'https://cy.iwerp.net/portal/images/chungyo.ico',
             },
             () => {
@@ -180,7 +180,11 @@ const updateTodayAttendanceContent = (td: HTMLTableCellElement, attendanceDates:
     const todaySignOutLeftMinutes: number = signInDate.clone().add(9, 'hours').diff(moment(), 'minutes');
 
     td.innerHTML = `<h6> ${predictedSignOutTimeString} </h6>`;
-    td.innerHTML += `<div> 預計 ${predictedSignOutDate.fromNow()} </div>`;
+    if (predictedSignOutLeftMinutes < 0) {
+        td.innerHTML += `<div> 符合下班條件 </div>`;
+    } else {
+        td.innerHTML += `<div> 預計 ${predictedSignOutDate.fromNow()} </div>`;
+    }
     // 已經下班且無負債
     if (predictedSignOutLeftMinutes < 0 && todaySignOutLeftMinutes < 0) {
         td.innerHTML = `<div> 超時工作 <span style="letter-spacing:1px; font-weight:bold; color: green;">  (+${Math.abs(
@@ -294,7 +298,11 @@ const resetAttendanceTimers = (): void => {
 const main = (): void => {
     // 出缺勤表格
     waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then((table: HTMLTableElement) => {
-        if (table.innerText.includes('預計') === true || table.innerText.includes('超時工作') === true) {
+        if (
+            table.innerText.includes('預計') === true ||
+            table.innerText.includes('符合下班條件') === true ||
+            table.innerText.includes('超時工作') === true
+        ) {
             return;
         }
         resetAttendanceTimers();
