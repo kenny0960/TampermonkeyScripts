@@ -1,8 +1,8 @@
 import { Moment } from '@/moment';
 
-interface AttendanceDates {
+interface Attendance {
     signInDate: Moment;
     signOutDate: Moment;
 }
 
-export default AttendanceDates;
+export default Attendance;
