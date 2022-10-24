@@ -54,9 +54,11 @@ const fetchAnnualLeave = async (): Promise<AnnualLeave> => {
 
 const showSignInNotification = (attendances: Attendance[]): void => {
     const currentDate: Moment = moment();
-    const { signInDate, signOutDate }: Attendance = attendances[0];
+    const { signInDate, signOutDate }: Attendance = formatAttendance(attendances[0]);
     // 根據剩餘分鐘來更新當日的預測可簽退時間
-    const predictedSignOutDate: Moment = signOutDate.clone().subtract(getTotalRemainMinutes(attendances), 'minutes');
+    const predictedSignOutDate: Moment = formatEarliestSignOutDate(
+        signOutDate.clone().subtract(getTotalRemainMinutes(attendances), 'minutes')
+    );
     const todaySignInContent: string = signInDate.format('HH:mm', { trim: false });
     const predictedSignOutLeftMinutes: number = predictedSignOutDate.diff(currentDate, 'minutes');
     const todaySignOutLeftMinutes: number = signInDate.clone().add(9, 'hours').diff(currentDate, 'minutes');
@@ -124,6 +126,31 @@ const showSignInNotification = (attendances: Attendance[]): void => {
     SessionManager.setByKey(SessionKeys.SIGN_IN_NOTIFICATION_TIMER, String(signInNotificationTimer));
 };
 
+const formatEarliestSignInDate = (signInDate: Moment): Moment => {
+    const signInDateString: string = signInDate.format('YYYY/MM/DD', { trim: false });
+    const earliestSignInDate: Moment = moment(`${signInDateString} 08:00`);
+    if (signInDate.isBefore(earliestSignInDate)) {
+        return earliestSignInDate;
+    }
+    return signInDate;
+};
+
+const formatEarliestSignOutDate = (signOutDate: Moment): Moment => {
+    const signOutDateString: string = signOutDate.format('YYYY/MM/DD', { trim: false });
+    const earliestSignOutDate: Moment = moment(`${signOutDateString} 17:00`);
+    if (signOutDate.isBefore(earliestSignOutDate)) {
+        return earliestSignOutDate;
+    }
+    return signOutDate;
+};
+
+const formatAttendance = (attendance: Attendance): Attendance => {
+    return {
+        ...attendance,
+        signInDate: formatEarliestSignInDate(attendance.signInDate),
+    };
+};
+
 const getTotalRemainMinutes = (attendances: Attendance[]): number => {
     let remainMinutes: number = 0;
     for (const attendance of attendances) {
@@ -132,7 +159,8 @@ const getTotalRemainMinutes = (attendances: Attendance[]): number => {
     return remainMinutes;
 };
 
-const getRemainMinutes = ({ signOutDate, signInDate }: Attendance): number => {
+const getRemainMinutes = (attendance: Attendance): number => {
+    const { signOutDate, signInDate }: Attendance = formatAttendance(attendance);
     const diffMinutes = signOutDate.diff(signInDate, 'minutes');
     if (diffMinutes === 0) {
         return 0;
@@ -170,9 +198,11 @@ const getAttendanceByTrs = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>):
 };
 
 const updateTodayAttendanceContent = (td: HTMLTableCellElement, attendances: Attendance[]): void => {
-    const { signOutDate, signInDate }: Attendance = attendances[0];
+    const { signOutDate, signInDate }: Attendance = formatAttendance(attendances[0]);
     // 根據剩餘分鐘來更新當日的預測可簽退時間
-    const predictedSignOutDate: Moment = signOutDate.clone().subtract(getTotalRemainMinutes(attendances), 'minutes');
+    const predictedSignOutDate: Moment = formatEarliestSignOutDate(
+        signOutDate.clone().subtract(getTotalRemainMinutes(attendances), 'minutes')
+    );
     const predictedSignOutTimeString: string = predictedSignOutDate.format('HH:mm', {
         trim: false,
     });
