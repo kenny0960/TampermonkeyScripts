@@ -12,9 +12,9 @@
 // ==UserScript==
 // @name         WERP 簽到退時間
 // @namespace    http://tampermonkey.net/
-// @version      0
+// @version      0.1
 // @description  try to take over the world!
-// @author       Kenny
+// @author       GTII-Kenny
 // @match        https://cy.iwerp.net/portal/page/new_home.xhtml
 // @require      https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js
