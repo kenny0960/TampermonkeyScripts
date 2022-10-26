@@ -30,6 +30,10 @@
 
 備註：「更新網址」如果為空則貼上 https://raw.githubusercontent.com/kenny0960/TampermonkeyScripts/master/dist/werp.bundle.js
 
+![image](https://raw.githubusercontent.com/kenny0960/TampermonkeyScripts/master/dist/images/wrep-step3.png)
+
 
 ### step 4:
 點擊最上層的「設定」(跟 step 3 的設定不同！)，找到外部的「更新週期」，選擇「永遠」即可
+
+![image](https://raw.githubusercontent.com/kenny0960/TampermonkeyScripts/master/dist/images/wrep-step4.png)
