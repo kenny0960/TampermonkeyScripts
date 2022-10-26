@@ -298,6 +298,7 @@ const getAnnualLeaveTemplate = (annualLeave: AnnualLeave): string => {
 
 const getUpdateLogs = (): string[] => {
     return [
+        'v2.3.7(20221026) 修改彈跳視窗「即將符合下班條件」字眼為「預計 MM 分鐘後」',
         'v2.3.6(20221024) 解決過早上班或是預測過早下班的問題',
         'v2.3.5(20221020) 顯示「符合下班條件」資訊',
         'v2.3.4(20221018) 顯示超時工作的資訊',
