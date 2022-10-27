@@ -210,10 +210,10 @@ const updateTodayAttendanceContent = (td: HTMLTableCellElement, attendances: Att
     const todaySignOutLeftMinutes: number = signInDate.clone().add(9, 'hours').diff(moment(), 'minutes');
 
     td.innerHTML = `<h6> ${predictedSignOutTimeString} </h6>`;
-    if (predictedSignOutLeftMinutes < 0) {
-        td.innerHTML += `<div> 符合下班條件 </div>`;
-    } else {
+    if (predictedSignOutLeftMinutes > 0) {
         td.innerHTML += `<div> 預計 ${predictedSignOutDate.fromNow()} </div>`;
+    } else {
+        td.innerHTML += `<div> 符合下班條件 </div>`;
     }
     // 已經下班且無負債
     if (predictedSignOutLeftMinutes < 0 && todaySignOutLeftMinutes < 0) {
