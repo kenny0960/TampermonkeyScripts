@@ -6,7 +6,7 @@
 
 ### step 2:
 
-「新增腳本」並且在「編輯器」分頁中貼上程式碼後存檔
+點擊 tampermonkey 中的「新增腳本」，並且在「編輯器」分頁中貼上程式碼後存檔
 
 ```
 // ==UserScript==
@@ -23,6 +23,8 @@
 // @grant        none
 // ==/UserScript==
 ```
+
+![image](https://raw.githubusercontent.com/kenny0960/TampermonkeyScripts/master/dist/images/wrep-step2.png)
 
 ### step 3:
 
