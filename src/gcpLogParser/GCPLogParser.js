@@ -107,14 +107,15 @@ class KeyboardRowParser {
     }
 
     rewriteSummaryDom(json) {
-        const { labels, mobile, payload } = json;
+        const { labels, mobile, payload, versions } = json;
         const { model } = mobile;
         const { name, bankCode } = labels;
         const { message } = payload;
+        const { bank_app_version } = versions;
         const shortenModelName = this.shortenModel(model);
         this.getSummaryDom().querySelectorAll('logs-highlightable-text').item(1).innerText = `${
-            bankCode ? ` 💳  ${bankCode}` : ''
-        }📱 ${shortenModelName}`;
+            bankCode ? ` 💳${bankCode}` : ''
+        }📱${shortenModelName} Ⓥ${bank_app_version}`;
         this.getSummaryDom().querySelectorAll('logs-highlightable-text').item(2).innerText = name;
         this.getSummaryDom().querySelectorAll('logs-highlightable-text').item(3).innerText = message;
     }
