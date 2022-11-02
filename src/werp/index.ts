@@ -291,6 +291,13 @@ const updateAttendanceFavicon = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr
         faviconBadge.badgeColor = '#cc0000';
         faviconBadge.badge = '超';
     }
+
+    // 定時更新內容
+    const todayAttendanceFaviconTimer: number = window.setTimeout((): void => {
+        log('更新預設當日下班 Favicon');
+        updateAttendanceFavicon(trs, attendances);
+    }, 60 * 1000);
+    SessionManager.setByKey(SessionKeys.TODAY_ATTENDANCE_FAVICON_TIMER, String(todayAttendanceFaviconTimer));
 };
 
 const getAnnualLeaveTemplate = (annualLeave: AnnualLeave): string => {
@@ -357,6 +364,7 @@ const appendCopyrightAndVersion = (body: HTMLElement): void => {
 const resetAttendanceTimers = (): void => {
     window.clearTimeout(Number(SessionManager.getByKey(SessionKeys.SIGN_IN_NOTIFICATION_TIMER)));
     window.clearTimeout(Number(SessionManager.getByKey(SessionKeys.TODAY_ATTENDANCE_CONTENT_TIMER)));
+    window.clearTimeout(Number(SessionManager.getByKey(SessionKeys.TODAY_ATTENDANCE_FAVICON_TIMER)));
 };
 
 const main = (): void => {
