@@ -9,3 +9,8 @@ export const updateFavicon = (url: string): void => {
     const heads: HTMLCollectionOf<HTMLHeadElement> = document.getElementsByTagName('head');
     heads[0].appendChild(getFaviconDom(url));
 };
+
+export const insertFaviconHTML = (faviconHTML: string): void => {
+    const heads: HTMLCollectionOf<HTMLHeadElement> = document.getElementsByTagName('head');
+    heads[0].innerHTML += faviconHTML;
+};

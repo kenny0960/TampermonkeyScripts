@@ -1,7 +1,8 @@
 import * as moment from 'moment';
+import 'favIcon-badge';
 
 import { log } from '@/common/logger';
-import { updateFavicon } from '@/common/favicon';
+import { insertFaviconHTML } from '@/common/favicon';
 import { showNotification } from '@/common/notification';
 import { waitElementLoaded } from '@/common/dom';
 import SessionManager from '@/common/SessionManager';
@@ -362,7 +363,7 @@ const main = (): void => {
 
 (function () {
     moment.locale('zh-tw');
-    updateFavicon('https://cy.iwerp.net/portal/images/chungyo.ico');
+    insertFaviconHTML(`<favicon-badge src="https://cy.iwerp.net/portal/images/chungyo.ico" />`);
     main();
     window.setInterval((): void => {
         main();
