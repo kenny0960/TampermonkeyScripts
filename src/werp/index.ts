@@ -393,7 +393,7 @@ const main = (): void => {
 
 (function () {
     moment.locale('zh-tw');
-    insertFaviconHTML(`<favicon-badge src="https://cy.iwerp.net/portal/images/chungyo.ico" />`);
+    insertFaviconHTML(`<favicon-badge src="" />`);
     main();
     window.setInterval((): void => {
         main();
