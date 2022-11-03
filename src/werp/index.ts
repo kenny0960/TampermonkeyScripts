@@ -264,6 +264,35 @@ const updateAttendanceContent = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr
     }
 };
 
+const updateAttendanceFavicon = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, attendances: Attendance[]) => {
+    const { signOutDate, signInDate }: Attendance = formatAttendance(attendances[0]);
+    // 根據剩餘分鐘來更新當日的預測可簽退時間
+    const predictedSignOutDate: Moment = formatEarliestSignOutDate(
+        signOutDate.clone().subtract(getTotalRemainMinutes(attendances), 'minutes')
+    );
+    const predictedSignOutLeftMinutes: number = predictedSignOutDate.diff(moment(), 'minutes');
+    const todaySignOutLeftMinutes: number = signInDate.clone().add(9, 'hours').diff(moment(), 'minutes');
+    const faviconBadge: FavIconBadge = document.querySelector('favicon-badge');
+    faviconBadge.textColor = 'white';
+    faviconBadge.badgeSize = 16;
+
+    if (predictedSignOutLeftMinutes > 0) {
+        document.title = `預計 ${predictedSignOutDate.fromNow()}`;
+        faviconBadge.badgeColor = '#006600';
+        faviconBadge.badge = predictedSignOutDate.fromNow().match(/(\d+)\s.+/)[1] + 'H';
+    } else {
+        document.title = '符合下班條件';
+        faviconBadge.badgeColor = '#e69500';
+        faviconBadge.badge = '可';
+    }
+    // 已經下班且無負債
+    if (predictedSignOutLeftMinutes < 0 && todaySignOutLeftMinutes < 0) {
+        document.title = `超時工作(+${Math.abs(todaySignOutLeftMinutes)})`;
+        faviconBadge.badgeColor = '#cc0000';
+        faviconBadge.badge = '超';
+    }
+};
+
 const getAnnualLeaveTemplate = (annualLeave: AnnualLeave): string => {
     return `
 <div id="formTemplate:j_idt323" class="ui-outputpanel ui-widget">
@@ -345,6 +374,7 @@ const main = (): void => {
         const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = table.getElementsByTagName('tr');
         const attendances: Attendance[] = getAttendanceByTrs(trs);
         updateAttendanceContent(trs, attendances);
+        updateAttendanceFavicon(trs, attendances);
         showSignInNotification(attendances);
         appendCopyrightAndVersion(table.parentElement.parentElement);
     });
