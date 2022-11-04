@@ -295,4 +295,44 @@ class GCPLogParser {
             parser.rowDom.title = title;
         });
     }
+
+    vnpay_outgoing_vn_bank_web_entries() {
+        this.removeSideBar();
+
+        this.getContentsDom().forEach((contentDom) => {
+            const contentText = contentDom.innerText;
+
+            if (contentText.includes("b'/")) {
+                const base64 = contentText.match(/b'(?<base64>.+)'/).groups.base64;
+                const imageSource = `data:image/png;base64,${base64}`;
+                const image = document.createElement('img');
+                image.width = 150;
+                image.height = 150;
+                image.src = imageSource;
+                contentDom.innerHTML = '';
+                contentDom.append(image);
+                contentDom.onclick = () => {
+                    const newWindow = window.open();
+                    const image = document.createElement('img');
+                    image.src = imageSource;
+                    newWindow.document.write(image.outerHTML);
+                };
+                contentDom.parentNode.style.height = '155px';
+                return;
+            }
+
+            if (contentText.includes('body')) {
+                const html = document.createElement('html');
+                html.innerHTML = contentText;
+                contentDom.innerHTML = '';
+                contentDom.appendChild(html);
+                contentDom.onclick = () => {
+                    const newWindow = window.open();
+                    newWindow.document.write(contentText);
+                };
+                contentDom.parentNode.style.height = '100px';
+                return;
+            }
+        });
+    }
 }
