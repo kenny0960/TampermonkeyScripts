@@ -337,6 +337,7 @@ const getAnnualLeaveTemplate = (annualLeave: AnnualLeave): string => {
 
 const getUpdateLogs = (): string[] => {
     return [
+        'v2.4.0(20221107) 修正 favicon 失效的問題',
         'v2.3.9(20221104) 根據不同剩餘時間來顯示 favicon 樣式和網頁標題',
         'v2.3.8(20221028) 下班提示訊息和畫面一致化',
         'v2.3.7(20221026) 修改彈跳視窗「即將符合下班條件」字眼為「預計 MM 分鐘後」',

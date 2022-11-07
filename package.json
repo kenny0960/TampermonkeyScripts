@@ -1,7 +1,7 @@
 {
   "name": "tampermonkeyscripts",
   "version": "1.0.0",
-  "wrep-version": "2.3.9",
+  "wrep-version": "2.4.0",
   "description": "",
   "main": ".eslintrc.js",
   "scripts": {
