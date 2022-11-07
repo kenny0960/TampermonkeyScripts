@@ -279,7 +279,9 @@ const updateAttendanceFavicon = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr
     if (predictedSignOutLeftMinutes > 0) {
         document.title = `預計 ${predictedSignOutDate.fromNow()}`;
         faviconBadge.badgeColor = '#006600';
-        faviconBadge.badge = predictedSignOutDate.fromNow().match(/(\d+)\s.+/)[1] + 'H';
+        faviconBadge.badge = `${predictedSignOutDate.fromNow().match(/(\d+)\s.+/)[1]}${
+            predictedSignOutLeftMinutes > 60 ? 'H' : ''
+        }`;
     } else {
         document.title = '符合下班條件';
         faviconBadge.badgeColor = '#e69500';
