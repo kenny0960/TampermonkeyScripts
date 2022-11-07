@@ -378,6 +378,8 @@ const main = (): void => {
         ) {
             return;
         }
+        // 初始化 FAVICON BADGE
+        insertFaviconHTML(`<favicon-badge src="" />`);
         resetAttendanceTimers();
         log('出缺勤表格已經載入');
         const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = table.getElementsByTagName('tr');
@@ -402,7 +404,6 @@ const main = (): void => {
 
 (function () {
     moment.locale('zh-tw');
-    insertFaviconHTML(`<favicon-badge src="" />`);
     main();
     window.setInterval((): void => {
         main();
