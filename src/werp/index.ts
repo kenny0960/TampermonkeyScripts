@@ -371,6 +371,16 @@ const resetAttendanceTimers = (): void => {
     window.clearTimeout(Number(SessionManager.getByKey(SessionKeys.TODAY_ATTENDANCE_FAVICON_TIMER)));
 };
 
+const initializeFaviconBadge = (): void => {
+    document.querySelectorAll('favicon-badge').forEach((faviconBadge: FavIconBadge) => {
+        faviconBadge.remove();
+    });
+    document.querySelectorAll('link[rel="shortcut icon"]').forEach((linkElement: HTMLLinkElement) => {
+        linkElement.remove();
+    });
+    insertFaviconHTML(`<favicon-badge src="" />`);
+};
+
 const main = (): void => {
     // 出缺勤表格
     waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then((table: HTMLTableElement) => {
@@ -381,8 +391,7 @@ const main = (): void => {
         ) {
             return;
         }
-        // 初始化 FAVICON BADGE
-        insertFaviconHTML(`<favicon-badge src="" />`);
+        initializeFaviconBadge();
         resetAttendanceTimers();
         log('出缺勤表格已經載入');
         const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = table.getElementsByTagName('tr');
