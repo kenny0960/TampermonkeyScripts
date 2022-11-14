@@ -131,11 +131,17 @@ class GCPLogParser {
         return true;
     }
 
-    deleteTimestampUTCString() {
-        document.querySelectorAll('div.timestamp-container').forEach((timestampDom) => {
-            timestampDom.style.flex = '0 0 0px';
-            timestampDom.innerHTML = timestampDom.innerHTML.replace(' UTC+8', '');
-        });
+    makeJsonPayloadColumnInvisible() {
+        document
+            .querySelectorAll(
+                'button.custom.custom-facet-jsonPayload-request_properties.facet-button.field.has-facet-menu.ng-star-inserted'
+            )
+            .forEach((buttonDom) => {
+                buttonDom.style.width = 0;
+                buttonDom.style.padding = 0;
+                buttonDom.style.margin = 0;
+                buttonDom.style.visibility = 'hidden';
+            });
     }
 
     getContentsDom() {
@@ -233,6 +239,7 @@ class GCPLogParser {
 
     vnpay_outgoing_api_laravel_http_access() {
         this.removeSideBar();
+        this.makeJsonPayloadColumnInvisible();
 
         this.getRowsDom().forEach((contentDom) => {
             const parser = new KeyboardRowParser(contentDom);
