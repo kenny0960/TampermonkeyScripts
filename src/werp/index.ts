@@ -337,6 +337,7 @@ const getAnnualLeaveTemplate = (annualLeave: AnnualLeave): string => {
 
 const getUpdateLogs = (): string[] => {
     return [
+        'v2.4.3(20221118) 更新特休 TOKEN',
         'v2.4.2(20221111) 更新特休 TOKEN',
         'v2.4.1(20221111) 修正 favicon 無限增生的問題',
         'v2.4.0(20221107) 修正 favicon 失效的問題',
