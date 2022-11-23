@@ -123,6 +123,21 @@ class KeyboardRowParser {
         this.getSummaryDom().querySelectorAll('logs-highlightable-text').item(2).innerText = name;
         this.getSummaryDom().querySelectorAll('logs-highlightable-text').item(3).innerText = message;
     }
+
+    rewriteMessageListenerSummaryDom(json) {
+        const { labels, mobile, payload, version } = json;
+        const { model } = mobile;
+        const { bank_card, serial_number } = labels;
+        const { message } = payload;
+        const { app_version } = version;
+        const shortenModelName = this.shortenModel(model);
+        this.getSummaryDom()
+            .querySelectorAll('logs-highlightable-text')
+            .item(1).innerText = `${serial_number}📱${shortenModelName} Ⓥ${app_version}`;
+        this.getSummaryDom().querySelectorAll('logs-highlightable-text').item(2).innerText =
+            bank_card === '' ? '未綁定' : bank_card;
+        this.getSummaryDom().querySelectorAll('logs-highlightable-text').item(3).innerText = message;
+    }
 }
 
 class GCPLogParser {
@@ -311,7 +326,18 @@ class GCPLogParser {
 
             // 自動傳送簡訊日誌
             if (summaryText.includes('client=message-app') === true) {
-                // TODO 實作自動傳送簡訊 parser
+                if (parser.hasParsed() === true) {
+                    return;
+                }
+
+                let jsonText = `{${parser.getJsonText()}}`;
+
+                if (parser.isJsonParsable(jsonText) === false) {
+                    return;
+                }
+
+                const json = JSON.parse(jsonText);
+                parser.rewriteMessageListenerSummaryDom(json);
             }
         });
     }
