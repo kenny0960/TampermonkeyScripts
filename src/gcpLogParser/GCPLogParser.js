@@ -171,6 +171,35 @@ class GCPLogParser {
             });
     }
 
+    getSearchTextDom() {
+        return document.querySelector('.monaco-mouse-cursor-text');
+    }
+
+    getLogNameType() {
+        const searchText = this.getSearchTextDom().innerText;
+        if (searchText.includes('VNPAY')) {
+            return '🔴';
+        }
+        if (searchText.includes('QA-HK')) {
+            return '🟡';
+        }
+        if (searchText.includes('DEVELOP')) {
+            return '🟢';
+        }
+        return '';
+    }
+
+    getLogNameText() {
+        const searchText = this.getSearchTextDom().innerText;
+        if (searchText.includes('client=mobile')) {
+            return '⌨';
+        }
+        if (searchText.includes('client=message-app')) {
+            return '✉';
+        }
+        return '';
+    }
+
     getContentsDom() {
         return document.querySelectorAll('.summary-container.short-summary');
     }
@@ -267,6 +296,7 @@ class GCPLogParser {
     vnpay_outgoing_api_laravel_http_access() {
         this.removeSideBar();
         this.makeJsonPayloadColumnInvisible();
+        document.title = `${this.getLogNameType()} ${this.getLogNameText()}`;
 
         this.getRowsDom().forEach((contentDom) => {
             const parser = new KeyboardRowParser(contentDom);
