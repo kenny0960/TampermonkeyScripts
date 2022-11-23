@@ -7,6 +7,10 @@ class KeyboardRowParser {
         return this.rowDom.querySelector('.short-summary');
     }
 
+    getSummaryTextDom() {
+        return this.getSummaryDom().querySelector('.summary-text');
+    }
+
     getJsonDom() {
         return this.getSummaryDom().querySelector('logs-truncated-text div');
     }
@@ -243,63 +247,72 @@ class GCPLogParser {
 
         this.getRowsDom().forEach((contentDom) => {
             const parser = new KeyboardRowParser(contentDom);
+            const summaryText = parser.getSummaryTextDom().innerText;
 
-            if (parser.hasParsed() === true) {
-                return;
-            }
-
-            let jsonText = parser.getJsonText();
-            let backgroundColor = '';
-            let title = '';
-
-            // 把 ORDER JSON 轉換成易讀的字串
-            if (parser.hasOrderText() === true) {
-                jsonText = parser.replaceOrderText(jsonText);
-                backgroundColor = '#ccffcc';
-                title = JSON.stringify(parser.getOrder());
-            }
-
-            // 把 ORDER SUMMARY JSON 轉換成易讀的字串
-            if (parser.hasOrderSummaryText() === true) {
-                jsonText = parser.replaceOrderSummaryText(jsonText);
-                title = JSON.stringify(parser.getOrderSummary());
-            }
-
-            // 把 404 JSON 轉換成易讀的字串
-            if (parser.has404Text() === true) {
-                try {
-                    parser.get404Json();
-                    jsonText = parser.replace404Text(jsonText);
-                    backgroundColor = '#ffedcc';
-                } catch (error) {
-                    console.log(error);
+            // 鍵盤出款日誌
+            if (summaryText.includes('client=mobile') === true) {
+                if (parser.hasParsed() === true) {
+                    return;
                 }
+
+                let jsonText = parser.getJsonText();
+                let backgroundColor = '';
+                let title = '';
+
+                // 把 ORDER JSON 轉換成易讀的字串
+                if (parser.hasOrderText() === true) {
+                    jsonText = parser.replaceOrderText(jsonText);
+                    backgroundColor = '#ccffcc';
+                    title = JSON.stringify(parser.getOrder());
+                }
+
+                // 把 ORDER SUMMARY JSON 轉換成易讀的字串
+                if (parser.hasOrderSummaryText() === true) {
+                    jsonText = parser.replaceOrderSummaryText(jsonText);
+                    title = JSON.stringify(parser.getOrderSummary());
+                }
+
+                // 把 404 JSON 轉換成易讀的字串
+                if (parser.has404Text() === true) {
+                    try {
+                        parser.get404Json();
+                        jsonText = parser.replace404Text(jsonText);
+                        backgroundColor = '#ffedcc';
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+
+                if (parser.hasSuccessText() === true) {
+                    jsonText = parser.replaceSuccessText(jsonText);
+                    backgroundColor = '#ccffcc';
+                }
+
+                if (parser.hasFailedText() === true) {
+                    jsonText = parser.replaceFailedText(jsonText);
+                    backgroundColor = '#ffe6e6';
+                }
+
+                if (parser.isJsonParsable(jsonText) === false) {
+                    return;
+                }
+
+                const json = JSON.parse(jsonText);
+
+                if (parser.isPermissionsGranted(json) === false) {
+                    backgroundColor = '#ffe6e6';
+                    title = '請核對權限';
+                }
+
+                parser.rewriteSummaryDom(json);
+                parser.rowDom.style.backgroundColor = backgroundColor;
+                parser.rowDom.title = title;
             }
 
-            if (parser.hasSuccessText() === true) {
-                jsonText = parser.replaceSuccessText(jsonText);
-                backgroundColor = '#ccffcc';
+            // 自動傳送簡訊日誌
+            if (summaryText.includes('client=message-app') === true) {
+                // TODO 實作自動傳送簡訊 parser
             }
-
-            if (parser.hasFailedText() === true) {
-                jsonText = parser.replaceFailedText(jsonText);
-                backgroundColor = '#ffe6e6';
-            }
-
-            if (parser.isJsonParsable(jsonText) === false) {
-                return;
-            }
-
-            const json = JSON.parse(jsonText);
-
-            if (parser.isPermissionsGranted(json) === false) {
-                backgroundColor = '#ffe6e6';
-                title = '請核對權限';
-            }
-
-            parser.rewriteSummaryDom(json);
-            parser.rowDom.style.backgroundColor = backgroundColor;
-            parser.rowDom.title = title;
         });
     }
 
