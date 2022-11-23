@@ -78,11 +78,19 @@ class KeyboardRowParser {
     }
 
     hasSuccessText() {
-        return this.getJsonText().indexOf('成功出款') !== -1;
+        return (
+            this.getJsonText().includes('成功出款') === true || this.getJsonText().includes('新增手機簡訊內容成功') === true
+        );
     }
 
     replaceSuccessText(jsonText) {
-        return jsonText.replace(/成功出款/g, '✅ 成功出款');
+        if (jsonText.includes('成功出款') === true) {
+            return jsonText.replace(/成功出款/g, '✅ 成功出款');
+        }
+        if (jsonText.includes('新增手機簡訊內容成功') === true) {
+            return jsonText.replace(/新增手機簡訊內容成功/g, '✅ 新增手機簡訊內容成功');
+        }
+        return '';
     }
 
     hasFailedText() {
@@ -331,6 +339,12 @@ class GCPLogParser {
                 }
 
                 let jsonText = `{${parser.getJsonText()}}`;
+                let backgroundColor = '';
+
+                if (parser.hasSuccessText() === true) {
+                    jsonText = parser.replaceSuccessText(jsonText);
+                    backgroundColor = '#ccffcc';
+                }
 
                 if (parser.isJsonParsable(jsonText) === false) {
                     return;
@@ -338,6 +352,7 @@ class GCPLogParser {
 
                 const json = JSON.parse(jsonText);
                 parser.rewriteMessageListenerSummaryDom(json);
+                parser.rowDom.style.backgroundColor = backgroundColor;
             }
         });
     }
