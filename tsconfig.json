@@ -4,7 +4,10 @@
     "baseUrl": "src",
     "paths": {
       "@/*": ["*"]
-    }
+    },
+    "lib": [
+      "dom"
+    ]
   },
   "exclude": [
     "node_modules"
