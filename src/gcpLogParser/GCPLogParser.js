@@ -175,7 +175,15 @@ class GCPLogParser {
         return document.querySelector('.monaco-mouse-cursor-text');
     }
 
-    getLogNameType() {
+    isKeyboardApp() {
+        return this.getSearchTextDom().innerText.includes('client=mobile');
+    }
+
+    isMessageListenerApp() {
+        return this.getSearchTextDom().innerText.includes('client=message-app');
+    }
+
+    getLogNameLightIcon() {
         const searchText = this.getSearchTextDom().innerText;
         if (searchText.includes('VNPAY')) {
             return '🔴';
@@ -189,12 +197,11 @@ class GCPLogParser {
         return '';
     }
 
-    getLogNameText() {
-        const searchText = this.getSearchTextDom().innerText;
-        if (searchText.includes('client=mobile')) {
+    getLogNameIcon() {
+        if (this.isKeyboardApp() === true) {
             return '⌨';
         }
-        if (searchText.includes('client=message-app')) {
+        if (this.isMessageListenerApp() === true) {
             return '✉';
         }
         return '';
@@ -296,14 +303,13 @@ class GCPLogParser {
     vnpay_outgoing_api_laravel_http_access() {
         this.removeSideBar();
         this.makeJsonPayloadColumnInvisible();
-        document.title = `${this.getLogNameType()} ${this.getLogNameText()}`;
+        document.title = `${this.getLogNameLightIcon()} ${this.getLogNameIcon()}`;
 
         this.getRowsDom().forEach((contentDom) => {
             const parser = new KeyboardRowParser(contentDom);
-            const summaryText = parser.getSummaryTextDom().innerText;
 
             // 鍵盤出款日誌
-            if (summaryText.includes('client=mobile') === true) {
+            if (this.isKeyboardApp() === true) {
                 if (parser.hasParsed() === true) {
                     return;
                 }
@@ -363,7 +369,7 @@ class GCPLogParser {
             }
 
             // 自動傳送簡訊日誌
-            if (summaryText.includes('client=message-app') === true) {
+            if (this.isMessageListenerApp() === true) {
                 if (parser.hasParsed() === true) {
                     return;
                 }
