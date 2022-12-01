@@ -341,12 +341,14 @@ const updateAttendanceFavicon = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr
     faviconBadge.textColor = 'white';
     faviconBadge.badgeSize = 16;
 
-    if (predictedSignOutLeftMinutes > 0) {
+    if (predictedSignOutLeftMinutes > 60) {
+        document.title = `預計 ${predictedSignOutDate.fromNow()}`;
+        faviconBadge.badgeColor = '#737373';
+        faviconBadge.badge = `${predictedSignOutDate.fromNow().match(/(\d+)\s.+/)[1]}H`;
+    } else if (predictedSignOutLeftMinutes > 0) {
         document.title = `預計 ${predictedSignOutDate.fromNow()}`;
         faviconBadge.badgeColor = '#006600';
-        faviconBadge.badge = `${predictedSignOutDate.fromNow().match(/(\d+)\s.+/)[1]}${
-            predictedSignOutLeftMinutes > 60 ? 'H' : ''
-        }`;
+        faviconBadge.badge = (predictedSignOutLeftMinutes + 1).toString();
     } else {
         document.title = '符合下班條件';
         faviconBadge.badgeColor = '#e69500';
