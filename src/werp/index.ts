@@ -53,6 +53,62 @@ const fetchAnnualLeave = async (): Promise<AnnualLeave> => {
         });
 };
 
+const fetchPersonalLeaveNotes = async (attendances: Attendance[]): Promise<string[]> => {
+    if (attendances.length === 0) {
+        return [];
+    }
+    const endDate: string = attendances[0].signInDate.format('YYYY/MM/DD', { trim: false });
+    const startDate: string = attendances[attendances.length - 1].signInDate.format('YYYY/MM/DD', { trim: false });
+    // 日期格式： &j_idt151_input=2022%2F11%2F28&j_idt155_input=2022%2F12%2F02
+    const searchDateRange: string = `&j_idt151_input=${startDate}&j_idt155_input=${endDate}`;
+    /*
+     * 請假資訊模板：
+         body: ''.replace(
+             /&j_idt151_input=\d+%2F\d+%2F\d+&j_idt155_input=\d+%2F\d+%2F\d+/,
+             searchDateRange
+         ),
+     */
+    return await await fetch('https://cy.iwerp.net/hr-attendance/merge/personal.xhtml', {
+        headers: {
+            accept: 'application/xml, text/xml, */*; q=0.01',
+            'accept-language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7,vi;q=0.6,zh-CN;q=0.5',
+            'cache-control': 'no-cache',
+            'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'faces-request': 'partial/ajax',
+            pragma: 'no-cache',
+            'sec-ch-ua': '"Google Chrome";v="107", "Chromium";v="107", "Not=A?Brand";v="24"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"macOS"',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'same-origin',
+            'x-requested-with': 'XMLHttpRequest',
+        },
+        referrer: 'https://cy.iwerp.net/hr-attendance/merge/personal.xhtml',
+        referrerPolicy: 'strict-origin-when-cross-origin',
+        body: 'javax.faces.partial.ajax=true&javax.faces.source=search-btn&javax.faces.partial.execute=search-btn+searchContent&javax.faces.partial.render=search-btn+id_tag_toolbar_view+opDt&search-btn=search-btn&formTemplate=formTemplate&j_idt151_input=2022%2F11%2F28&j_idt155_input=2022%2F12%2F02&kind_focus=&kind_input=ALL&dt_scrollState=0%2C0&javax.faces.ViewState=Sz68q2mLNuPUIowrZsLofjuviiUSuYj8Pbj1ZhaQH0MoDLMNkA3RFihzNC%2BbnPHX%2FJT%2Fepb04s3fV99iIeR4NtkmOH67ivFuCqbA2lgnayTZh24%2BeMkA4U1zx9v9QphqLyA3OwCoDjYhk1GcavljvDvZy63GXoGIuLrrfpMT1hV6QSfbVeAd3IdTl4as0y5CwfEb3VXeI%2FRMYj7CsRFOk7HBpuBrGtDTjDWvZKGxCMMKnccafRNn9S5TItnAYXUzE7yYik8BTSrZIrNOcdyb9fZXktJR17MdPmgWMjoqN%2FdNIQput4koRE%2BmHicUOhMBK3X%2B8G0EzoaoAbHNav8PIrpWzys0gNHjhSefOUC9KQngy0rKOaCE9ghj9OVNetqkjCZ1EjiEYLe0bq5fES1bNxKsKBEHLf8wl0AWrYJ1ETzJtzNNrHKo%2FW12N2d%2BUZydSWCq2SoISS4DpJQIBFjdu0jrcadHSDe%2FOGCAJyXJruP0y4H1j8Pd3P5UC04ZFOT%2B1ZhYCGyPSG4TjEErHyIdxx%2FEuYl%2BErV5KDNegONbTkSC%2B0FTHHZGIeQ%2BMWI912lwxrtKV%2FWkJwKs6E2e5EtR2na%2FdwajlYaJYpz713tcqK0g0Sxh09X9DnuGvzQ29r03VAyFV7FV8nwsREPAqiop24LEZSoG2pu%2BmFJZf37LoKlH5h2rMzFBKJwxMbrjHmkr2SWO%2BqXw6nhKA1auoXF29j5HJdpMZvfpkVCunsvywtX8rf2tmJzYJHB7GMi1R8Y8wz3nVoKj1LOwoKZxNfXF7fCHVcoQ84o%2F48OO1TiCdF%2F%2B%2BzOrXQ4U0Tf6fvsHsmcgGWmGnMHLXW3PAjOGus4UFattti2EdUPwTAYHTMdQQ2HOrwYERUqLcM52b%2FnTx3qx0cz1seoD6LtVvYlL9ERrZZeNhizs6aQPWIHtjbjOQ%2Bq1N4%2FJv8xFyC7M38b4by5GCY9h7%2B%2FiZiut2RKkM%2BSm1csp9mlcBH9NEd6X413H5DO5rbR2jgZBmaJ0PI3n5AU60GUo%2B1GVfnNdyd5f5o3ae3%2F9GaobTVkRvRcidtA%2FvEn5xwYps7xWmbSkbS3LM97MrHeiZ5mQTWtyHBXQyWFPpHv5YjL8Ba1fQ4QnzdLizWKSgwOOIyv2dx2twcF9Zl1ccfJluuv0ReBRgKY6v8RT0BzCu7awIkoft%2FvrTbGc%2Btu9dKlqfujB%2FHKiOcn0%2FIvRtIFm4TialP76%2FR3uEyHGg2lUGe04xhtmyKal%2BnsUUxpXyTC1pEujv6OH2ELz0C9NTNj%2FOi%2F5og9qRFwoSSOeh18g9SQE8%2BfvTEmcmFdAK80CyByZhA5qzh%2FaifSwmKWroX%2BFMe2SekAzMVHHuNs2hyZnYZOyQGp3om46%2BRKGg14pxfMyjMNcalijWAvzRLxiNkJZAr6PILo4Hgb4bE1slGm7KTNV4asIu0ug61F2ssSwpRip5kDddz%2FLVMO1DouR1HoE9lCdTHsD97GjLkNT3eLfHYALc1Z6YM0UGb7qvkRczX7Yl2PeeZy9HHG4%2FY5mBfvdmt2zk5JrK88caU%2BGW9%2B4ersBztWZf0CADlkcoK1IZvaNnbRlD34snT4koybUbIEKPV41lSxhMJYKFjIJ1gbN7uKlOeqYqvWcjgYw3DUri6IinUSQg6cett0ZGgXgTZ1hJkStHJzQfE02aXtRmkM%2Fwn0v1GicXbra9GxPBAfeTQSU%2FwFaOu3tOeNaF6Z5xg8V4NwXVmCZRRoQ46HMt6aBe%2F01XETOU7S4hpHW%2BF6aMqmrzyO3WovfpI6JxQsv7b1Sky5uQKZm7iTLVtHw2pOYZKMOJPniXKzGY4iqGf%2FWrEOPAMmDtLQ7WjsoYAAsMHnie3GguDC%2B7vsvvgKWdCiCYYhiz03WibpeQtFMperCOt43tWfFv30JeoScF120ozrMJICV3OzSjT9zUINfgpLCKdJLIpsglls3YHEHwbinFnOK8iRtRJuYP2DjG8o3OHYtqxVgEXZMO7E4Dsz2f4GIzowf33SqNu%2FRbIVo%2FqY9N%2BKeWSQZ8SsZfAHWHgoXNVlIRxkHhq3Ow0uFOrM3w9wK8ZBd1d8cs%2BwOD%2BUdaOu%2FGE2Bvf%2FOCWA%2BcaYU%2FEExfPzQL44G1h3jKL0Zp5OVuxZc94%2FnF6a3i0%2FRb7vcClVsiAbcotNVAWHOmjtDX3PK7DAiBuAV5tSIdsuCrRK%2FdxkmhMkcJuGJPZRpyWho2515xp%2Btu9J8vm4bueH60fSp6Cm6qCDJrAyVhTdxj3l3kge9vaEw%2FcLG1PcLzpLDmO%2BA%2B1sjDipgXFIPxCSJxAdYGJ3wM3UnuRZ%2BjhYjkjXt9IOi8vTvOolhjjh0DEmYUPD8yUWyhWa980ZDIzlHKlS5q87JdGtTXJ3h3dQuXYiaCf2kxjoo%2FthmTC5symsUUV9OgWLJLtOyzcThWu%2Bd%2FsjcWBTbeBVUdy15KzBM3PcLcw1cRcctspX0eXx6cJP3OsFG6NL4ZqU8JArFblQxxkLDKu41UvdX3wMEacJ3rJDsWJ4ClsugO6zuT0ctzar7Q7ei7TiGXuT5gYlLOIKn3fhFuFuDZJd0zU1JfKkVp%2FMNRytwyWkRo4hid0i02akXuJ2fv6mZNrF5D2%2Bgz5%2FfJqhd1KR20hoQ7oLjAopUoYG19fXFMxvaJenSpbNPp8gIzjVYWP8JX%2F9%2BmC77at8S9n1AuscILAT%2BWXHGUfew9pwWijBtmiuYWlIUhVcHTUMtr%2BYLAl2xPwbiZtGQTe887AALGtTHFlZ%2FAuwq0Eb%2BkVugjw1VS3Akp0L%2FXtQFWLVR5LjQ4YuH7MAYSiKN1jGmbDJdra5%2FgCuYidWZ0mgB8IgFUF89EdYNrybOhOcPQA5LyGMLdQGmU%2BFwMyCZM%2F8lxKwfJ4PDyFsQW8cMHGyobwTi8cV6kVdYs%2FIJsqc%2FUbHcERjy3uvqyu0Nyhvs7T4a%2BLheAwSY2oPcIirJxQHnH5PJZ5pWmXMeK0ayjHucmBYbIae2xMl9%2FyVXcHbZurXx8VhlYVR1TP4KzcSUTmPycY2qM7kU5dPPs1q8JY9rcZn9FChxssmmEQvBieE5hMf%2FcALjcfvKt1T6dnqX8dlV2jrIGufGOM%2BEkqSodJayjPS6k2kq%2FGqXEIkdv7lcM2%2BckSmYefzF8XmcXvatlNRRPr1jJ3vRNfqMDpPW%2BSdBDlj1CXMJOyotNPBkB2X4RI5NwF79EIfDrut%2FYq4qqEBKlJ9SdGvPKeaV%2FlYz2kNEXVPbEm1uEIVZjkM%2BKU3WhoL3avadNpYx4DZjCtqDgHGPm0c2N6wz0vk0%2BNZGtdOFfvfbAFfuP%2B4gLxEyxExfqPVIpiVhE6ni20ag5voXOP%2Bhh%2FJK1VWYwOu9u32OQo9WGGMRPLp8sN1hKDpJY6WM1cKHdnK1hT38gGZLLg0u%2FXoR%2B5QEbFuxUmxE06%2B5K%2FqJq1IKcGLj4BIGS4OmNSL3VJZC2fn1Vi2%2F7%2FxeZ4R4sID70xBKBXBgYGoKn%2FOtKl%2BYDY6tePm%2BhWUEIJNLg7Z7YAVtIU%2Bc7D1KRv3BbSZdqveu%2F24PzZYtWzsUCw51dfqlmghF%2ByHC7ctJx%2F5xZ4%2FCwDCFR7I5o9jmIFTNpA0FE4czv%2B2PBmk9nh2q81mv2f7O3euV1CQVOwezAe%2B9HDDfHFg%2Bmzz6ziSZyIJgOavQKzgz0eL2r7MrHutlBJdk6v207lTymr5qBNWiuynMUk%2FgS4v9X5bRsL73CLmgL62pcevxjLOUD54Vu6XlX9LuiaNCjuHFDdhD%2FdfUVoU%2BrB5MCBWLbfTcFbxqQQw79GT1FY2BGrGy3yFdL1VGllPVGhtu0jXdBvUZoNreCDyeS0c1mKuKoBJMIX2NoIciyFCWohyl5bvySPT%2Bap4zhOINZNJsp2sK3Eb1BAvLcbl5KqLhVsf0HmCV347Iyyy9UqP7l50pkmgzHR3OD%2Bgv8TI8DnVgrAu%2BzykhL90ubvSvubkxQpwOy33H4CjnVPxI1q1T1YXafCbIZ5NzMXNj4zVm5xXyDcddfupPIamw0p%2FI%2FqFYZSQauuErncz1sdxcap4UNMhBIjgs5D8P%2F7zP1lF8d9%2FNXmHuF6XMlgz68ilyXBo91kG8%2FlBNZv119Pk7GXHdRfYJA8EhtC9BazHorFjnyjLsnwRWeRSdK23iRCt5nONiiEzdH1%2B00iAKwJwH9LYup3X9Vr1XN7QGnQkLqivfU2NUtszXggB8fADdKqvxpVRBYSrh78Vyn5WweKqWhJmoajvJG16kv781LGWAWxctqV6WfmSqQ5UlwxXEsL7PENrSKIzqYIdrrMtXE70cWoKmSFf1Ew%2FDSeQZRY%2Bvt3oVRF1sYtnvYokBjYk17WlVkSXlRCnnuDgWfLMSwHys0ZH6qrR3oZ%2BP%2F%2Fj2uGKaHMYR6m0xksVJ1%2BCb5cIOHgGatdo6KQhPyxt2zj7h6P54VTcoWi5pH9j%2FOZSfSBleH1yF48%2FncvuwGWhbf20omRjfcgg%2Beikcu%2FIf0SGOt2HCPo5BP0sWIDVF4fwO9XF%2Fnh5qygdeyqhuYNSy0rGknRcL5uXXsgDClC7OPaJC7U2uWelFnbH2Abk%2Fwd1KiGi%2FTPEDQ8yyc2ykujEIWsQ9%2BXAK9yUViDbJYSgzLMolUouh%2FLwN5ytcwO1Bv%2FR8a%2B4ey1wq1YNJ%2Fw%2F10katAyeS6Zk7G5GSOpdHZ1KoZNw57b0G3x%2FiR2KrQWp%2BiQADBWR0Hfew2bUuwBEJD6PAJYX%2Ba1FfstU7SgYZDqVS%2FtWwTOKBcEU23SPwBO4EkYLjDjzAaoLlmScN7AqCYizIcr0dsAZALscvbpTirVwte4R4xfiDDeixLY4nBdBcraNOVuItJZPDHXNm4ebzkYLi5p0alBKTpYU0oIXb83N6ekqazzlFAhqgJmSMSZouJmlH1LrdU8aXO0Pe4yR9zqAIGOS70k8nVPyei8mzH4bhNZfw7TZh1SJ8uOKRW1b85%2Fi42Efu4qD6ZDBEACr3EPT%2Fwh0EmJ2dMxD1USG5hSba6W%2BwzrAtsG5rkITkIWLyf%2FMj8NZbICaX5TP0F28fkcW%2Bc8Z15j1woW5xiPBNDAQ7W7mAeJi0GxAXj%2BWt%2FHarKc%2BEqRukq6J0pjSFUteRNUK1LNqDEzVc28go3H8XtcP%2BhXw3GZ%2BEhFnNNkHpoj%2Fi8SSFPV%2BAqRsLdDgP88e%2FL%2FQDB5isrEEa1BzHrh7tFoAL1Utyym4ijHGojpNONKCX%2Bty2X%2Fjgz81wb5Sj01TvnLxyw2JDR64kF8XwDcKqEJjttUF61S7Im2wul9pRFCYRGaKus7SbNNNM3sKB1MTeewB8RjNC6pdyUC4iLgUfM1VwJLi85CvEh7xjoal5KJv7tPxNI9NqWvXI1C3ex63EYeJeYZOvaAj4y84NslwddzwDVorBHCTpuPezFO86Q6h%2F8UItQ75YWvfXIK3jfOsVLNiudRf9Q4dO0DRRI6ocHlBkynTCVrUafGU3rQvoqrbEZYNxG620PzOA%2BYmSvZwmplh%2BiyohsX4oTW3OryuhN1jnoFdeAmvkN8sI4kEqyhcgMTd0OMkBG%2FFR65Q835ygOIkzxhwu30ptSXTY71pEUvAIzTOd%2BUECHmXlKGCF9kIc1XbbiCU1aFSads6TXz090C9uDryJaTByWcifBMlAC12kGQjAV8xepyOwo%2BLr7UNCuwEhzCMCxLN2OxIhZHyBEAQOF8qZJfalWWfLRaj0yL87YXSzHLkWppC2Uja%2BpR6gvsMsMXm59KgFYdn%2FmdpwjNzBLagSX5BQEQcGcjyYWduEtjHuOLTpzGe6lUJTOeG9Hi29eFErdfysHiNCVrAmRSrhkyaUjIZRhuStwvrLIKnHeIvGGRKLPU8sANFepOOSPFXIk%2FDfTQ3hJ96NLx1D7bmiZf%2FDXmRrL%2FtSvHusU6dfqvKM9x1uxwdnH6oKyfIwIzKXJLAdhHeJt8BOBiDTAH6Pkg5ixMBy5q3Pi%2FlVJKKcdSzs211aIyc6doD2yIbQjllkPKvMc7HwxfG6QOtWfPDZhI%2FZImwVMJ0PsSE42Xnb%2BHSqwG2t1TIHjHe7gdtAfTgH55wYRszn6%2B6OPDOCabXsYhAwoIehkiJKjJYSnQb235t7SEEDS2M9x8yN6VYCjHZffR2BSE%2FStnUQTYkPfnhcynNOdqsQHa8BRs55286CicEpFw8O%2B9D0u2k484Cp1gb0j7odZVwJujDAgFCo4V1rhZ1hnpUPhmN0eIoAfVcRhdiYyhRHS7KRdbamqWRVgkrEG%2BzWYAg15xKNM9A7V2gYi483X%2FTIOdsfof9q5gp2A0N29m3b07Gqe5%2FhSJ1%2FP1HQTHXTzjp6hHkc%2FhO17AanQxAE9BEdZRlck%2BVX69KIDx%2FAV%2F0c%2FYRnu%2BtcUd4aSpT4vTZfl4ubGVxzVmi76oZ3yTB2KeO%2BHq68%2F1%2F%2B05UreHd8oxcsFmblqeigQ4j3XhybAnetVyuwF8RQdMXw3oWutmPlHZ2bq%2FPXGX19pORI72xfNNLpIfAZAR%2F3khVQSIuE5H8J6jV4gj4cvZpKc2hObJpAgT4fEImEKysz2wYS35ijXZSm%2FPo7j6yInx%2F%2BjTwq5HwBGH8C1zWKwK8UlgJo5030XejYBf9MFiaL1p5u1LGUOGz0iJOh3EMncYGaFRQchG27nPhxdLZEK%2F9urCnyoJRDFiFF56BN3iL46nkVgr2e4Lam%2FrtNmGxQDJbfq4Un5G5DigswbqHJuu11zoMZRDbjsj0CH7kAoAiJyD6iP9VNOfhQryzCQCJCv0NZqcSzPw6AwkDsfjSLu8M9YmqOs8fpkI3Reca00n1MJIFAPLmBjeOcoYSNILNYPfnSf2oZ1KOG1t7NKXLxlfNx8YmNP4DKPFTg91I3tiBFjaOVMcc3ZVdpQIwdwGAqk7oY57JkCH8uJxppVWPShLX4y4M%3D'.replace(
+            /&j_idt151_input=\d+%2F\d+%2F\d+&j_idt155_input=\d+%2F\d+%2F\d+/,
+            searchDateRange
+        ),
+        method: 'POST',
+        mode: 'cors',
+        credentials: 'include',
+    })
+        .then((response) => {
+            return response.text();
+        })
+        .then((body) => {
+            const leaveNotes: string[] = [];
+            const html: HTMLHtmlElement = document.createElement('html');
+            html.innerHTML = body;
+            html.querySelectorAll('.ui-datatable-frozenlayout-right tbody tr').forEach((tr: HTMLTableRowElement) => {
+                const leaveNote: string = tr.querySelectorAll('td').item(3).innerText.trim();
+                leaveNotes.push(leaveNote);
+            });
+            return leaveNotes.reverse();
+        });
+};
+
 const showSignInNotification = (attendances: Attendance[]): void => {
     const currentDate: Moment = moment();
     const { signInDate, signOutDate }: Attendance = formatAttendance(attendances[0]);
@@ -222,7 +278,6 @@ const updateTodayAttendanceContent = (td: HTMLTableCellElement, attendances: Att
             todaySignOutLeftMinutes
         )})</span></div>`;
     }
-
     // 定時更新內容
     const todayAttendanceContentTimer: number = window.setTimeout((): void => {
         log('更新預設當日下班內容');
@@ -261,6 +316,16 @@ const updateAttendanceContent = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr
         } else {
             updatePastDayAttendanceContent(td, attendances[i]);
         }
+    }
+};
+
+const updateLeaveNoteContent = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, leaveNotes: string[]) => {
+    for (let i = 0; i < trs.length; i++) {
+        const tr: HTMLTableRowElement = trs[i];
+        const leaveNote: string = leaveNotes[i];
+        const leaveNoteTd: HTMLTableCellElement = document.createElement('td');
+        leaveNoteTd.innerText = leaveNote === undefined ? '' : leaveNote.replace(/\s/g, '\n');
+        tr.append(leaveNoteTd);
     }
 };
 
@@ -385,26 +450,38 @@ const initializeFaviconBadge = (): void => {
     insertFaviconHTML(`<favicon-badge src="" />`);
 };
 
+const appendLeaveNoteCaption = (table: HTMLTableElement): void => {
+    const leaveCaption: HTMLTableCaptionElement = document.createElement('th');
+    leaveCaption.innerHTML = '<span class="ui-column-title">請假</span>';
+    table.parentNode.querySelector('thead tr').append(leaveCaption);
+};
+
 const main = (): void => {
     // 出缺勤表格
-    waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then((table: HTMLTableElement) => {
-        if (
-            table.innerText.includes('預計') === true ||
-            table.innerText.includes('符合下班條件') === true ||
-            table.innerText.includes('超時工作') === true
-        ) {
-            return;
+    waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then(
+        async (table: HTMLTableElement): Promise<void> => {
+            if (
+                table.innerText.includes('預計') === true ||
+                table.innerText.includes('符合下班條件') === true ||
+                table.innerText.includes('超時工作') === true
+            ) {
+                return;
+            }
+            initializeFaviconBadge();
+            resetAttendanceTimers();
+            log('出缺勤表格已經載入');
+            const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = table.getElementsByTagName('tr');
+            const attendances: Attendance[] = getAttendanceByTrs(trs);
+            const leaveNotes: string[] = await fetchPersonalLeaveNotes(attendances);
+
+            appendLeaveNoteCaption(table);
+            updateLeaveNoteContent(trs, leaveNotes);
+            updateAttendanceContent(trs, attendances);
+            updateAttendanceFavicon(trs, attendances);
+            showSignInNotification(attendances);
+            appendCopyrightAndVersion(table.parentElement.parentElement);
         }
-        initializeFaviconBadge();
-        resetAttendanceTimers();
-        log('出缺勤表格已經載入');
-        const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = table.getElementsByTagName('tr');
-        const attendances: Attendance[] = getAttendanceByTrs(trs);
-        updateAttendanceContent(trs, attendances);
-        updateAttendanceFavicon(trs, attendances);
-        showSignInNotification(attendances);
-        appendCopyrightAndVersion(table.parentElement.parentElement);
-    });
+    );
 
     // 待辦事項表格
     waitElementLoaded('.waitingTaskMClass').then(async (table: HTMLTableElement): Promise<void> => {
