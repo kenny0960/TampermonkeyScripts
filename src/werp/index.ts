@@ -404,6 +404,7 @@ const getAnnualLeaveTemplate = (annualLeave: AnnualLeave): string => {
 
 const getUpdateLogs = (): string[] => {
     return [
+        'v3.0.0(20221202) 顯示請假資訊',
         'v2.4.4(20221125) 更新特休 TOKEN',
         'v2.4.3(20221118) 更新特休 TOKEN',
         'v2.4.2(20221111) 更新特休 TOKEN',
