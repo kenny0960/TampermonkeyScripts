@@ -268,13 +268,13 @@ const updateTodayAttendanceContent = (td: HTMLTableCellElement, attendances: Att
 
     td.innerHTML = `<h6> ${predictedSignOutTimeString} </h6>`;
     if (predictedSignOutLeftMinutes > 0) {
-        td.innerHTML += `<div> 預計 ${predictedSignOutDate.fromNow()} </div>`;
+        td.innerHTML += `<div style="font-size: 12px;"> 預計 ${predictedSignOutDate.fromNow()} </div>`;
     } else {
-        td.innerHTML += `<div> 符合下班條件 </div>`;
+        td.innerHTML += `<div style="font-size: 12px;"> 符合下班條件 </div>`;
     }
     // 已經下班且無負債
     if (predictedSignOutLeftMinutes < 0 && todaySignOutLeftMinutes < 0) {
-        td.innerHTML = `<div> 超時工作 <span style="letter-spacing:1px; font-weight:bold; color: green;">  (+${Math.abs(
+        td.innerHTML = `<div style="font-size: 12px;"> 超時工作 <span style="letter-spacing:1px; font-weight:bold; color: green;">  (+${Math.abs(
             todaySignOutLeftMinutes
         )})</span></div>`;
     }
