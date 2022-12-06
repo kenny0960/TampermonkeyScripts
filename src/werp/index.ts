@@ -218,11 +218,11 @@ const getTotalRemainMinutes = (attendances: Attendance[]): number => {
 
 const getRemainMinutes = (attendance: Attendance): number => {
     const { signOutDate, signInDate }: Attendance = formatAttendance(attendance);
-    const diffMinutes = signOutDate.diff(signInDate, 'minutes');
-    if (diffMinutes === 0) {
+    // 國定假日或請假直接不計算
+    if (attendance.signOutDate.diff(attendance.signInDate, 'minutes') === 0) {
         return 0;
     }
-    return diffMinutes - 9 * 60;
+    return signOutDate.diff(signInDate, 'minutes') - 9 * 60;
 };
 
 const getAttendanceByTr = (tr: HTMLTableRowElement): Attendance => {
