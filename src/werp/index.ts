@@ -460,6 +460,42 @@ const appendLeaveNoteCaption = (table: HTMLTableElement): void => {
     table.parentNode.querySelector('thead tr').append(leaveCaption);
 };
 
+const createAttendanceButton = (text: string, link: string): HTMLElement => {
+    const anchorElement: HTMLAnchorElement = document.createElement('a');
+    anchorElement.href = link;
+    anchorElement.innerText = text;
+    anchorElement.title = text;
+    anchorElement.className =
+        'ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only atnd-btn common-btn atndreccssBth attendBtnCss';
+    anchorElement.target = '_blank';
+    anchorElement.style.background = 'white';
+    anchorElement.style.border = '1px solid #c4c4c4';
+    anchorElement.style.boxSizing = 'border-box';
+    anchorElement.style.boxShadow = '0px 2px 5px rgb(0 0 0 / 25%)';
+    anchorElement.style.borderRadius = '4px';
+    anchorElement.style.width = 'fit-content';
+    anchorElement.style.padding = '0 3px';
+    return anchorElement;
+};
+
+const prependForgottenAttendanceButton = (): void => {
+    const forgottenAttendanceButton: HTMLElement = createAttendanceButton(
+        '忘簽到退',
+        '/hr-attendance/acs/personal/personal-acs-aply.xhtml'
+    );
+    document
+        .querySelector('table[id="formTemplate:attend_rec_panel-title"] .ui-panel-content')
+        .prepend(forgottenAttendanceButton);
+};
+
+const restyleAttendanceButtons = (): void => {
+    document
+        .querySelectorAll('table[id="formTemplate:attend_rec_panel-title"] .ui-panel-content button,span,a')
+        .forEach((buttonElement: HTMLButtonElement): void => {
+            buttonElement.style.marginRight = '2px';
+        });
+};
+
 const main = (): void => {
     // 出缺勤表格
     waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then(
@@ -484,6 +520,8 @@ const main = (): void => {
             updateAttendanceFavicon(trs, attendances);
             showSignInNotification(attendances);
             appendCopyrightAndVersion(table.parentElement.parentElement);
+            prependForgottenAttendanceButton();
+            restyleAttendanceButtons();
         }
     );
 
