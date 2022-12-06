@@ -431,7 +431,7 @@ const getUpdateLogs = (): string[] => {
 
 const appendCopyrightAndVersion = (body: HTMLElement): void => {
     const copyRightDiv: HTMLDivElement = document.createElement('div');
-    copyRightDiv.innerText = `Kenny design © V${PackageJson['wrep-version']}`;
+    copyRightDiv.innerText = `ⓚ design © V${PackageJson['wrep-version']}`;
     copyRightDiv.style.textAlign = 'right';
     copyRightDiv.title = getUpdateLogs().slice(0, 5).join('\n');
     body.append(copyRightDiv);
