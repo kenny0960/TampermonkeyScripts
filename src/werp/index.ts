@@ -404,6 +404,7 @@ const getAnnualLeaveTemplate = (annualLeave: AnnualLeave): string => {
 
 const getUpdateLogs = (): string[] => {
     return [
+        'v3.1.0(20221202) 解決請假導致預計時間錯亂的問題',
         'v3.0.0(20221202) 顯示請假資訊',
         'v2.4.4(20221125) 更新特休 TOKEN',
         'v2.4.3(20221118) 更新特休 TOKEN',
