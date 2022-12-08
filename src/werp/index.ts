@@ -479,13 +479,18 @@ const createAttendanceButton = (text: string, link: string): HTMLElement => {
 };
 
 const prependForgottenAttendanceButton = (): void => {
+    const toolbarElement: HTMLTableElement | null = document.querySelector(
+        'table[id="formTemplate:attend_rec_panel-title"] .ui-panel-content'
+    );
+    if (toolbarElement === null || toolbarElement.innerText.includes('忘簽到退') === true) {
+        log('忘簽到退按鍵已經載入');
+        return;
+    }
     const forgottenAttendanceButton: HTMLElement = createAttendanceButton(
         '忘簽到退',
         '/hr-attendance/acs/personal/personal-acs-aply.xhtml'
     );
-    document
-        .querySelector('table[id="formTemplate:attend_rec_panel-title"] .ui-panel-content')
-        .prepend(forgottenAttendanceButton);
+    toolbarElement.prepend(forgottenAttendanceButton);
 };
 
 const restyleAttendanceButtons = (): void => {
