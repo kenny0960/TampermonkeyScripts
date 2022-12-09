@@ -400,6 +400,7 @@ const getAnnualLeaveTemplate = (annualLeave: AnnualLeave): string => {
 
 const getUpdateLogs = (): string[] => {
     return [
+        'v3.2.0(20221209) 顯示忘簽到退按鍵',
         'v3.1.0(20221202) 解決請假導致預計時間錯亂的問題',
         'v3.0.0(20221202) 顯示請假資訊',
         'v2.4.1(20221111) 修正 favicon 無限增生的問題',
