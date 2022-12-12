@@ -400,6 +400,7 @@ const getAnnualLeaveTemplate = (annualLeave: AnnualLeave): string => {
 
 const getUpdateLogs = (): string[] => {
     return [
+        'v3.2.1(20221212) 解決取得考勤彙總表參數名稱異動的問題',
         'v3.2.0(20221209) 顯示忘簽到退按鍵',
         'v3.1.0(20221202) 解決請假導致預計時間錯亂的問題',
         'v3.0.0(20221202) 顯示請假資訊',
