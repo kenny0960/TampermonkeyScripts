@@ -478,6 +478,28 @@ const removeAllAttendanceContent = (table: HTMLTableElement): void => {
     });
 };
 
+const restyleAttendanceTable = (table: HTMLTableElement): void => {
+    table.parentElement.parentElement.parentElement.parentElement.style.height = '100%';
+    table.parentElement.parentElement.parentElement.style.height = '100%';
+    table.parentElement.parentElement.style.height = '100%';
+    table.parentElement.style.height = '90%';
+};
+
+const restyleWholePage = (): void => {
+    document.querySelector('#todo-bpm').parentElement.className = document
+        .querySelector('#todo-bpm')
+        .parentElement.className.replace(/col-xl-9/, 'col-xl-8');
+    document.querySelector('#right-top-layout').className = document
+        .querySelector('#right-top-layout')
+        .className.replace(/col-xl-3/, 'col-xl-4');
+    document.querySelector('#anno-layout').className = document
+        .querySelector('#anno-layout')
+        .className.replace(/col-xl-9/, 'col-xl-8');
+    document.querySelector('#check-in-out-layout').className = document
+        .querySelector('#check-in-out-layout')
+        .className.replace(/col-xl-3/, 'col-xl-4');
+};
+
 const main = (): void => {
     // 出缺勤表格
     waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then(
@@ -500,6 +522,8 @@ const main = (): void => {
             appendCopyrightAndVersion(table.parentElement.parentElement);
             prependForgottenAttendanceButton();
             restyleAttendanceButtons();
+            restyleAttendanceTable(table);
+            restyleWholePage();
         }
     );
 
