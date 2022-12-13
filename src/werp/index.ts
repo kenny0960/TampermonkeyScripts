@@ -11,6 +11,15 @@ import * as PackageJson from '@/../package.json';
 import Attendance from '@/werp/interfaces/Attendance';
 import AnnualLeave from '@/werp/interfaces/AnnualLeave';
 import SessionKeys from '@/werp/enums/SessionKeys';
+import { getTodayAttendance, getWeekAttendances } from '@/werp/classes/attendanceUtility';
+import { formatTime, isToday } from '@/werp/classes/momentUtility';
+import {
+    getAnnualLeaveTemplate,
+    getAttendanceDateTemplate,
+    getAttendanceSignInTemplate,
+    getAttendanceSignOutTemplate,
+    getLeaveNoteTemplate,
+} from '@/werp/classes/template';
 
 const fetchAnnualLeave = async (): Promise<AnnualLeave> => {
     return await fetch('https://cy.iwerp.net/hr-attendance/leave/personal/personal-apply.xhtml', {
@@ -51,12 +60,10 @@ const fetchAnnualLeave = async (): Promise<AnnualLeave> => {
         });
 };
 
-const fetchPersonalLeaveNotes = async (attendances: Attendance[]): Promise<string[]> => {
-    if (attendances.length === 0) {
-        return [];
-    }
-    const endDate: string = attendances[0].signInDate.format('YYYY/MM/DD', { trim: false });
-    const startDate: string = attendances[attendances.length - 1].signInDate.format('YYYY/MM/DD', { trim: false });
+const fetchPersonalLeaveNotes = async (): Promise<string[]> => {
+    const attendances: Attendance[] = getWeekAttendances();
+    const endDate: string = attendances[5].signInDate.format('YYYY/MM/DD', { trim: false });
+    const startDate: string = attendances[1].signInDate.format('YYYY/MM/DD', { trim: false });
     // 日期格式： &j_idt168_input=2022%2F11%2F28&j_idt172_input=2022%2F12%2F02
     const searchDateRange: string = `&j_idt168_input=${startDate}&j_idt172_input=${endDate}`;
     /*
@@ -97,22 +104,23 @@ const fetchPersonalLeaveNotes = async (attendances: Attendance[]): Promise<strin
             const leaveNotes: string[] = [];
             const html: HTMLHtmlElement = document.createElement('html');
             html.innerHTML = body;
-            html.querySelectorAll('.ui-datatable-frozenlayout-right tbody tr').forEach((tr: HTMLTableRowElement) => {
-                const leaveNote: string = tr.querySelectorAll('td').item(3).innerText.trim();
-                leaveNotes.push(leaveNote);
-            });
-            return leaveNotes.reverse();
+            html.querySelectorAll('.ui-datatable-frozenlayout-right tbody tr').forEach(
+                (tr: HTMLTableRowElement, index: number) => {
+                    leaveNotes[index + 1] = tr.querySelectorAll('td').item(3).innerText.trim();
+                }
+            );
+            return leaveNotes;
         });
 };
 
 const showSignInNotification = (attendances: Attendance[]): void => {
     const currentDate: Moment = moment();
-    const { signInDate, signOutDate }: Attendance = formatAttendance(attendances[0]);
+    const { signInDate, signOutDate }: Attendance = formatAttendance(getTodayAttendance(attendances));
     // 根據剩餘分鐘來更新當日的預測可簽退時間
     const predictedSignOutDate: Moment = formatEarliestSignOutDate(
         signOutDate.clone().subtract(getTotalRemainMinutes(attendances), 'minutes')
     );
-    const todaySignInContent: string = signInDate.format('HH:mm', { trim: false });
+    const todaySignInContent: string = formatTime(signInDate);
     const predictedSignOutLeftMinutes: number = predictedSignOutDate.diff(currentDate, 'minutes');
     const todaySignOutLeftMinutes: number = signInDate.clone().add(9, 'hours').diff(currentDate, 'minutes');
     const currentDateString: string = currentDate.format('YYYYMMDD', { trim: false });
@@ -206,8 +214,8 @@ const formatAttendance = (attendance: Attendance): Attendance => {
 
 const getTotalRemainMinutes = (attendances: Attendance[]): number => {
     let remainMinutes: number = 0;
-    for (const attendance of attendances) {
-        remainMinutes += getRemainMinutes(attendance);
+    for (let i = 1; i < attendances.length; i++) {
+        remainMinutes += getRemainMinutes(attendances[i]);
     }
     return remainMinutes;
 };
@@ -235,98 +243,100 @@ const getAttendanceByTr = (tr: HTMLTableRowElement): Attendance => {
 };
 
 const getAttendanceByTrs = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>): Attendance[] => {
-    const attendances: Attendance[] = [];
+    const attendances: Attendance[] = getWeekAttendances();
 
     for (let i = 0; i < trs.length; i++) {
         const tr: HTMLTableRowElement = trs[i];
+        const attendance: Attendance = getAttendanceByTr(tr);
+
         // 無需計算上個禮拜
         if (/\([日|六]\)/.test(tr.innerText) === true) {
             break;
         }
 
-        attendances.push(getAttendanceByTr(tr));
+        attendances[attendance.signOutDate.day()] = attendance;
     }
 
     return attendances;
 };
 
-const updateTodayAttendanceContent = (td: HTMLTableCellElement, attendances: Attendance[]): void => {
-    const { signOutDate, signInDate }: Attendance = formatAttendance(attendances[0]);
-    // 根據剩餘分鐘來更新當日的預測可簽退時間
-    const predictedSignOutDate: Moment = formatEarliestSignOutDate(
-        signOutDate.clone().subtract(getTotalRemainMinutes(attendances), 'minutes')
-    );
-    const predictedSignOutTimeString: string = predictedSignOutDate.format('HH:mm', {
-        trim: false,
-    });
-    const predictedSignOutLeftMinutes: number = predictedSignOutDate.diff(moment(), 'minutes');
-    const todaySignOutLeftMinutes: number = signInDate.clone().add(9, 'hours').diff(moment(), 'minutes');
+const updateTodayAttendanceContent = (table: HTMLTableElement, attendances: Attendance[]): void => {
+    const index: number = 5 - moment().day();
+    const todayAttendanceContentElement: HTMLTableRowElement = table.getElementsByTagName('tr').item(index);
+    const todayAttendanceSignOutElement: HTMLTableCellElement = todayAttendanceContentElement
+        .getElementsByTagName('td')
+        .item(2);
+    todayAttendanceSignOutElement.innerHTML = getAttendanceSignOutTemplate(getTodayAttendanceInnerHTML(attendances));
 
-    td.innerHTML = `<h6> ${predictedSignOutTimeString} </h6>`;
-    if (predictedSignOutLeftMinutes > 0) {
-        td.innerHTML += `<div style="font-size: 12px;"> 預計 ${predictedSignOutDate.fromNow()} </div>`;
-    } else {
-        td.innerHTML += `<div style="font-size: 12px;"> 符合下班條件 </div>`;
-    }
-    // 已經下班且無負債
-    if (predictedSignOutLeftMinutes < 0 && todaySignOutLeftMinutes < 0) {
-        td.innerHTML = `<div style="font-size: 12px;"> 超時工作 <span style="letter-spacing:1px; font-weight:bold; color: green;">  (+${Math.abs(
-            todaySignOutLeftMinutes
-        )})</span></div>`;
-    }
     // 定時更新內容
     const todayAttendanceContentTimer: number = window.setTimeout((): void => {
         log('更新預設當日下班內容');
-        updateTodayAttendanceContent(td, attendances);
+        updateTodayAttendanceContent(table, attendances);
     }, 60 * 1000);
     SessionManager.setByKey(SessionKeys.TODAY_ATTENDANCE_CONTENT_TIMER, String(todayAttendanceContentTimer));
 };
 
-const updatePastDayAttendanceContent = (td: HTMLTableCellElement, attendance: Attendance): void => {
-    const signInTimeString: string = attendance.signInDate.format('HH:mm', {
-        trim: false,
-    });
-    const signOutTimeString: string = attendance.signOutDate.format('HH:mm', {
-        trim: false,
-    });
+const getTodayAttendanceInnerHTML = (attendances: Attendance[]): string => {
+    const { signOutDate, signInDate }: Attendance = formatAttendance(getTodayAttendance(attendances));
+    // 根據剩餘分鐘來更新當日的預測可簽退時間
+    const predictedSignOutDate: Moment = formatEarliestSignOutDate(
+        signOutDate.clone().subtract(getTotalRemainMinutes(attendances), 'minutes')
+    );
+    const predictedSignOutTimeString: string = formatTime(predictedSignOutDate);
+    const predictedSignOutLeftMinutes: number = predictedSignOutDate.diff(moment(), 'minutes');
+    const todaySignOutLeftMinutes: number = signInDate.clone().add(9, 'hours').diff(moment(), 'minutes');
+
+    let innerHTML: string = `<h6> ${predictedSignOutTimeString} </h6>`;
+    if (predictedSignOutLeftMinutes > 0) {
+        innerHTML += `<div style="font-size: 12px;"> 預計 ${predictedSignOutDate.fromNow()} </div>`;
+    } else {
+        innerHTML += `<div style="font-size: 12px;"> 符合下班條件 </div>`;
+    }
+    // 已經下班且無負債
+    if (predictedSignOutLeftMinutes < 0 && todaySignOutLeftMinutes < 0) {
+        innerHTML = `<div style="font-size: 12px;"> 超時工作 <span style="letter-spacing:1px; font-weight:bold; color: green;">  (+${Math.abs(
+            todaySignOutLeftMinutes
+        )})</span></div>`;
+    }
+    return innerHTML;
+};
+
+const getPastDayAttendanceInnerHTML = (attendance: Attendance): string => {
+    const signInTimeString: string = formatTime(attendance.signInDate);
+    const signOutTimeString: string = formatTime(attendance.signOutDate);
 
     // 國定假日或請假
-    if (signOutTimeString === '00:00' && signInTimeString === '00:00') {
-        td.innerHTML = '';
-        return;
+    if (signOutTimeString === '' && signInTimeString === '') {
+        return '';
     }
 
     const remainMinutes: number = getRemainMinutes(attendance);
     // 顯示超過或不足的分鐘數
-    td.innerHTML += ` <span style="letter-spacing:1px; font-weight:bold; color: ${
+    return `${signOutTimeString} <span style="letter-spacing:1px; font-weight:bold; color: ${
         remainMinutes >= 0 ? 'green' : 'red'
     }">  (${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes})</span>`;
 };
 
-const updateAttendanceContent = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, attendances: Attendance[]) => {
-    for (let i = 0; i < attendances.length; i++) {
-        const tr: HTMLTableRowElement = trs[i];
-        const td: HTMLTableCellElement = tr.getElementsByTagName('td').item(2);
-        if (i === 0) {
-            updateTodayAttendanceContent(td, attendances);
-        } else {
-            updatePastDayAttendanceContent(td, attendances[i]);
-        }
-    }
-};
-
-const updateLeaveNoteContent = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, leaveNotes: string[]) => {
-    for (let i = 0; i < trs.length; i++) {
-        const tr: HTMLTableRowElement = trs[i];
+const updateAttendanceContent = (table: HTMLTableElement, attendances: Attendance[], leaveNotes: string[]) => {
+    for (let i = 1; i < attendances.length; i++) {
+        const attendance: Attendance = attendances[i];
         const leaveNote: string = leaveNotes[i];
-        const leaveNoteTd: HTMLTableCellElement = document.createElement('td');
-        leaveNoteTd.innerText = leaveNote === undefined ? '' : leaveNote.replace(/\s/g, '\n');
-        tr.append(leaveNoteTd);
+        const attendanceContentElement: HTMLTableRowElement = document.createElement('tr');
+        attendanceContentElement.innerHTML = getAttendanceDateTemplate(attendance);
+        attendanceContentElement.innerHTML += getAttendanceSignInTemplate(attendance);
+        if (isToday(attendance.signInDate) === true) {
+            attendanceContentElement.innerHTML += getAttendanceSignOutTemplate(getTodayAttendanceInnerHTML(attendances));
+        } else {
+            attendanceContentElement.innerHTML += getAttendanceSignOutTemplate(getPastDayAttendanceInnerHTML(attendance));
+        }
+        attendanceContentElement.innerHTML += getLeaveNoteTemplate(leaveNote);
+        table.prepend(attendanceContentElement);
     }
+    updateTodayAttendanceContent(table, attendances);
 };
 
-const updateAttendanceFavicon = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, attendances: Attendance[]) => {
-    const { signOutDate, signInDate }: Attendance = formatAttendance(attendances[0]);
+const updateAttendanceFavicon = (attendances: Attendance[]) => {
+    const { signOutDate, signInDate }: Attendance = formatAttendance(getTodayAttendance(attendances));
     // 根據剩餘分鐘來更新當日的預測可簽退時間
     const predictedSignOutDate: Moment = formatEarliestSignOutDate(
         signOutDate.clone().subtract(getTotalRemainMinutes(attendances), 'minutes')
@@ -360,42 +370,9 @@ const updateAttendanceFavicon = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr
     // 定時更新內容
     const todayAttendanceFaviconTimer: number = window.setTimeout((): void => {
         log('更新預設當日下班 Favicon');
-        updateAttendanceFavicon(trs, attendances);
+        updateAttendanceFavicon(attendances);
     }, 60 * 1000);
     SessionManager.setByKey(SessionKeys.TODAY_ATTENDANCE_FAVICON_TIMER, String(todayAttendanceFaviconTimer));
-};
-
-const getAnnualLeaveTemplate = (annualLeave: AnnualLeave): string => {
-    return `
-<div id="formTemplate:j_idt323" class="ui-outputpanel ui-widget">
-  <div class="ui-g-12 waiting-task-g">
-    <div class="title-name ui-g-4 ">特休狀況
-    </div>
-    <div class="ui-g-8 ">
-      <span class="todocss">
-        <ul class="todo-ul-list">
-          <li>
-            <img id="formTemplate:j_idt329:0:j_idt331" src="/portal/javax.faces.resource/werp_blue.png.xhtml?ln=images" alt="">
-            <label id="formTemplate:j_idt329:0:j_idt333" class="ui-outputlabel ui-widget" style=" width: 0px;"></label>
-            已休(含在途)：${annualLeave.leaveHours}
-          </li>
-          <li>
-            <img id="formTemplate:j_idt329:2:j_idt332" src="/portal/javax.faces.resource/werp_red.png.xhtml?ln=images" alt="">
-            <label id="formTemplate:j_idt329:2:j_idt333" class="ui-outputlabel ui-widget" style=" width: 0px;"></label>
-            <a href="/hr-attendance/leave/personal/personal-apply.xhtml" target="_blank" class="select-link-red">未休：${annualLeave.notLeaveHours}</a>
-          </li>
-          <li>
-            <img id="formTemplate:j_idt329:0:j_idt331" src="/portal/javax.faces.resource/werp_blue.png.xhtml?ln=images" alt="">
-            <label id="formTemplate:j_idt329:0:j_idt333" class="ui-outputlabel ui-widget" style=" width: 0px;"></label>
-            有效日：${annualLeave.endDatetime}
-          </li>
-        </ul>
-      </span>
-    </div>    
-  </div>
-</div>
-<table id="formTemplate:j_idt319" class="ui-panelgrid ui-widget" style=" width: 100%; border: none;margin-top: 2px;margin-bottom: 2px; " role="grid"><tbody><tr class="ui-widget-content ui-panelgrid-even" role="row"><td role="gridcell" class="ui-panelgrid-cell" style="border-bottom-color: #C4C4C4;border-bottom-width: 0.5px;border-top-color: white;                                border-left-color: white;border-right-color: white;"></td></tr></tbody></table>
-    `;
 };
 
 const getUpdateLogs = (): string[] => {
@@ -495,15 +472,17 @@ const restyleAttendanceButtons = (): void => {
         });
 };
 
+const removeAllAttendanceContent = (table: HTMLTableElement): void => {
+    table.querySelectorAll('tr').forEach((tr: HTMLTableRowElement) => {
+        tr.remove();
+    });
+};
+
 const main = (): void => {
     // 出缺勤表格
     waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then(
         async (table: HTMLTableElement): Promise<void> => {
-            if (
-                table.innerText.includes('預計') === true ||
-                table.innerText.includes('符合下班條件') === true ||
-                table.innerText.includes('超時工作') === true
-            ) {
+            if (table.parentElement.parentElement.innerText.includes('ⓚ design') === true) {
                 return;
             }
             initializeFaviconBadge();
@@ -511,12 +490,12 @@ const main = (): void => {
             log('出缺勤表格已經載入');
             const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = table.getElementsByTagName('tr');
             const attendances: Attendance[] = getAttendanceByTrs(trs);
-            const leaveNotes: string[] = await fetchPersonalLeaveNotes(attendances);
+            const leaveNotes: string[] = await fetchPersonalLeaveNotes();
 
+            removeAllAttendanceContent(table);
             appendLeaveNoteCaption(table);
-            updateLeaveNoteContent(trs, leaveNotes);
-            updateAttendanceContent(trs, attendances);
-            updateAttendanceFavicon(trs, attendances);
+            updateAttendanceContent(table, attendances, leaveNotes);
+            updateAttendanceFavicon(attendances);
             showSignInNotification(attendances);
             appendCopyrightAndVersion(table.parentElement.parentElement);
             prependForgottenAttendanceButton();
