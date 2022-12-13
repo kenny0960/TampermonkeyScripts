@@ -61,7 +61,7 @@ const fetchAnnualLeave = async (): Promise<AnnualLeave> => {
 };
 
 const fetchPersonalLeaveNotes = async (): Promise<string[]> => {
-    const attendances: Attendance[] = getWeekAttendances();
+    const attendances: Attendance[] = getWeekAttendances([]);
     const endDate: string = attendances[5].signInDate.format('YYYY/MM/DD', { trim: false });
     const startDate: string = attendances[1].signInDate.format('YYYY/MM/DD', { trim: false });
     // 日期格式： &j_idt168_input=2022%2F11%2F28&j_idt172_input=2022%2F12%2F02
@@ -239,11 +239,12 @@ const getAttendanceByTr = (tr: HTMLTableRowElement): Attendance => {
     return {
         signInDate,
         signOutDate,
+        leaveNote: '',
     };
 };
 
-const getAttendanceByTrs = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>): Attendance[] => {
-    const attendances: Attendance[] = getWeekAttendances();
+const getAttendanceByTrs = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, leaveNotes: string[]): Attendance[] => {
+    const attendances: Attendance[] = getWeekAttendances(leaveNotes);
 
     for (let i = 0; i < trs.length; i++) {
         const tr: HTMLTableRowElement = trs[i];
@@ -254,7 +255,11 @@ const getAttendanceByTrs = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>):
             break;
         }
 
-        attendances[attendance.signOutDate.day()] = attendance;
+        attendances[attendance.signOutDate.day()] = {
+            ...attendances[attendance.signOutDate.day()],
+            signInDate: attendance.signInDate,
+            signOutDate: attendance.signOutDate,
+        };
     }
 
     return attendances;
@@ -317,10 +322,9 @@ const getPastDayAttendanceInnerHTML = (attendance: Attendance): string => {
     }">  (${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes})</span>`;
 };
 
-const updateAttendanceContent = (table: HTMLTableElement, attendances: Attendance[], leaveNotes: string[]) => {
+const updateAttendanceContent = (table: HTMLTableElement, attendances: Attendance[]) => {
     for (let i = 1; i < attendances.length; i++) {
         const attendance: Attendance = attendances[i];
-        const leaveNote: string = leaveNotes[i];
         const attendanceContentElement: HTMLTableRowElement = document.createElement('tr');
         attendanceContentElement.innerHTML = getAttendanceDateTemplate(attendance);
         attendanceContentElement.innerHTML += getAttendanceSignInTemplate(attendance);
@@ -329,7 +333,7 @@ const updateAttendanceContent = (table: HTMLTableElement, attendances: Attendanc
         } else {
             attendanceContentElement.innerHTML += getAttendanceSignOutTemplate(getPastDayAttendanceInnerHTML(attendance));
         }
-        attendanceContentElement.innerHTML += getLeaveNoteTemplate(leaveNote);
+        attendanceContentElement.innerHTML += getLeaveNoteTemplate(attendance.leaveNote);
         table.prepend(attendanceContentElement);
     }
     updateTodayAttendanceContent(table, attendances);
@@ -511,12 +515,12 @@ const main = (): void => {
             resetAttendanceTimers();
             log('出缺勤表格已經載入');
             const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = table.getElementsByTagName('tr');
-            const attendances: Attendance[] = getAttendanceByTrs(trs);
             const leaveNotes: string[] = await fetchPersonalLeaveNotes();
+            const attendances: Attendance[] = getAttendanceByTrs(trs, leaveNotes);
 
             removeAllAttendanceContent(table);
             appendLeaveNoteCaption(table);
-            updateAttendanceContent(table, attendances, leaveNotes);
+            updateAttendanceContent(table, attendances);
             updateAttendanceFavicon(attendances);
             showSignInNotification(attendances);
             appendCopyrightAndVersion(table.parentElement.parentElement);
