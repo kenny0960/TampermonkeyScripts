@@ -324,7 +324,7 @@ const getTodayAttendanceInnerHTML = (attendances: Attendance[]): string => {
     const predictedSignOutLeftMinutes: number = predictedSignOutDate.diff(moment(), 'minutes');
     const todaySignOutLeftMinutes: number = signInDate.clone().add(9, 'hours').diff(moment(), 'minutes');
 
-    let innerHTML: string = `<h6> ${predictedSignOutTimeString} </h6>`;
+    let innerHTML: string = `<div style="font-size: 20px;"> ${predictedSignOutTimeString} </div>`;
     if (predictedSignOutLeftMinutes > 0) {
         innerHTML += `<div style="font-size: 12px;"> 預計 ${predictedSignOutDate.fromNow()} </div>`;
     } else {
@@ -359,6 +359,9 @@ const updateAttendanceContent = (table: HTMLTableElement, attendances: Attendanc
     for (let i = 1; i < attendances.length; i++) {
         const attendance: Attendance = attendances[i];
         const attendanceContentElement: HTMLTableRowElement = document.createElement('tr');
+        if (isToday(attendance.signInDate) === false) {
+            attendanceContentElement.style.opacity = '0.5';
+        }
         attendanceContentElement.innerHTML = getAttendanceDateTemplate(attendance);
         attendanceContentElement.innerHTML += getAttendanceSignInTemplate(attendance);
         if (isToday(attendance.signInDate) === true) {
@@ -462,12 +465,6 @@ const initializeFaviconBadge = (): void => {
     insertFaviconHTML(`<favicon-badge src="" />`);
 };
 
-const appendLeaveNoteCaption = (table: HTMLTableElement): void => {
-    const leaveCaption: HTMLTableCaptionElement = document.createElement('th');
-    leaveCaption.innerHTML = '<span class="ui-column-title">請假</span>';
-    table.parentNode.querySelector('thead tr').append(leaveCaption);
-};
-
 const createAttendanceButton = (text: string, link: string): HTMLElement => {
     const anchorElement: HTMLAnchorElement = document.createElement('a');
     anchorElement.href = link;
@@ -510,7 +507,7 @@ const restyleAttendanceButtons = (): void => {
 };
 
 const removeAllAttendanceContent = (table: HTMLTableElement): void => {
-    table.querySelectorAll('tr').forEach((tr: HTMLTableRowElement) => {
+    table.parentElement.querySelectorAll('tr').forEach((tr: HTMLTableRowElement) => {
         tr.remove();
     });
 };
@@ -552,7 +549,6 @@ const main = (): void => {
             const attendances: Attendance[] = getAttendanceByTrs(trs, leaveNotes);
 
             removeAllAttendanceContent(table);
-            appendLeaveNoteCaption(table);
             updateAttendanceContent(table, attendances);
             updateAttendanceFavicon(attendances);
             showSignInNotification(attendances);
