@@ -189,9 +189,13 @@ const showSignInNotification = (attendances: Attendance[]): void => {
 
 const formatEarliestSignInDate = (signInDate: Moment): Moment => {
     const signInDateString: string = signInDate.format('YYYY/MM/DD', { trim: false });
-    const earliestSignInDate: Moment = moment(`${signInDateString} 08:00`);
-    if (signInDate.isBefore(earliestSignInDate)) {
-        return earliestSignInDate;
+    // 打卡最早只能計算到 08:00
+    if (signInDate.isBefore(moment(`${signInDateString} 08:00`))) {
+        return moment(`${signInDateString} 08:00`);
+    }
+    // 如果打卡時間介於午休時間只能從 13:30 開始計算
+    if (signInDate.isBetween(moment(`${signInDateString} 12:30`), moment(`${signInDateString} 13:30`))) {
+        return moment(`${signInDateString} 13:30`);
     }
     return signInDate;
 };
@@ -215,18 +219,41 @@ const formatAttendance = (attendance: Attendance): Attendance => {
 const getTotalRemainMinutes = (attendances: Attendance[]): number => {
     let remainMinutes: number = 0;
     for (let i = 1; i < attendances.length; i++) {
+        // 國定假日或請假直接不計算
+        if (getWorkingMinutes(attendances[i]) === 0) {
+            continue;
+        }
         remainMinutes += getRemainMinutes(attendances[i]);
     }
     return remainMinutes;
 };
 
-const getRemainMinutes = (attendance: Attendance): number => {
-    const { signOutDate, signInDate }: Attendance = formatAttendance(attendance);
-    // 國定假日或請假直接不計算
-    if (attendance.signOutDate.diff(attendance.signInDate, 'minutes') === 0) {
+const getWorkingMinutes = ({ signOutDate, signInDate }: Attendance): number => {
+    return signOutDate.diff(signInDate, 'minutes');
+};
+
+const getLeaveMinutes = ({ signInDate, leaveNote }: Attendance): number => {
+    const matches: RegExpMatchArray | null = leaveNote.match(/(?<leaveTime>\d+)-(?<backTime>\d+).+/);
+
+    if (matches === null || matches.length === 0) {
         return 0;
     }
-    return signOutDate.diff(signInDate, 'minutes') - 9 * 60;
+
+    const { leaveTime, backTime } = matches.groups;
+    const date: string = signInDate.format('YYYY/MM/DD', { trim: false });
+    const leaveDate: Moment = moment(`${date} ${leaveTime.slice(0, 2)}:${leaveTime.slice(2, 4)}`);
+    const backDate: Moment = moment(`${date} ${backTime.slice(0, 2)}:${backTime.slice(2, 4)}`);
+
+    // 上班途中請假不算累積分鐘
+    if (signInDate.isBefore(leaveDate)) {
+        return 0;
+    }
+
+    return backDate.diff(leaveDate, 'minutes');
+};
+
+const getRemainMinutes = (attendance: Attendance): number => {
+    return getWorkingMinutes(formatAttendance(attendance)) + getLeaveMinutes(attendance) - 9 * 60;
 };
 
 const getAttendanceByTr = (tr: HTMLTableRowElement): Attendance => {
