@@ -21,7 +21,7 @@ import {
     getLeaveNoteTemplate,
 } from '@/werp/classes/template';
 
-const fetchAnnualLeave = async (): Promise<AnnualLeave> => {
+const fetchAnnualLeave = async (): Promise<AnnualLeave | null> => {
     return await fetch('https://cy.iwerp.net/hr-attendance/leave/personal/personal-apply.xhtml', {
         headers: {
             accept: 'application/xml, text/xml, */*; q=0.01',
@@ -50,6 +50,9 @@ const fetchAnnualLeave = async (): Promise<AnnualLeave> => {
             const html: HTMLHtmlElement = document.createElement('html');
             html.innerHTML = body;
             const labels: NodeListOf<HTMLLabelElement> = html.querySelectorAll('#annual-now-year li label:nth-child(2)');
+            if (labels.length === 0) {
+                return null;
+            }
             return {
                 totalHours: parseInt(labels.item(0).innerText),
                 leaveHours: parseInt(labels.item(1).innerText),
@@ -106,7 +109,10 @@ const fetchPersonalLeaveNotes = async (): Promise<string[]> => {
             html.innerHTML = body;
             html.querySelectorAll('.ui-datatable-frozenlayout-right tbody tr').forEach(
                 (tr: HTMLTableRowElement, index: number) => {
-                    leaveNotes[index + 1] = tr.querySelectorAll('td').item(3).innerText.trim();
+                    const leaveNoteElement: HTMLDivElement | null = tr.querySelectorAll('td').item(3);
+                    if (leaveNoteElement !== null) {
+                        leaveNotes[index + 1] = leaveNoteElement.innerText.trim();
+                    }
                 }
             );
             return leaveNotes;
@@ -564,7 +570,7 @@ const main = (): void => {
             return;
         }
         log('待辦事項表格已經載入');
-        const annualLeave: AnnualLeave = await fetchAnnualLeave();
+        const annualLeave: AnnualLeave | null = await fetchAnnualLeave();
         const annualTemplate: string = getAnnualLeaveTemplate(annualLeave);
         table.insertAdjacentHTML('afterbegin', annualTemplate);
     });

@@ -2,7 +2,10 @@ import Attendance from '@/werp/interfaces/Attendance';
 import { formatTime, formatWeekday, isToday } from '@/werp/classes/momentUtility';
 import AnnualLeave from '@/werp/interfaces/AnnualLeave';
 
-export const getAnnualLeaveTemplate = (annualLeave: AnnualLeave): string => {
+export const getAnnualLeaveTemplate = (annualLeave: AnnualLeave | null): string => {
+    if (annualLeave === null) {
+        return '';
+    }
     return `
 <div id="formTemplate:j_idt323" class="ui-outputpanel ui-widget">
   <div class="ui-g-12 waiting-task-g">

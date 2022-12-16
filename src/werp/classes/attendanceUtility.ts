@@ -9,7 +9,7 @@ export const getWeekAttendances = (leaveNotes: string[]): Attendance[] => {
         attendances[i] = {
             signInDate: initialDate,
             signOutDate: initialDate,
-            leaveNote: leaveNotes[i],
+            leaveNote: leaveNotes[i] === undefined ? '' : leaveNotes[i],
         };
     }
     return attendances;
