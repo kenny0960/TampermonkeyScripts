@@ -224,17 +224,7 @@ class GCPLogParser {
         return pre;
     }
 
-    removeSideBar() {
-        const sidebarDom = document.querySelector('cfc-panel.pan-shell-section-nav-panel');
-        if (sidebarDom === null) {
-            return;
-        }
-        sidebarDom.remove();
-    }
-
     vnpay_websocket_laravel() {
-        this.removeSideBar();
-
         this.getContentsDom().forEach((contentDom) => {
             const contentText = contentDom.innerText;
             const matches = contentText.match(
@@ -261,8 +251,6 @@ class GCPLogParser {
     }
 
     vnpay_outgoing_vn_bank_web() {
-        this.removeSideBar();
-
         this.getContentsDom().forEach((contentDom) => {
             const contentText = contentDom.innerText;
 
@@ -301,7 +289,6 @@ class GCPLogParser {
     }
 
     vnpay_outgoing_api_laravel_http_access() {
-        this.removeSideBar();
         this.makeJsonPayloadColumnInvisible();
         document.title = `${this.getLogNameLightIcon()} ${this.getLogNameIcon()}`;
 
@@ -394,8 +381,6 @@ class GCPLogParser {
     }
 
     vnpay_outgoing_vn_bank_web_entries() {
-        this.removeSideBar();
-
         this.getContentsDom().forEach((contentDom) => {
             const contentText = contentDom.innerText;
 
