@@ -132,6 +132,22 @@ const showSignInNotification = (attendances: Attendance[]): void => {
     const todaySignOutLeftMinutes: number = signInDate.clone().add(9, 'hours').diff(currentDate, 'minutes');
     const currentDateString: string = currentDate.format('YYYYMMDD', { trim: false });
 
+    // 已簽退：不再預測可簽退時間
+    if (formatTime(signOutDate) !== '') {
+        showNotification(
+            '已經簽退',
+            {
+                body: '請馬上離開辦公室',
+                icon: 'https://cy.iwerp.net/portal/images/chungyo.ico',
+            },
+            () => {
+                log(`已經關閉簽到通知`);
+                SessionManager.setByKey(SessionKeys.SIGN_IN_NOTIFICATION, currentDateString);
+            }
+        );
+        return;
+    }
+
     if (todaySignInContent === '') {
         if (SessionManager.getByKey(SessionKeys.SIGN_IN_NOTIFICATION) === currentDateString) {
             return;
@@ -316,7 +332,14 @@ const updateTodayAttendanceContent = (table: HTMLTableElement, attendances: Atte
 };
 
 const getTodayAttendanceInnerHTML = (attendances: Attendance[]): string => {
-    const { signOutDate, signInDate }: Attendance = formatAttendance(getTodayAttendance(attendances));
+    const attendance: Attendance = formatAttendance(getTodayAttendance(attendances));
+    const { signOutDate, signInDate }: Attendance = attendance;
+
+    // 已簽退：不再預測可簽退時間
+    if (formatTime(attendance.signOutDate) !== '') {
+        return getPastDayAttendanceInnerHTML(attendance);
+    }
+
     // 根據剩餘分鐘來更新當日的預測可簽退時間
     const predictedSignOutDate: Moment = formatEarliestSignOutDate(
         signOutDate.clone().subtract(getTotalRemainMinutes(attendances), 'minutes')
@@ -387,6 +410,14 @@ const updateAttendanceFavicon = (attendances: Attendance[]) => {
     const faviconBadge: FavIconBadge = document.querySelector('favicon-badge');
     faviconBadge.textColor = 'white';
     faviconBadge.badgeSize = 16;
+
+    // 已簽退：不再預測可簽退時間
+    if (formatTime(signOutDate) !== '') {
+        document.title = '已經簽退';
+        faviconBadge.badgeColor = '#3399ff';
+        faviconBadge.badge = '離';
+        return;
+    }
 
     if (predictedSignOutLeftMinutes > 60) {
         document.title = `預計 ${predictedSignOutDate.fromNow()}`;
