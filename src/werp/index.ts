@@ -110,8 +110,9 @@ const fetchPersonalLeaveNotes = async (): Promise<string[]> => {
             html.querySelectorAll('.ui-datatable-frozenlayout-right tbody tr').forEach(
                 (tr: HTMLTableRowElement, index: number) => {
                     const leaveNoteElement: HTMLDivElement | null = tr.querySelectorAll('td').item(3);
-                    if (leaveNoteElement !== null) {
-                        leaveNotes[index + 1] = leaveNoteElement.innerText.trim();
+                    const unusualNoteElement: HTMLDivElement | null = tr.querySelectorAll('td').item(2);
+                    if (leaveNoteElement !== null && unusualNoteElement !== null) {
+                        leaveNotes[index + 1] = leaveNoteElement.innerText.trim() || unusualNoteElement.innerText.trim();
                     }
                 }
             );
