@@ -426,7 +426,7 @@ const updateAttendanceFavicon = (attendances: Attendance[]) => {
     } else if (predictedSignOutLeftMinutes > 0) {
         document.title = `預計 ${predictedSignOutDate.fromNow()}`;
         faviconBadge.badgeColor = '#006600';
-        faviconBadge.badge = (predictedSignOutLeftMinutes + 1).toString();
+        faviconBadge.badge = predictedSignOutLeftMinutes.toString();
     } else {
         document.title = '符合下班條件';
         faviconBadge.badgeColor = '#e69500';
