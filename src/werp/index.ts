@@ -360,6 +360,8 @@ const updateAttendanceFavicon = (attendances: Attendance[]) => {
 
 const getUpdateLogs = (): string[] => {
     return [
+        'v3.4.2(20221223) 解決更新網頁後簽到退顯示異常的問題',
+        'v3.4.2(20221223) 顯示不同禮拜的簽到退情況',
         'v3.4.1(20221223) 解決請假記錄顯示錯誤的問題',
         'v3.4.0(20221223) 自動取得請假和特休狀況的 TOKEN',
         'v3.4.0(20221223) 已簽退就不再預測可簽退時間',
