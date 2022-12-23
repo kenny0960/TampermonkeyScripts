@@ -2,6 +2,7 @@ import Attendance from '@/werp/interfaces/Attendance';
 import { formatTime, formatWeekday, isToday } from '@/werp/classes/momentUtility';
 import AnnualLeave from '@/werp/interfaces/AnnualLeave';
 import LeaveNote from '@/werp/interfaces/LeaveNote';
+import * as moment from 'moment';
 
 export const getAnnualLeaveTemplate = (annualLeave: AnnualLeave | null): string => {
     if (annualLeave === null) {
@@ -36,6 +37,55 @@ export const getAnnualLeaveTemplate = (annualLeave: AnnualLeave | null): string 
   </div>
 </div>
 <table id="formTemplate:j_idt319" class="ui-panelgrid ui-widget" style=" width: 100%; border: none;margin-top: 2px;margin-bottom: 2px; " role="grid"><tbody><tr class="ui-widget-content ui-panelgrid-even" role="row"><td role="gridcell" class="ui-panelgrid-cell" style="border-bottom-color: #C4C4C4;border-bottom-width: 0.5px;border-top-color: white;                                border-left-color: white;border-right-color: white;"></td></tr></tbody></table>
+    `;
+};
+
+export const getCompanyEmployeeTemplate = (
+    companyEmployeeCount: number | null,
+    companyEmployeeCountObject: Object
+): string => {
+    if (companyEmployeeCount === null) {
+        return '';
+    }
+    const year: number = moment().year();
+    const week: number = moment().week();
+    const thisYearCompanyEmployeeCountObject: Object = companyEmployeeCountObject[year];
+    const lastWeekCompanyEmployeeCount: number | undefined =
+        thisYearCompanyEmployeeCountObject === undefined ? undefined : thisYearCompanyEmployeeCountObject[week - 1];
+    return `
+<table id="formTemplate:j_idt319" class="ui-panelgrid ui-widget" style=" width: 100%; border: none;margin-top: 2px;margin-bottom: 2px; " role="grid"><tbody><tr class="ui-widget-content ui-panelgrid-even" role="row"><td role="gridcell" class="ui-panelgrid-cell" style="border-bottom-color: #C4C4C4;border-bottom-width: 0.5px;border-top-color: white;                                border-left-color: white;border-right-color: white;"></td></tr></tbody></table>
+<div id="formTemplate:j_idt323" class="ui-outputpanel ui-widget">
+  <div class="ui-g-12 waiting-task-g">
+    <div class="title-name ui-g-4 ">公司狀況
+    </div>
+    <div class="ui-g-8 ">
+      <span class="todocss">
+        <ul class="todo-ul-list">
+          <li>
+            <img id="formTemplate:j_idt329:0:j_idt331" src="/portal/javax.faces.resource/werp_blue.png.xhtml?ln=images" alt="">
+            <label id="formTemplate:j_idt329:0:j_idt333" class="ui-outputlabel ui-widget" style=" width: 0px;"></label>
+            在職人數：${companyEmployeeCount}
+          </li>
+          <li>
+            <img id="formTemplate:j_idt329:0:j_idt331" src="/portal/javax.faces.resource/werp_blue.png.xhtml?ln=images" alt="">
+            <label id="formTemplate:j_idt329:0:j_idt333" class="ui-outputlabel ui-widget" style=" width: 0px;"></label>
+            周趨勢：${
+                lastWeekCompanyEmployeeCount === undefined || lastWeekCompanyEmployeeCount === companyEmployeeCount
+                    ? `<i class="fa fa-arrows-h" aria-hidden="true"></i>`
+                    : lastWeekCompanyEmployeeCount > companyEmployeeCount
+                    ? `<i class="fa fa-arrow-down" style="color: red" title="少了 ${
+                          lastWeekCompanyEmployeeCount - companyEmployeeCount
+                      } 人" aria-hidden="true"></i>`
+                    : `<i class="fa fa-arrow-up" style="color: green" title="多了 ${
+                          companyEmployeeCount - lastWeekCompanyEmployeeCount
+                      } 人" aria-hidden="true"></i>`
+            }
+          </li>
+        </ul>
+      </span>
+    </div>
+  </div>
+</div>
     `;
 };
 
