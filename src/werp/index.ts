@@ -466,9 +466,15 @@ const restyleAttendanceButtons = (): void => {
 };
 
 const removeAllAttendanceContent = (table: HTMLTableElement): void => {
-    table.parentElement.querySelectorAll('tr').forEach((tr: HTMLTableRowElement) => {
+    table.querySelectorAll('tr').forEach((tr: HTMLTableRowElement) => {
         tr.remove();
     });
+};
+
+const appendLeaveNoteCaption = (table: HTMLTableElement): void => {
+    const leaveCaption: HTMLTableCaptionElement = document.createElement('th');
+    leaveCaption.innerHTML = '<span class="ui-column-title">請假/異常</span>';
+    table.parentNode.querySelector('thead tr').append(leaveCaption);
 };
 
 const restyleAttendanceTable = (table: HTMLTableElement): void => {
@@ -509,6 +515,7 @@ const main = (): void => {
             const attendances: Attendance[] = getAttendanceByTrs(trs, leaveNotes);
 
             removeAllAttendanceContent(table);
+            appendLeaveNoteCaption(table);
             updateAttendanceContent(table, attendances);
             appendCopyrightAndVersion(table.parentElement.parentElement);
             prependForgottenAttendanceButton();
