@@ -2,6 +2,78 @@ import AnnualLeave from '@/werp/interfaces/AnnualLeave';
 import Attendance from '@/werp/interfaces/Attendance';
 import { getWeekAttendances } from '@/werp/classes/attendanceUtility';
 
+export const fetchCompanyEmployeeToken = async (): Promise<string | null> => {
+    return await fetch('https://cy.iwerp.net/system/hr/showEmpData.xhtml', {
+        headers: {
+            accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+            'accept-language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7,vi;q=0.6,zh-CN;q=0.5',
+            'cache-control': 'max-age=0',
+            'sec-ch-ua': '"Google Chrome";v="107", "Chromium";v="107", "Not=A?Brand";v="24"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"macOS"',
+            'sec-fetch-dest': 'document',
+            'sec-fetch-mode': 'navigate',
+            'sec-fetch-site': 'same-origin',
+            'sec-fetch-user': '?1',
+            'upgrade-insecure-requests': '1',
+        },
+        referrer: 'https://cy.iwerp.net/portal/page/new_home.xhtml',
+        referrerPolicy: 'strict-origin-when-cross-origin',
+        body: null,
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'include',
+    })
+        .then((response) => {
+            return response.text();
+        })
+        .then((body) => {
+            const html: HTMLHtmlElement = document.createElement('html');
+            html.innerHTML = body;
+            const inputElement: HTMLInputElement | null = html.querySelector('input[id="j_id1:javax.faces.ViewState:0"]');
+            if (inputElement === null) {
+                return null;
+            }
+            return inputElement.value.trim();
+        });
+};
+
+export const fetchAllCompanyEmployeeCount = async (): Promise<number | null> => {
+    return await fetch('https://cy.iwerp.net/system/hr/showEmpData.xhtml', {
+        headers: {
+            accept: 'application/xml, text/xml, */*; q=0.01',
+            'accept-language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7,vi;q=0.6,zh-CN;q=0.5',
+            'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'faces-request': 'partial/ajax',
+            'sec-ch-ua': '"Google Chrome";v="107", "Chromium";v="107", "Not=A?Brand";v="24"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"macOS"',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'same-origin',
+            'x-requested-with': 'XMLHttpRequest',
+        },
+        referrer: 'https://cy.iwerp.net/system/hr/showEmpData.xhtml',
+        referrerPolicy: 'strict-origin-when-cross-origin',
+        body: `javax.faces.partial.ajax=true&javax.faces.source=id_dataTable&javax.faces.partial.execute=id_dataTable&javax.faces.partial.render=id_dataTable&id_dataTable=id_dataTable&id_dataTable_filtering=true&id_dataTable_encodeFeature=true&formTemplate=formTemplate&j_idt20_selection=0&id_dataTable%3Aj_idt29%3Afilter=&id_dataTable%3Aj_idt31%3Afilter=&id_dataTable%3Aj_idt32%3Afilter=&id_dataTable%3Aj_idt34%3Afilter=&id_dataTable%3Aj_idt36%3Afilter=&id_dataTable_scrollState=0%2C0&javax.faces.ViewState=${await fetchCompanyEmployeeToken()}`,
+        method: 'POST',
+        mode: 'cors',
+        credentials: 'include',
+    })
+        .then((response) => {
+            return response.text();
+        })
+        .then((body) => {
+            const html: HTMLHtmlElement = document.createElement('html');
+            html.innerHTML = body;
+            const extension: HTMLElement | null = html.querySelector('extension');
+            if (extension === null) {
+                return null;
+            }
+            return Number(JSON.parse(extension.innerText.trim()).totalRecords);
+        });
+};
+
 export const fetchAnnualLeaveToken = async (): Promise<string | null> => {
     return await fetch('https://cy.iwerp.net/hr-attendance/leave/personal/personal-apply.xhtml', {
         headers: {
