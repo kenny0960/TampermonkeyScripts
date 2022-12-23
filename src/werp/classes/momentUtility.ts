@@ -30,5 +30,5 @@ export const formatTime = (moment: Moment): string => {
 };
 
 export const isToday = (targetMoment: Moment): boolean => {
-    return moment().day() === targetMoment.day();
+    return moment().isSame(targetMoment.format('YYYY/MM/DD', { trim: false }), 'day') === true;
 };

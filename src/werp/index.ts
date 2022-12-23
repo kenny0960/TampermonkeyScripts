@@ -181,11 +181,20 @@ const getRemainMinutes = (attendance: Attendance): number => {
     return getWorkingMinutes(formatAttendance(attendance)) + getLeaveMinutes(attendance) - 9 * 60;
 };
 
+export const getCurrentYear = (): number => {
+    const yearElement: HTMLSpanElement | null = document.querySelector('.ui-datepicker-year');
+
+    if (yearElement === null) {
+        return moment().year();
+    }
+
+    return Number(yearElement.innerText);
+};
+
 const getAttendanceByTr = (tr: HTMLTableRowElement): Attendance => {
-    const currentDate: Moment = moment();
     // ['09/12 (一)', '09:38', '18:41']
     const datetimeStrings: string[] = tr.innerText.split('\t');
-    const dateString: string = `${currentDate.year()}/${datetimeStrings[0].split(' ')[0]}`;
+    const dateString: string = `${getCurrentYear()}/${datetimeStrings[0].split(' ')[0]}`;
     const signInDate: Moment = moment(`${dateString} ${datetimeStrings[1]}`);
     const signOutDate: Moment = moment(`${dateString} ${datetimeStrings[2]}`);
     return {
@@ -299,7 +308,6 @@ const updateAttendanceContent = (table: HTMLTableElement, attendances: Attendanc
         attendanceContentElement.innerHTML += getLeaveNoteTemplate(attendance.leaveNote);
         table.prepend(attendanceContentElement);
     }
-    updateTodayAttendanceContent(table, attendances);
 };
 
 const updateAttendanceFavicon = (attendances: Attendance[]) => {
@@ -394,6 +402,16 @@ const resetAttendanceTimers = (): void => {
     window.clearTimeout(Number(SessionManager.getByKey(SessionKeys.SIGN_IN_NOTIFICATION_TIMER)));
     window.clearTimeout(Number(SessionManager.getByKey(SessionKeys.TODAY_ATTENDANCE_CONTENT_TIMER)));
     window.clearTimeout(Number(SessionManager.getByKey(SessionKeys.TODAY_ATTENDANCE_FAVICON_TIMER)));
+};
+
+const startAttendanceTimers = (table: HTMLTableElement, attendances: Attendance[]) => {
+    for (let i = 1; i < attendances.length; i++) {
+        if (isToday(attendances[i].signInDate) === true) {
+            updateTodayAttendanceContent(table, attendances);
+            updateAttendanceFavicon(attendances);
+            showSignInNotification(attendances);
+        }
+    }
 };
 
 const initializeFaviconBadge = (): void => {
@@ -492,13 +510,12 @@ const main = (): void => {
 
             removeAllAttendanceContent(table);
             updateAttendanceContent(table, attendances);
-            updateAttendanceFavicon(attendances);
-            showSignInNotification(attendances);
             appendCopyrightAndVersion(table.parentElement.parentElement);
             prependForgottenAttendanceButton();
             restyleAttendanceButtons();
             restyleAttendanceTable(table);
             restyleWholePage();
+            startAttendanceTimers(table, attendances);
         }
     );
 
