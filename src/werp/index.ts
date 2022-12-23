@@ -196,7 +196,8 @@ const getAttendanceByTr = (tr: HTMLTableRowElement): Attendance => {
 };
 
 const getAttendanceByTrs = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, leaveNotes: string[]): Attendance[] => {
-    const attendances: Attendance[] = getWeekAttendances(leaveNotes);
+    const firstDayAttendance: Attendance = getAttendanceByTr(trs.item(0));
+    const attendances: Attendance[] = getWeekAttendances(firstDayAttendance, leaveNotes);
 
     for (let i = 0; i < trs.length; i++) {
         const tr: HTMLTableRowElement = trs[i];
@@ -485,7 +486,8 @@ const main = (): void => {
             resetAttendanceTimers();
             log('出缺勤表格已經載入');
             const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = table.getElementsByTagName('tr');
-            const leaveNotes: string[] = await fetchPersonalLeaveNotes();
+            const firstDayAttendance: Attendance = getAttendanceByTr(trs.item(0));
+            const leaveNotes: string[] = await fetchPersonalLeaveNotes(firstDayAttendance);
             const attendances: Attendance[] = getAttendanceByTrs(trs, leaveNotes);
 
             removeAllAttendanceContent(table);

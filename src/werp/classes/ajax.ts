@@ -1,6 +1,5 @@
 import AnnualLeave from '@/werp/interfaces/AnnualLeave';
 import Attendance from '@/werp/interfaces/Attendance';
-import { getWeekAttendances } from '@/werp/classes/attendanceUtility';
 
 export const fetchCompanyEmployeeToken = async (): Promise<string | null> => {
     return await fetch('https://cy.iwerp.net/system/hr/showEmpData.xhtml', {
@@ -224,11 +223,10 @@ export const fetchPersonalLeaveNotesSearchPattern = async (): Promise<string[]> 
         });
 };
 
-export const fetchPersonalLeaveNotes = async (): Promise<string[]> => {
+export const fetchPersonalLeaveNotes = async (firstDayAttendance: Attendance): Promise<string[]> => {
     const searchPattern: string[] = await fetchPersonalLeaveNotesSearchPattern();
-    const attendances: Attendance[] = getWeekAttendances([]);
-    const endDate: string = attendances[5].signInDate.format('YYYY/MM/DD', { trim: false });
-    const startDate: string = attendances[1].signInDate.format('YYYY/MM/DD', { trim: false });
+    const endDate: string = firstDayAttendance.signInDate.day(5).format('YYYY/MM/DD', { trim: false });
+    const startDate: string = firstDayAttendance.signInDate.day(1).format('YYYY/MM/DD', { trim: false });
     const searchDateRange: string = `&${searchPattern[0]}=${startDate}&${searchPattern[1]}=${endDate}`;
 
     return fetch('https://cy.iwerp.net/hr-attendance/merge/personal.xhtml', {
