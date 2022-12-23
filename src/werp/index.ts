@@ -135,19 +135,49 @@ const fetchPersonalLeaveNotesToken = async (): Promise<string | null> => {
         });
 };
 
+const fetchPersonalLeaveNotesSearchPattern = async (): Promise<string[]> => {
+    return await fetch('https://cy.iwerp.net/hr-attendance/merge/personal.xhtml', {
+        headers: {
+            accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+            'accept-language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7,vi;q=0.6,zh-CN;q=0.5',
+            'cache-control': 'max-age=0',
+            'sec-ch-ua': '"Google Chrome";v="107", "Chromium";v="107", "Not=A?Brand";v="24"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"macOS"',
+            'sec-fetch-dest': 'document',
+            'sec-fetch-mode': 'navigate',
+            'sec-fetch-site': 'same-origin',
+            'sec-fetch-user': '?1',
+            'upgrade-insecure-requests': '1',
+        },
+        referrer: 'https://cy.iwerp.net/portal/page/new_home.xhtml',
+        referrerPolicy: 'strict-origin-when-cross-origin',
+        body: null,
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'include',
+    })
+        .then((response) => {
+            return response.text();
+        })
+        .then((body) => {
+            const html: HTMLHtmlElement = document.createElement('html');
+            html.innerHTML = body;
+            const inputElements: NodeListOf<HTMLInputElement> = html.querySelectorAll('#searchContent input');
+            if (inputElements.length < 2) {
+                return [];
+            }
+            return [inputElements.item(0).name, inputElements.item(1).name];
+        });
+};
+
 const fetchPersonalLeaveNotes = async (): Promise<string[]> => {
+    const searchPattern: string[] = await fetchPersonalLeaveNotesSearchPattern();
     const attendances: Attendance[] = getWeekAttendances([]);
     const endDate: string = attendances[5].signInDate.format('YYYY/MM/DD', { trim: false });
     const startDate: string = attendances[1].signInDate.format('YYYY/MM/DD', { trim: false });
-    // 日期格式： &j_idt152_input=2022%2F11%2F28&j_idt156_input=2022%2F12%2F02
-    const searchDateRange: string = `&j_idt152_input=${startDate}&j_idt156_input=${endDate}`;
-    /*
-     * 請假資訊模板：
-         body: ''.replace(
-             /&j_idt168_input=\d+%2F\d+%2F\d+&j_idt172_input=\d+%2F\d+%2F\d+/,
-             searchDateRange
-         ),
-     */
+    const searchDateRange: string = `&${searchPattern[0]}=${startDate}&${searchPattern[1]}=${endDate}`;
+
     return fetch('https://cy.iwerp.net/hr-attendance/merge/personal.xhtml', {
         headers: {
             accept: 'application/xml, text/xml, */*; q=0.01',
