@@ -66,10 +66,54 @@ export const getAttendanceSignOutTemplate = (innerHTML: string): string => {
     `;
 };
 
-export const getLeaveNoteTemplate = (leaveNote: LeaveNote): string => {
+export const getLeaveNoteTemplate = ({ unusualNote, unsignedNote, receiptNote }: LeaveNote): string => {
+    const icons: string[] = [];
+
+    if (unusualNote !== '') {
+        icons.push(`
+            <div title="${unusualNote}">
+                <i style="color: crimson;" class="fa fa-1 fa-exclamation-triangle" aria-hidden="true"></i> 異常
+                <div style="
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    width: 50%;
+                    margin-left: 25%;"
+                >${unusualNote}</div>
+            </div>`);
+    }
+
+    if (unsignedNote !== '') {
+        icons.push(`
+            <div title="${unsignedNote}">
+                <i style="color: chocolate;" class="fa fa-spinner fa-1 fa-spin fa-fw"></i> 簽核中
+                <div style="
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    width: 50%;
+                    margin-left: 25%;"
+                >${unsignedNote}</div>
+            </div>`);
+    }
+
+    if (receiptNote !== '') {
+        icons.push(`
+            <div title="${receiptNote}">
+                <i style="color: darkgreen;" class="fa fa-1 fa-check-square-o" aria-hidden="true"></i> 請假
+                <div style="
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    width: 50%;
+                    margin-left: 25%;"
+                >${receiptNote}</div>
+            </div>`);
+    }
+
     return `
         <td role="gridcell" style="text-align: center;">
-            ${leaveNote.receiptNote}
+            ${icons.join('')}
         </td>
     `;
 };
