@@ -18,6 +18,7 @@ import {
     getAttendanceDateTemplate,
     getAttendanceSignInTemplate,
     getAttendanceSignOutTemplate,
+    getCompanyEmployeeTemplate,
     getLeaveNoteTemplate,
 } from '@/werp/classes/template';
 import { fetchAllCompanyEmployeeCount, fetchAnnualLeave, fetchPersonalLeaveNotes } from '@/werp/classes/ajax';
@@ -554,8 +555,13 @@ const main = (): void => {
         const annualLeave: AnnualLeave | null = await fetchAnnualLeave();
         const companyEmployeeCount: number | null = await fetchAllCompanyEmployeeCount();
         const annualTemplate: string = getAnnualLeaveTemplate(annualLeave);
+        const companyEmployeeTemplate: string = getCompanyEmployeeTemplate(
+            companyEmployeeCount,
+            SessionManager.getObjectByKey(SessionKeys.COMPANY_EMPLOYEE_COUNT)
+        );
         updateCompanyEmployeeCountSession(companyEmployeeCount);
         table.insertAdjacentHTML('afterbegin', annualTemplate);
+        table.insertAdjacentHTML('beforeend', companyEmployeeTemplate);
     });
 };
 
