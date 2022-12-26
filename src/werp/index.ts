@@ -21,6 +21,8 @@ import {
     getLeaveNoteTemplate,
 } from '@/werp/classes/template';
 import { fetchAnnualLeave, fetchPersonalLeaveNotes } from '@/werp/classes/ajax';
+import LeaveNote from '@/werp/interfaces/LeaveNote';
+import { defaultLeaveNote } from '@/werp/classes/leaveNote';
 
 const showSignInNotification = (attendances: Attendance[]): void => {
     const currentDate: Moment = moment();
@@ -158,7 +160,7 @@ const getWorkingMinutes = ({ signOutDate, signInDate }: Attendance): number => {
 };
 
 const getLeaveMinutes = ({ signInDate, leaveNote }: Attendance): number => {
-    const matches: RegExpMatchArray | null = leaveNote.match(/^(?<leaveTime>\d+)-(?<backTime>\d+).+$/);
+    const matches: RegExpMatchArray | null = leaveNote.receiptNote.match(/^(?<leaveTime>\d+)-(?<backTime>\d+).+$/);
 
     if (matches === null || matches.length === 0) {
         return 0;
@@ -200,11 +202,11 @@ const getAttendanceByTr = (tr: HTMLTableRowElement): Attendance => {
     return {
         signInDate,
         signOutDate,
-        leaveNote: '',
+        leaveNote: defaultLeaveNote,
     };
 };
 
-const getAttendanceByTrs = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, leaveNotes: string[]): Attendance[] => {
+const getAttendanceByTrs = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, leaveNotes: LeaveNote[]): Attendance[] => {
     const firstDayAttendance: Attendance = getAttendanceByTr(trs.item(0));
     const attendances: Attendance[] = getWeekAttendances(firstDayAttendance, leaveNotes);
 
@@ -513,7 +515,7 @@ const main = (): void => {
             log('出缺勤表格已經載入');
             const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = table.getElementsByTagName('tr');
             const firstDayAttendance: Attendance = getAttendanceByTr(trs.item(0));
-            const leaveNotes: string[] = await fetchPersonalLeaveNotes(firstDayAttendance);
+            const leaveNotes: LeaveNote[] = await fetchPersonalLeaveNotes(firstDayAttendance);
             const attendances: Attendance[] = getAttendanceByTrs(trs, leaveNotes);
 
             removeAllAttendanceContent(table);

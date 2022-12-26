@@ -1,5 +1,6 @@
 import AnnualLeave from '@/werp/interfaces/AnnualLeave';
 import Attendance from '@/werp/interfaces/Attendance';
+import LeaveNote from '@/werp/interfaces/LeaveNote';
 
 export const fetchCompanyEmployeeToken = async (): Promise<string | null> => {
     return await fetch('https://cy.iwerp.net/system/hr/showEmpData.xhtml', {
@@ -223,7 +224,7 @@ export const fetchPersonalLeaveNotesSearchPattern = async (): Promise<string[]> 
         });
 };
 
-export const fetchPersonalLeaveNotes = async (firstDayAttendance: Attendance): Promise<string[]> => {
+export const fetchPersonalLeaveNotes = async (firstDayAttendance: Attendance): Promise<LeaveNote[]> => {
     const searchPattern: string[] = await fetchPersonalLeaveNotesSearchPattern();
     const endDate: string = firstDayAttendance.signInDate.day(5).format('YYYY/MM/DD', { trim: false });
     const startDate: string = firstDayAttendance.signInDate.day(1).format('YYYY/MM/DD', { trim: false });
@@ -257,19 +258,20 @@ export const fetchPersonalLeaveNotes = async (firstDayAttendance: Attendance): P
             return response.text();
         })
         .then((body) => {
-            const leaveNotes: string[] = [];
+            const leaveNotes: LeaveNote[] = [];
             const html: HTMLHtmlElement = document.createElement('html');
             html.innerHTML = body;
             html.querySelectorAll('.ui-datatable-frozenlayout-right tbody tr').forEach(
                 (tr: HTMLTableRowElement, index: number) => {
                     const unusualNoteElement: HTMLDivElement | null = tr.querySelectorAll('td').item(2);
-                    const leaveNoteElement: HTMLDivElement | null = tr.querySelectorAll('td').item(3);
-                    const unsignedLeaveReceiptElement: HTMLDivElement | null = tr.querySelectorAll('td').item(5);
-                    if (leaveNoteElement !== null && unusualNoteElement !== null && unsignedLeaveReceiptElement !== null) {
-                        leaveNotes[index + 1] =
-                            leaveNoteElement.innerText.trim() ||
-                            unusualNoteElement.innerText.trim() ||
-                            unsignedLeaveReceiptElement.innerText.trim();
+                    const unsignedNoteElement: HTMLDivElement | null = tr.querySelectorAll('td').item(5);
+                    const receiptNoteElement: HTMLDivElement | null = tr.querySelectorAll('td').item(3);
+                    if (unusualNoteElement !== null && unsignedNoteElement !== null && receiptNoteElement !== null) {
+                        leaveNotes[index + 1] = {
+                            unusualNote: unusualNoteElement.innerText.trim(),
+                            unsignedNote: unsignedNoteElement.innerText.trim(),
+                            receiptNote: receiptNoteElement.innerText.trim(),
+                        };
                     }
                 }
             );

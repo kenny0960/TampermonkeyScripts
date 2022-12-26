@@ -1,6 +1,7 @@
 import Attendance from '@/werp/interfaces/Attendance';
 import { formatTime, formatWeekday, isToday } from '@/werp/classes/momentUtility';
 import AnnualLeave from '@/werp/interfaces/AnnualLeave';
+import LeaveNote from '@/werp/interfaces/LeaveNote';
 
 export const getAnnualLeaveTemplate = (annualLeave: AnnualLeave | null): string => {
     if (annualLeave === null) {
@@ -65,10 +66,10 @@ export const getAttendanceSignOutTemplate = (innerHTML: string): string => {
     `;
 };
 
-export const getLeaveNoteTemplate = (leaveNote: string): string => {
+export const getLeaveNoteTemplate = (leaveNote: LeaveNote): string => {
     return `
         <td role="gridcell" style="text-align: center;">
-            ${leaveNote}
+            ${leaveNote.receiptNote}
         </td>
     `;
 };
