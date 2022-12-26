@@ -20,7 +20,7 @@ import {
     getAttendanceSignOutTemplate,
     getLeaveNoteTemplate,
 } from '@/werp/classes/template';
-import { fetchAnnualLeave, fetchPersonalLeaveNotes } from '@/werp/classes/ajax';
+import { fetchAllCompanyEmployeeCount, fetchAnnualLeave, fetchPersonalLeaveNotes } from '@/werp/classes/ajax';
 import LeaveNote from '@/werp/interfaces/LeaveNote';
 import { defaultLeaveNote } from '@/werp/classes/leaveNote';
 
@@ -476,6 +476,20 @@ const removeAllAttendanceContent = (table: HTMLTableElement): void => {
     });
 };
 
+const updateCompanyEmployeeCountSession = (companyEmployeeCount: number | null): void => {
+    if (companyEmployeeCount === null) {
+        return;
+    }
+    const year: number = moment().year();
+    const week: number = moment().week();
+    const companyEmployeeCountObject: Object = SessionManager.getObjectByKey(SessionKeys.COMPANY_EMPLOYEE_COUNT);
+    companyEmployeeCountObject[year] = {
+        ...companyEmployeeCountObject[year],
+        [week]: companyEmployeeCount,
+    };
+    SessionManager.setByKey(SessionKeys.COMPANY_EMPLOYEE_COUNT, JSON.stringify(companyEmployeeCountObject));
+};
+
 const appendLeaveNoteCaption = (table: HTMLTableElement): void => {
     const leaveCaption: HTMLTableCaptionElement = document.createElement('th');
     leaveCaption.innerHTML = '<span class="ui-column-title">請假/異常</span>';
@@ -538,7 +552,9 @@ const main = (): void => {
         }
         log('待辦事項表格已經載入');
         const annualLeave: AnnualLeave | null = await fetchAnnualLeave();
+        const companyEmployeeCount: number | null = await fetchAllCompanyEmployeeCount();
         const annualTemplate: string = getAnnualLeaveTemplate(annualLeave);
+        updateCompanyEmployeeCountSession(companyEmployeeCount);
         table.insertAdjacentHTML('afterbegin', annualTemplate);
     });
 };
