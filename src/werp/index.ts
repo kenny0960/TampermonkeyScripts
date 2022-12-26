@@ -565,4 +565,8 @@ const main = (): void => {
     window.setInterval((): void => {
         main();
     }, 5 * 1000);
+    // 覆寫 WERP 原有函式
+    reloadNewHome = (): void => {
+        location.reload();
+    };
 })();
