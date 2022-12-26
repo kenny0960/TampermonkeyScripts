@@ -262,10 +262,14 @@ export const fetchPersonalLeaveNotes = async (firstDayAttendance: Attendance): P
             html.innerHTML = body;
             html.querySelectorAll('.ui-datatable-frozenlayout-right tbody tr').forEach(
                 (tr: HTMLTableRowElement, index: number) => {
-                    const leaveNoteElement: HTMLDivElement | null = tr.querySelectorAll('td').item(3);
                     const unusualNoteElement: HTMLDivElement | null = tr.querySelectorAll('td').item(2);
-                    if (leaveNoteElement !== null && unusualNoteElement !== null) {
-                        leaveNotes[index + 1] = leaveNoteElement.innerText.trim() || unusualNoteElement.innerText.trim();
+                    const leaveNoteElement: HTMLDivElement | null = tr.querySelectorAll('td').item(3);
+                    const unsignedLeaveReceiptElement: HTMLDivElement | null = tr.querySelectorAll('td').item(5);
+                    if (leaveNoteElement !== null && unusualNoteElement !== null && unsignedLeaveReceiptElement !== null) {
+                        leaveNotes[index + 1] =
+                            leaveNoteElement.innerText.trim() ||
+                            unusualNoteElement.innerText.trim() ||
+                            unsignedLeaveReceiptElement.innerText.trim();
                     }
                 }
             );

@@ -158,7 +158,7 @@ const getWorkingMinutes = ({ signOutDate, signInDate }: Attendance): number => {
 };
 
 const getLeaveMinutes = ({ signInDate, leaveNote }: Attendance): number => {
-    const matches: RegExpMatchArray | null = leaveNote.match(/(?<leaveTime>\d+)-(?<backTime>\d+).+/);
+    const matches: RegExpMatchArray | null = leaveNote.match(/^(?<leaveTime>\d+)-(?<backTime>\d+).+$/);
 
     if (matches === null || matches.length === 0) {
         return 0;
