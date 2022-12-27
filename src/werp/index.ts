@@ -370,6 +370,7 @@ const updateAttendanceFavicon = (attendances: Attendance[]) => {
 
 const getUpdateLogs = (): string[] => {
     return [
+        'v3.6.0(20221227) 顯示近期請假狀況',
         'v3.5.0(20221226) 顯示異常、簽核中和請假的個別資訊',
         'v3.4.2(20221223) 解決更新網頁後簽到退顯示異常的問題',
         'v3.4.2(20221223) 顯示不同禮拜的簽到退情況',
