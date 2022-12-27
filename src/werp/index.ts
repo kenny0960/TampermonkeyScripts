@@ -571,7 +571,8 @@ const main = (): void => {
         updateCompanyEmployeeCountSession(companyEmployeeCount);
         table.insertAdjacentHTML('afterbegin', annualTemplate);
         table.insertAdjacentHTML('afterbegin', leaveReceiptNotesTemplate);
-        table.insertAdjacentHTML('beforeend', companyEmployeeTemplate);
+        // TODO 暫時隱藏公司狀況
+        // table.insertAdjacentHTML('beforeend', companyEmployeeTemplate);
     });
 };
 
