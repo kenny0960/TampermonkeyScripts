@@ -20,10 +20,17 @@ import {
     getAttendanceSignOutTemplate,
     getCompanyEmployeeTemplate,
     getLeaveNoteTemplate,
+    getLeaveReceiptNotesTemplate,
 } from '@/werp/classes/template';
-import { fetchAllCompanyEmployeeCount, fetchAnnualLeave, fetchPersonalLeaveNotes } from '@/werp/classes/ajax';
+import {
+    fetchAllCompanyEmployeeCount,
+    fetchAnnualLeave,
+    fetchPersonalLeaveNotes,
+    fetchPersonalLeaveReceiptNotes,
+} from '@/werp/classes/ajax';
 import LeaveNote from '@/werp/interfaces/LeaveNote';
 import { defaultLeaveNote } from '@/werp/classes/leaveNote';
+import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
 
 const showSignInNotification = (attendances: Attendance[]): void => {
     const currentDate: Moment = moment();
@@ -553,14 +560,17 @@ const main = (): void => {
         }
         log('待辦事項表格已經載入');
         const annualLeave: AnnualLeave | null = await fetchAnnualLeave();
+        const leaveReceiptNotes: LeaveReceiptNote[] = await fetchPersonalLeaveReceiptNotes();
         const companyEmployeeCount: number | null = await fetchAllCompanyEmployeeCount();
         const annualTemplate: string = getAnnualLeaveTemplate(annualLeave);
+        const leaveReceiptNotesTemplate: string = getLeaveReceiptNotesTemplate(leaveReceiptNotes);
         const companyEmployeeTemplate: string = getCompanyEmployeeTemplate(
             companyEmployeeCount,
             SessionManager.getObjectByKey(SessionKeys.COMPANY_EMPLOYEE_COUNT)
         );
         updateCompanyEmployeeCountSession(companyEmployeeCount);
         table.insertAdjacentHTML('afterbegin', annualTemplate);
+        table.insertAdjacentHTML('afterbegin', leaveReceiptNotesTemplate);
         table.insertAdjacentHTML('beforeend', companyEmployeeTemplate);
     });
 };
