@@ -42,9 +42,6 @@ export const getAnnualLeaveTemplate = (annualLeave: AnnualLeave | null): string 
 };
 
 export const getLeaveReceiptNotesTemplate = (leaveReceiptNotes: LeaveReceiptNote[]): string => {
-    if (leaveReceiptNotes.length === 0) {
-        return '';
-    }
     const templates: string[] = [];
     for (const leaveReceiptNote of leaveReceiptNotes.reverse()) {
         // 不顯示已結案的過往記錄
@@ -80,6 +77,10 @@ export const getLeaveReceiptNotesTemplate = (leaveReceiptNotes: LeaveReceiptNote
                 </td>
             </tr>
         `);
+    }
+
+    if (templates.length === 0) {
+        return '';
     }
 
     return `
