@@ -62,7 +62,7 @@ export const getLeaveReceiptNotesTemplate = (leaveReceiptNotes: LeaveReceiptNote
                             : '<i style="color: chocolate;" class="fa fa-spinner fa-1 fa-spin fa-fw"></i>'
                     }
                 </td>
-                <td role="gridcell" style="text-align: center;" class="notSign">
+                <td role="gridcell" style="text-align: center; font-size: 12px;" class="notSign">
                     ${leaveReceiptNote.type}
                 </td>
                 <td role="gridcell" style="text-align: center; font-size: 12px;">
@@ -72,10 +72,10 @@ export const getLeaveReceiptNotesTemplate = (leaveReceiptNotes: LeaveReceiptNote
                 <td role="gridcell" style="text-align: center;" class="notSign">
                     ${leaveReceiptNote.hours}
                 </td>
-                <td role="gridcell" style="text-align: center;" class="notSign">
+                <td role="gridcell" style="text-align: center; font-size: 12px;" class="notSign">
                     ${leaveReceiptNote.status}
                 </td>
-                 <td role="gridcell" style="text-align: center;" class="notSign">
+                 <td role="gridcell" style="text-align: center; font-size: 12px;" class="notSign">
                     ${leaveReceiptNote.start.fromNow()}
                 </td>
             </tr>
