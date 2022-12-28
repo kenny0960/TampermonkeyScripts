@@ -320,8 +320,8 @@ export const fetchPersonalLeaveReceiptNotesSearchPattern = async (): Promise<str
 
 export const fetchPersonalLeaveReceiptNotes = async (): Promise<LeaveReceiptNote[]> => {
     const searchPattern: string[] = await fetchPersonalLeaveReceiptNotesSearchPattern();
-    const endDate: string = moment().day(28).format('YYYY/MM/DD', { trim: false });
-    const startDate: string = moment().day(-7).format('YYYY/MM/DD', { trim: false });
+    const endDate: string = moment().add(1, 'months').format('YYYY/MM/DD', { trim: false });
+    const startDate: string = moment().subtract(7, 'days').format('YYYY/MM/DD', { trim: false });
     const searchDateRange: string = `&${searchPattern[0]}=${startDate}&${searchPattern[1]}=${endDate}`;
 
     return fetch('https://cy.iwerp.net/hr-attendance/leave/personal/personal-apply.xhtml', {
