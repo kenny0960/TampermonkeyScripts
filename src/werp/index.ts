@@ -475,7 +475,7 @@ const restyleAttendanceButtons = (): void => {
     document
         .querySelectorAll('table[id="formTemplate:attend_rec_panel-title"] .ui-panel-content button,span,a')
         .forEach((buttonElement: HTMLButtonElement): void => {
-            buttonElement.style.marginRight = '2px';
+            buttonElement.style.marginRight = '4px';
         });
 };
 
