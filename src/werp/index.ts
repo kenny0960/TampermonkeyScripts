@@ -34,12 +34,12 @@ import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
 
 const showSignInNotification = (attendances: Attendance[]): void => {
     const currentDate: Moment = moment();
-    const { signInDate, signOutDate }: Attendance = formatAttendance(getTodayAttendance(attendances));
+    const todayAttendance: Attendance = getTodayAttendance(attendances);
+    const { signInDate, signOutDate }: Attendance = formatAttendance(todayAttendance);
     // 根據剩餘分鐘來更新當日的預測可簽退時間
     const predictedSignOutDate: Moment = formatEarliestSignOutDate(
         signOutDate.clone().subtract(getTotalRemainMinutes(attendances), 'minutes')
     );
-    const todaySignInContent: string = formatTime(signInDate);
     const predictedSignOutLeftMinutes: number = predictedSignOutDate.diff(currentDate, 'minutes');
     const todaySignOutLeftMinutes: number = signInDate.clone().add(9, 'hours').diff(currentDate, 'minutes');
     const currentDateString: string = currentDate.format('YYYYMMDD', { trim: false });
@@ -60,7 +60,8 @@ const showSignInNotification = (attendances: Attendance[]): void => {
         return;
     }
 
-    if (todaySignInContent === '') {
+    // 未簽到：不再預測可簽退時間
+    if (formatTime(todayAttendance.signInDate) === '') {
         if (SessionManager.getByKey(SessionKeys.SIGN_IN_NOTIFICATION) === currentDateString) {
             return;
         }
@@ -76,6 +77,7 @@ const showSignInNotification = (attendances: Attendance[]): void => {
                 SessionManager.setByKey(SessionKeys.SIGN_IN_NOTIFICATION, currentDateString);
             }
         );
+        return;
     }
 
     // 已經下班且無負債
@@ -254,8 +256,14 @@ const updateTodayAttendanceContent = (table: HTMLTableElement, attendances: Atte
 };
 
 const getTodayAttendanceInnerHTML = (attendances: Attendance[]): string => {
-    const attendance: Attendance = formatAttendance(getTodayAttendance(attendances));
+    const todayAttendance: Attendance = getTodayAttendance(attendances);
+    const attendance: Attendance = formatAttendance(todayAttendance);
     const { signOutDate, signInDate }: Attendance = attendance;
+
+    // 未簽到：不再預測可簽退時間
+    if (formatTime(todayAttendance.signInDate) === '') {
+        return '';
+    }
 
     // 已簽退：不再預測可簽退時間
     if (formatTime(attendance.signOutDate) !== '') {
@@ -321,7 +329,8 @@ const updateAttendanceContent = (table: HTMLTableElement, attendances: Attendanc
 };
 
 const updateAttendanceFavicon = (attendances: Attendance[]) => {
-    const { signOutDate, signInDate }: Attendance = formatAttendance(getTodayAttendance(attendances));
+    const todayAttendance: Attendance = getTodayAttendance(attendances);
+    const { signOutDate, signInDate }: Attendance = formatAttendance(todayAttendance);
     // 根據剩餘分鐘來更新當日的預測可簽退時間
     const predictedSignOutDate: Moment = formatEarliestSignOutDate(
         signOutDate.clone().subtract(getTotalRemainMinutes(attendances), 'minutes')
@@ -331,6 +340,14 @@ const updateAttendanceFavicon = (attendances: Attendance[]) => {
     const faviconBadge: FavIconBadge = document.querySelector('favicon-badge');
     faviconBadge.textColor = 'white';
     faviconBadge.badgeSize = 16;
+
+    // 未簽到：不再預測可簽退時間
+    if (formatTime(todayAttendance.signInDate) === '') {
+        document.title = '未簽到';
+        faviconBadge.badgeColor = '#cc0000';
+        faviconBadge.badge = '未';
+        return;
+    }
 
     // 已簽退：不再預測可簽退時間
     if (formatTime(signOutDate) !== '') {

@@ -185,9 +185,14 @@ export const getAttendanceDateTemplate = (attendance: Attendance): string => {
 };
 
 export const getAttendanceSignInTemplate = (attendance: Attendance): string => {
+    const time: string = formatTime(attendance.signInDate);
     return `
         <td role="gridcell" style="text-align: center;">
-            ${formatTime(attendance.signInDate)}
+            ${
+                time === '' && isToday(attendance.signInDate) === true
+                    ? `<i style="color: crimson;" class="fa fa-1 fa-exclamation-triangle" aria-hidden="true"></i> 未簽到`
+                    : time
+            }
         </td>
     `;
 };
