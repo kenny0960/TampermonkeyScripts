@@ -48,6 +48,10 @@ const showSignInNotification = (attendances: Attendance[]): void => {
 
     // 已簽退：不再預測可簽退時間
     if (formatTime(signOutDate) !== '') {
+        if (SessionManager.getByKey(SessionKeys.SIGN_OUT_ALREADY_NOTIFICATION) === currentDateString) {
+            return;
+        }
+
         showNotification(
             '已經簽退',
             {
@@ -56,7 +60,7 @@ const showSignInNotification = (attendances: Attendance[]): void => {
             },
             () => {
                 log(`已經關閉簽到通知`);
-                SessionManager.setByKey(SessionKeys.SIGN_IN_NOTIFICATION, currentDateString);
+                SessionManager.setByKey(SessionKeys.SIGN_OUT_ALREADY_NOTIFICATION, currentDateString);
             }
         );
         return;
