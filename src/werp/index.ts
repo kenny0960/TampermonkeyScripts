@@ -31,6 +31,8 @@ import {
 import LeaveNote from '@/werp/interfaces/LeaveNote';
 import { defaultLeaveNote } from '@/werp/classes/leaveNote';
 import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
+import UPDATE_LOGS from '@/werp/consts/UpdateLogs';
+import UpdateLog from '@/werp/interfaces/UpdateLog';
 
 const showSignInNotification = (attendances: Attendance[]): void => {
     const currentDate: Moment = moment();
@@ -385,50 +387,15 @@ const updateAttendanceFavicon = (attendances: Attendance[]) => {
     SessionManager.setByKey(SessionKeys.TODAY_ATTENDANCE_FAVICON_TIMER, String(todayAttendanceFaviconTimer));
 };
 
-const getUpdateLogs = (): string[] => {
-    return [
-        'v3.6.2(20221228) 隱藏空的近期請假表格',
-        'v3.6.2(20221228) 解決近期請假日期參數錯誤的問題',
-        'v3.6.1(20221228) 固定顯示請假記錄的單位為小時',
-        'v3.6.0(20221227) 顯示近期請假狀況',
-        'v3.5.0(20221226) 顯示異常、簽核中和請假的個別資訊',
-        'v3.4.2(20221223) 解決更新網頁後簽到退顯示異常的問題',
-        'v3.4.2(20221223) 顯示不同禮拜的簽到退情況',
-        'v3.4.1(20221223) 解決請假記錄顯示錯誤的問題',
-        'v3.4.0(20221223) 自動取得請假和特休狀況的 TOKEN',
-        'v3.4.0(20221223) 已簽退就不再預測可簽退時間',
-        'v3.4.0(20221223) 顯示出缺勤「異常」的記錄',
-        'v3.3.0(20221216) 移除表頭欄位和修改簽到退表格樣式',
-        'v3.3.0(20221216) 根據請假情況來調整計算已上班分鐘數',
-        'v3.2.1(20221212) 解決取得考勤彙總表參數名稱異動的問題',
-        'v3.2.0(20221209) 顯示忘簽到退按鍵',
-        'v3.1.0(20221202) 解決請假導致預計時間錯亂的問題',
-        'v3.0.0(20221202) 顯示請假資訊',
-        'v2.4.1(20221111) 修正 favicon 無限增生的問題',
-        'v2.4.0(20221107) 修正 favicon 失效的問題',
-        'v2.3.9(20221104) 根據不同剩餘時間來顯示 favicon 樣式和網頁標題',
-        'v2.3.8(20221028) 下班提示訊息和畫面一致化',
-        'v2.3.7(20221026) 修改彈跳視窗「即將符合下班條件」字眼為「預計 MM 分鐘後」',
-        'v2.3.6(20221024) 解決過早上班或是預測過早下班的問題',
-        'v2.3.5(20221020) 顯示「符合下班條件」資訊',
-        'v2.3.4(20221018) 顯示超時工作的資訊',
-        'v2.3.4(20221018) 清空重複執行的出缺勤 timer',
-        'v2.3.2(20221013) 顯示更新日誌',
-        'v2.3.1(20221013) 新增每五分鐘(簽到、簽退、超時工作)通知訊息視窗',
-        'v2.3.1(20221013) 通知訊息視窗點擊「關閉」後當天不會再顯示',
-        'v2.2.0(20221012) 解決特休狀況失效的問題',
-        'v2.2.0(20221012) 顯示版號和版權資訊',
-        'v2.2.0(20221012) 忽略國定假日的簽退內容提示文字',
-        'v2.1.0(20221006) 解決每次 wrep 更新時畫面為空的問題',
-        'v2.0.0(20221003) 顯示特休狀況',
-    ];
+const stringifyUpdateLog = (updateLog: UpdateLog): string => {
+    return `v${updateLog.version} ${updateLog.date} ${updateLog.messages}`;
 };
 
 const appendCopyrightAndVersion = (body: HTMLElement): void => {
     const copyRightDiv: HTMLDivElement = document.createElement('div');
     copyRightDiv.innerText = `ⓚ design © V${PackageJson['wrep-version']}`;
     copyRightDiv.style.textAlign = 'right';
-    copyRightDiv.title = getUpdateLogs().slice(0, 5).join('\n');
+    copyRightDiv.title = UPDATE_LOGS.slice(0, 5).map(stringifyUpdateLog).join('\n');
     body.append(copyRightDiv);
 };
 
