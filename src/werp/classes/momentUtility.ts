@@ -1,5 +1,6 @@
 import { Moment } from '@/moment';
 import * as moment from 'moment';
+import { getTotalRemainMinutes } from '@/werp/classes/attendanceUtility';
 
 export const formatWeekday = (moment: Moment): string => {
     switch (moment.day()) {
@@ -31,4 +32,26 @@ export const formatTime = (moment: Moment): string => {
 
 export const isToday = (targetMoment: Moment): boolean => {
     return moment().isSame(targetMoment.format('YYYY/MM/DD', { trim: false }), 'day') === true;
+};
+
+export const formatEarliestSignInDate = (signInDate: Moment): Moment => {
+    const signInDateString: string = signInDate.format('YYYY/MM/DD', { trim: false });
+    // 打卡最早只能計算到 08:00
+    if (signInDate.isBefore(moment(`${signInDateString} 08:00`))) {
+        return moment(`${signInDateString} 08:00`);
+    }
+    // 如果打卡時間介於午休時間只能從 13:30 開始計算
+    if (signInDate.isBetween(moment(`${signInDateString} 12:30`), moment(`${signInDateString} 13:30`))) {
+        return moment(`${signInDateString} 13:30`);
+    }
+    return signInDate;
+};
+
+export const formatEarliestSignOutDate = (signOutDate: Moment): Moment => {
+    const signOutDateString: string = signOutDate.format('YYYY/MM/DD', { trim: false });
+    const earliestSignOutDate: Moment = moment(`${signOutDateString} 17:00`);
+    if (signOutDate.isBefore(earliestSignOutDate)) {
+        return earliestSignOutDate;
+    }
+    return signOutDate;
 };

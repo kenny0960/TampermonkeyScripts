@@ -3,6 +3,7 @@ import { Moment } from '@/moment';
 import * as moment from 'moment';
 import LeaveNote from '@/werp/interfaces/LeaveNote';
 import { defaultLeaveNote } from '@/werp/classes/leaveNote';
+import { formatEarliestSignInDate, formatEarliestSignOutDate } from '@/werp/classes/momentUtility';
 
 export const getWeekAttendances = (firstDayAttendance: Attendance, leaveNotes: LeaveNote[]): Attendance[] => {
     const attendances: Attendance[] = [];
@@ -19,4 +20,58 @@ export const getWeekAttendances = (firstDayAttendance: Attendance, leaveNotes: L
 
 export const getTodayAttendance = (attendances: Attendance[]): Attendance => {
     return attendances[moment().day()];
+};
+
+export const formatAttendance = (attendance: Attendance): Attendance => {
+    return {
+        ...attendance,
+        signInDate: formatEarliestSignInDate(attendance.signInDate),
+    };
+};
+
+export const getTotalRemainMinutes = (attendances: Attendance[]): number => {
+    let remainMinutes: number = 0;
+    for (let i = 1; i < attendances.length; i++) {
+        // 國定假日或請假直接不計算
+        if (getWorkingMinutes(attendances[i]) === 0) {
+            continue;
+        }
+        remainMinutes += getRemainMinutes(attendances[i]);
+    }
+    return remainMinutes;
+};
+
+export const getWorkingMinutes = ({ signOutDate, signInDate }: Attendance): number => {
+    return signOutDate.diff(signInDate, 'minutes');
+};
+
+export const getLeaveMinutes = ({ signInDate, leaveNote }: Attendance): number => {
+    const matches: RegExpMatchArray | null = leaveNote.receiptNote.match(/^(?<leaveTime>\d+)-(?<backTime>\d+).+$/);
+
+    if (matches === null || matches.length === 0) {
+        return 0;
+    }
+
+    const { leaveTime, backTime } = matches.groups;
+    const date: string = signInDate.format('YYYY/MM/DD', { trim: false });
+    const leaveDate: Moment = moment(`${date} ${leaveTime.slice(0, 2)}:${leaveTime.slice(2, 4)}`);
+    const backDate: Moment = moment(`${date} ${backTime.slice(0, 2)}:${backTime.slice(2, 4)}`);
+
+    // 上班途中請假不算累積分鐘
+    if (signInDate.isBefore(leaveDate)) {
+        return 0;
+    }
+
+    return backDate.diff(leaveDate, 'minutes');
+};
+
+export const getRemainMinutes = (attendance: Attendance): number => {
+    return getWorkingMinutes(formatAttendance(attendance)) + getLeaveMinutes(attendance) - 9 * 60;
+};
+
+export const getPredictedSignOutDate = (attendances: Attendance[]): Moment => {
+    const todayAttendance: Attendance = getTodayAttendance(attendances);
+    const { signOutDate }: Attendance = formatAttendance(todayAttendance);
+    // 根據剩餘分鐘來更新當日的預測可簽退時間
+    return formatEarliestSignOutDate(signOutDate.clone().subtract(getTotalRemainMinutes(attendances), 'minutes'));
 };
