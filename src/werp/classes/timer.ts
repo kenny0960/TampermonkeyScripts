@@ -3,7 +3,7 @@ import SessionKeys from '@/werp/enums/SessionKeys';
 import Attendance from '@/werp/interfaces/Attendance';
 import { isToday } from '@/werp/classes/momentUtility';
 import { updateAttendanceFavicon } from '@/werp/classes/favicon';
-import { showSignInNotification } from '@/werp/classes/notification';
+import { showAttendanceNotification } from '@/werp/classes/notification';
 import { log } from '@/common/logger';
 import { updateTodayAttendanceContent } from '@/werp';
 
@@ -16,7 +16,7 @@ export const startAttendanceTimers = (table: HTMLTableElement, attendances: Atte
         if (isToday(attendances[i].signInDate) === true) {
             updateTodayAttendanceContent(table, attendances);
             updateAttendanceFavicon(attendances);
-            showSignInNotification(attendances);
+            showAttendanceNotification(attendances);
 
             // 定時更新內容
             const attendanceTimer: number = window.setTimeout((): void => {

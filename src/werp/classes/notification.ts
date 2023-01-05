@@ -9,7 +9,7 @@ import SessionKeys from '@/werp/enums/SessionKeys';
 import { showNotification } from '@/common/notification';
 import { log } from '@/common/logger';
 
-export const showSignInNotification = (attendances: Attendance[]): void => {
+export const showAttendanceNotification = (attendances: Attendance[]): void => {
     const currentDate: Moment = moment();
     const todayAttendance: Attendance = getTodayAttendance(attendances);
     const { signInDate, signOutDate }: Attendance = formatAttendance(todayAttendance);
