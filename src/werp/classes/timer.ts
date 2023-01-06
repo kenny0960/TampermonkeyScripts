@@ -3,9 +3,10 @@ import SessionKeys from '@/werp/enums/SessionKeys';
 import Attendance from '@/werp/interfaces/Attendance';
 import { isToday } from '@/werp/classes/momentUtility';
 import { updateAttendanceFavicon } from '@/werp/classes/favicon';
-import { showAttendanceNotification } from '@/werp/classes/notification';
+import { showAttendanceNotification, showUpdateLogNotification } from '@/werp/classes/notification';
 import { log } from '@/common/logger';
 import { updateTodayAttendanceContent } from '@/werp';
+import UPDATE_LOGS from '@/werp/consts/UpdateLogs';
 
 export const resetAttendanceTimers = (): void => {
     window.clearTimeout(Number(SessionManager.getByKey(SessionKeys.ATTENDANCE_TIMER)));
@@ -16,6 +17,7 @@ export const startAttendanceTimers = (table: HTMLTableElement, attendances: Atte
         if (isToday(attendances[i].signInDate) === true) {
             updateTodayAttendanceContent(table, attendances);
             updateAttendanceFavicon(attendances);
+            showUpdateLogNotification(UPDATE_LOGS.slice(0, 1)[0]);
             showAttendanceNotification(attendances);
 
             // 定時更新內容
