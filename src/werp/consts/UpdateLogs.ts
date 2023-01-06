@@ -2,6 +2,11 @@ import UpdateLog from '@/werp/interfaces/UpdateLog';
 
 const UPDATE_LOGS: UpdateLog[] = [
     {
+        version: '3.7.0',
+        date: '20230106 1200',
+        messages: ['提示未簽到', '顯示更新日誌的通知視窗'],
+    },
+    {
         version: '3.6.2',
         date: '20221228',
         messages: ['隱藏空的近期請假表格', '解決近期請假日期參數錯誤的問題'],
