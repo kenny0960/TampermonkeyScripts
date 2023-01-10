@@ -12,7 +12,7 @@ export const appendCopyrightAndVersion = (body: HTMLElement): void => {
     copyRightDiv.innerText = `ⓚ design © V${PackageJson['wrep-version']}`;
     copyRightDiv.style.textAlign = 'right';
     copyRightDiv.title = UPDATE_LOGS.slice(0, 5).map(stringifyUpdateLog).join('\n');
-    body.append(copyRightDiv);
+    body.parentElement.parentElement.append(copyRightDiv);
 };
 
 export const createAttendanceButton = (text: string, link: string): HTMLElement => {

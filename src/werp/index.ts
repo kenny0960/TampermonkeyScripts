@@ -113,7 +113,7 @@ const getTodayAttendanceInnerHTML = (attendances: Attendance[]): string => {
 
     // 已簽退：不再預測可簽退時間
     if (formatTime(attendance.signOutDate) !== '') {
-        return getPastDayAttendanceInnerHTML(attendance);
+        return getSignOutInnerHTML(attendance);
     }
 
     const predictedSignOutDate: Moment = getPredictedSignOutDate(attendances);
@@ -136,12 +136,17 @@ const getTodayAttendanceInnerHTML = (attendances: Attendance[]): string => {
     return innerHTML;
 };
 
-const getPastDayAttendanceInnerHTML = (attendance: Attendance): string => {
+const getSignOutInnerHTML = (attendance: Attendance): string => {
     const signInTimeString: string = formatTime(attendance.signInDate);
     const signOutTimeString: string = formatTime(attendance.signOutDate);
 
     // 國定假日或請假
     if (signOutTimeString === '' && signInTimeString === '') {
+        return '';
+    }
+
+    // 未簽到：不再預測可簽退時間
+    if (signOutTimeString === '') {
         return '';
     }
 
@@ -161,11 +166,7 @@ const updateAttendanceContent = (table: HTMLTableElement, attendances: Attendanc
         }
         attendanceContentElement.innerHTML = getAttendanceDateTemplate(attendance);
         attendanceContentElement.innerHTML += getAttendanceSignInTemplate(attendance);
-        if (isToday(attendance.signInDate) === true) {
-            attendanceContentElement.innerHTML += getAttendanceSignOutTemplate(getTodayAttendanceInnerHTML(attendances));
-        } else {
-            attendanceContentElement.innerHTML += getAttendanceSignOutTemplate(getPastDayAttendanceInnerHTML(attendance));
-        }
+        attendanceContentElement.innerHTML += getAttendanceSignOutTemplate(getSignOutInnerHTML(attendance));
         attendanceContentElement.innerHTML += getLeaveNoteTemplate(attendance.leaveNote);
         table.prepend(attendanceContentElement);
     }
@@ -203,7 +204,7 @@ const main = (): void => {
             removeAllAttendanceContent(table);
             appendLeaveNoteCaption(table);
             updateAttendanceContent(table, attendances);
-            appendCopyrightAndVersion(table.parentElement.parentElement);
+            appendCopyrightAndVersion(table);
             prependForgottenAttendanceButton();
             restyleAttendanceButtons();
             restyleAttendanceTable(table);
