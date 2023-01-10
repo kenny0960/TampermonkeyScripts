@@ -127,7 +127,7 @@ const getPredictedSignOutInnerHTML = (attendances: Attendance[]): string => {
         textClass: 'progress-bar progress-bar-striped progress-bar-animated',
     };
 
-    if (predictedSignOutLeftMinutes > 60) {
+    if (predictedSignOutLeftMinutes > 30) {
         progressBar.percentage = Math.floor(100 - (predictedSignOutLeftMinutes / 540) * 100);
         progressBar.text = `${predictedSignOutTimeString} ( 預計 ${predictedSignOutDate.fromNow()} )`;
         progressBar.textClass += ' bg-secondary';

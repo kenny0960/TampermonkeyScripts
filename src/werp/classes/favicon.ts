@@ -42,7 +42,7 @@ export const updateAttendanceFavicon = (attendances: Attendance[]) => {
         return;
     }
 
-    if (predictedSignOutLeftMinutes > 60) {
+    if (predictedSignOutLeftMinutes > 30) {
         document.title = `預計 ${predictedSignOutDate.fromNow()}`;
         faviconBadge.badgeColor = '#737373';
         faviconBadge.badge = `${predictedSignOutDate.fromNow().match(/(\d+)\s.+/)[1]}H`;
