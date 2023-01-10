@@ -38,6 +38,7 @@ import { initializeFaviconBadge } from '@/werp/classes/favicon';
 import {
     appendCopyrightAndVersion,
     appendLeaveNoteCaption,
+    appendPredictedSignOutProgressBar,
     prependForgottenAttendanceButton,
     removeAllAttendanceContent,
     restyleAttendanceButtons,
@@ -45,6 +46,8 @@ import {
     restyleWholePage,
 } from '@/werp/classes/style';
 import { resetAttendanceTimers, startAttendanceTimers } from '@/werp/classes/timer';
+import ProgressBar from '@/werp/interfaces/ProgressBar';
+import { defaultProgressBar } from '@/werp/classes/progressBar';
 
 export const getCurrentYear = (): number => {
     const yearElement: HTMLSpanElement | null = document.querySelector('.ui-datepicker-year');
@@ -98,10 +101,10 @@ export const updateTodayAttendanceContent = (table: HTMLTableElement, attendance
     const todayAttendanceSignOutElement: HTMLTableCellElement = todayAttendanceContentElement
         .getElementsByTagName('td')
         .item(2);
-    todayAttendanceSignOutElement.innerHTML = getAttendanceSignOutTemplate(getTodayAttendanceInnerHTML(attendances));
+    todayAttendanceSignOutElement.innerHTML = getAttendanceSignOutTemplate(getPredictedSignOutInnerHTML(attendances));
 };
 
-const getTodayAttendanceInnerHTML = (attendances: Attendance[]): string => {
+const getPredictedSignOutInnerHTML = (attendances: Attendance[]): string => {
     const todayAttendance: Attendance = getTodayAttendance(attendances);
     const attendance: Attendance = formatAttendance(todayAttendance);
     const { signInDate }: Attendance = attendance;
@@ -113,27 +116,45 @@ const getTodayAttendanceInnerHTML = (attendances: Attendance[]): string => {
 
     // 已簽退：不再預測可簽退時間
     if (formatTime(attendance.signOutDate) !== '') {
-        return getSignOutInnerHTML(attendance);
+        return '';
     }
 
     const predictedSignOutDate: Moment = getPredictedSignOutDate(attendances);
     const predictedSignOutTimeString: string = formatTime(predictedSignOutDate);
     const predictedSignOutLeftMinutes: number = predictedSignOutDate.diff(moment(), 'minutes');
     const todaySignOutLeftMinutes: number = signInDate.clone().add(9, 'hours').diff(moment(), 'minutes');
+    const progressBar: ProgressBar = {
+        ...defaultProgressBar,
+        textClass: 'progress-bar progress-bar-striped progress-bar-animated',
+    };
 
-    let innerHTML: string = `<div style="font-size: 20px;"> ${predictedSignOutTimeString} </div>`;
-    if (predictedSignOutLeftMinutes > 0) {
-        innerHTML += `<div style="font-size: 12px;"> 預計 ${predictedSignOutDate.fromNow()} </div>`;
+    if (predictedSignOutLeftMinutes > 60) {
+        progressBar.percentage = Math.floor(100 - (predictedSignOutLeftMinutes / 540) * 100);
+        progressBar.text = `${predictedSignOutTimeString} ( 預計 ${predictedSignOutDate.fromNow()} )`;
+        progressBar.textClass += ' bg-secondary';
+    } else if (predictedSignOutLeftMinutes > 0) {
+        progressBar.percentage = Math.floor(100 - (predictedSignOutLeftMinutes / 540) * 100);
+        progressBar.text = `${predictedSignOutTimeString} ( 預計 ${predictedSignOutDate.fromNow()} )`;
+        progressBar.textClass += ' bg-success';
     } else {
-        innerHTML += `<div style="font-size: 12px;"> 符合下班條件 </div>`;
+        progressBar.percentage = 100;
+        progressBar.text = `${predictedSignOutTimeString} ( 符合下班條件 )`;
+        progressBar.textClass += ' bg-warning';
     }
     // 已經下班且無負債
     if (predictedSignOutLeftMinutes < 0 && todaySignOutLeftMinutes < 0) {
-        innerHTML = `<div style="font-size: 12px;"> 超時工作 <span style="letter-spacing:1px; font-weight:bold; color: green;">  (+${Math.abs(
-            todaySignOutLeftMinutes
-        )})</span></div>`;
+        progressBar.percentage = 100;
+        progressBar.text = `超時工作 (+${Math.abs(todaySignOutLeftMinutes)})`;
+        progressBar.textClass += ' bg-danger';
     }
-    return innerHTML;
+
+    return `
+        <div id="predicted-sign-out-progress-bar">
+            <div class="progress" style="height: 30px;" role="progressbar" aria-label="Animated striped example" aria-valuenow="${progressBar.percentage}" aria-valuemin="0" aria-valuemax="100">
+              <div class="${progressBar.textClass}" style="width: ${progressBar.percentage}%; font-size: 16px; font-weight: bold">${progressBar.text}</div>
+            </div>
+        </div>
+    `;
 };
 
 const getSignOutInnerHTML = (attendance: Attendance): string => {
@@ -204,6 +225,7 @@ const main = (): void => {
             removeAllAttendanceContent(table);
             appendLeaveNoteCaption(table);
             updateAttendanceContent(table, attendances);
+            appendPredictedSignOutProgressBar(table, getPredictedSignOutInnerHTML(attendances));
             appendCopyrightAndVersion(table);
             prependForgottenAttendanceButton();
             restyleAttendanceButtons();

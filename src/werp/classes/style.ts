@@ -7,6 +7,13 @@ export const stringifyUpdateLog = (updateLog: UpdateLog): string => {
     return `v${updateLog.version} ${updateLog.date} ${updateLog.messages}`;
 };
 
+export const appendPredictedSignOutProgressBar = (body: HTMLElement, innerHTML: string): void => {
+    if (innerHTML === '') {
+        return;
+    }
+    body.parentElement.parentElement.insertAdjacentHTML('beforeend', innerHTML);
+};
+
 export const appendCopyrightAndVersion = (body: HTMLElement): void => {
     const copyRightDiv: HTMLDivElement = document.createElement('div');
     copyRightDiv.innerText = `ⓚ design © V${PackageJson['wrep-version']}`;
@@ -72,7 +79,7 @@ export const restyleAttendanceTable = (table: HTMLTableElement): void => {
     table.parentElement.parentElement.parentElement.parentElement.style.height = '100%';
     table.parentElement.parentElement.parentElement.style.height = '100%';
     table.parentElement.parentElement.style.height = '100%';
-    table.parentElement.style.height = '90%';
+    table.parentElement.style.height = '80%';
 };
 
 export const restyleWholePage = (): void => {
