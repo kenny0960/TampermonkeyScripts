@@ -47,7 +47,7 @@ export const updateAttendanceFavicon = (attendances: Attendance[]) => {
         faviconBadge.badgeColor = '#737373';
         faviconBadge.badge = `${predictedSignOutDate.fromNow().match(/(\d+)\s.+/)[1]}H`;
     } else if (predictedSignOutLeftMinutes > 0) {
-        document.title = `預計 ${predictedSignOutDate.fromNow()}`;
+        document.title = `預計 ${predictedSignOutLeftMinutes.toString()} 分鐘後`;
         faviconBadge.badgeColor = '#006600';
         faviconBadge.badge = predictedSignOutLeftMinutes.toString();
     } else {
