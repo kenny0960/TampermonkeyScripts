@@ -11,7 +11,7 @@ export const appendPredictedSignOutProgressBar = (body: HTMLElement, innerHTML: 
     if (innerHTML === '') {
         return;
     }
-    body.parentElement.parentElement.insertAdjacentHTML('beforeend', innerHTML);
+    body.parentElement.insertAdjacentHTML('beforeend', innerHTML);
 };
 
 export const appendCopyrightAndVersion = (body: HTMLElement): void => {
@@ -79,7 +79,7 @@ export const restyleAttendanceTable = (table: HTMLTableElement): void => {
     table.parentElement.parentElement.parentElement.parentElement.style.height = '100%';
     table.parentElement.parentElement.parentElement.style.height = '100%';
     table.parentElement.parentElement.style.height = '100%';
-    table.parentElement.style.height = '80%';
+    table.parentElement.style.height = '90%';
 };
 
 export const restyleWholePage = (): void => {

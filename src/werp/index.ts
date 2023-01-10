@@ -96,9 +96,7 @@ const getAttendanceByTrs = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, 
 };
 
 export const updatePredictedSignOutProgressBar = (table: HTMLTableElement, attendances: Attendance[]): void => {
-    const progressBarElement: HTMLDivElement | null = table.parentElement.parentElement.querySelector(
-        '#predicted-sign-out-progress-bar'
-    );
+    const progressBarElement: HTMLDivElement | null = table.parentElement.querySelector('#predicted-sign-out-progress-bar');
     if (progressBarElement === null) {
         return;
     }
@@ -135,7 +133,7 @@ const getPredictedSignOutInnerHTML = (attendances: Attendance[]): string => {
         progressBar.textClass += ' bg-secondary';
     } else if (predictedSignOutLeftMinutes > 0) {
         progressBar.percentage = Math.floor(100 - (predictedSignOutLeftMinutes / 540) * 100);
-        progressBar.text = `${predictedSignOutTimeString} ( 預計 ${predictedSignOutDate.fromNow()} )`;
+        progressBar.text = `${predictedSignOutTimeString} ( 預計 ${predictedSignOutLeftMinutes.toString()} 分鐘後 )`;
         progressBar.textClass += ' bg-success';
     } else {
         progressBar.percentage = 100;
@@ -150,11 +148,15 @@ const getPredictedSignOutInnerHTML = (attendances: Attendance[]): string => {
     }
 
     return `
-        <div id="predicted-sign-out-progress-bar">
-            <div class="progress" style="height: 30px;" role="progressbar" aria-label="Animated striped example" aria-valuenow="${progressBar.percentage}" aria-valuemin="0" aria-valuemax="100">
-              <div class="${progressBar.textClass}" style="width: ${progressBar.percentage}%; font-size: 16px; font-weight: bold">${progressBar.text}</div>
-            </div>
-        </div>
+        <tfoot id="predicted-sign-out-progress-bar">
+            <tr>
+                <td colspan="4">
+                    <div class="progress" style="height: 30px;" role="progressbar" aria-label="Animated striped example" aria-valuenow="${progressBar.percentage}" aria-valuemin="0" aria-valuemax="100">
+                        <div class="${progressBar.textClass}" style="width: ${progressBar.percentage}%; font-size: 16px; font-weight: bold">${progressBar.text}</div>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
     `;
 };
 
