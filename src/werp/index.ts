@@ -95,13 +95,14 @@ const getAttendanceByTrs = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, 
     return attendances;
 };
 
-export const updateTodayAttendanceContent = (table: HTMLTableElement, attendances: Attendance[]): void => {
-    const index: number = 5 - moment().day();
-    const todayAttendanceContentElement: HTMLTableRowElement = table.getElementsByTagName('tr').item(index);
-    const todayAttendanceSignOutElement: HTMLTableCellElement = todayAttendanceContentElement
-        .getElementsByTagName('td')
-        .item(2);
-    todayAttendanceSignOutElement.innerHTML = getAttendanceSignOutTemplate(getPredictedSignOutInnerHTML(attendances));
+export const updatePredictedSignOutProgressBar = (table: HTMLTableElement, attendances: Attendance[]): void => {
+    const progressBarElement: HTMLDivElement | null = table.parentElement.parentElement.querySelector(
+        '#predicted-sign-out-progress-bar'
+    );
+    if (progressBarElement === null) {
+        return;
+    }
+    progressBarElement.innerHTML = getPredictedSignOutInnerHTML(attendances);
 };
 
 const getPredictedSignOutInnerHTML = (attendances: Attendance[]): string => {

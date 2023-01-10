@@ -5,7 +5,7 @@ import { isToday } from '@/werp/classes/momentUtility';
 import { updateAttendanceFavicon } from '@/werp/classes/favicon';
 import { showAttendanceNotification, showUpdateLogNotification } from '@/werp/classes/notification';
 import { log } from '@/common/logger';
-import { updateTodayAttendanceContent } from '@/werp';
+import { updatePredictedSignOutProgressBar } from '@/werp';
 import UPDATE_LOGS from '@/werp/consts/UpdateLogs';
 
 export const resetAttendanceTimers = (): void => {
@@ -15,7 +15,7 @@ export const resetAttendanceTimers = (): void => {
 export const startAttendanceTimers = (table: HTMLTableElement, attendances: Attendance[]) => {
     for (let i = 1; i < attendances.length; i++) {
         if (isToday(attendances[i].signInDate) === true) {
-            updateTodayAttendanceContent(table, attendances);
+            updatePredictedSignOutProgressBar(table, attendances);
             updateAttendanceFavicon(attendances);
             showUpdateLogNotification(UPDATE_LOGS.slice(0, 1)[0]);
             showAttendanceNotification(attendances);
