@@ -176,7 +176,6 @@ export const getCompanyEmployeeTemplate = (
 export const getAttendanceDateTemplate = (attendance: Attendance): string => {
     return `
         <td role="gridcell">
-            ${isToday(attendance.signInDate) === true ? '<i class="fa fa-hand-o-right"></i>' : ''}
             <label id="formTemplate:attend_rec_datatable:0:j_idt760" class="ui-outputlabel ui-widget">
                 ${attendance.signInDate.format('MM/DD', { trim: false })} (${formatWeekday(attendance.signInDate)})
             </label>
