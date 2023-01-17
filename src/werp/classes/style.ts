@@ -11,7 +11,7 @@ export const appendPredictedSignOutProgressBar = (body: HTMLElement, innerHTML: 
     if (innerHTML === '') {
         return;
     }
-    body.parentElement.insertAdjacentHTML('beforeend', innerHTML);
+    document.querySelector('tr.today').insertAdjacentHTML('afterend', innerHTML);
 };
 
 export const appendCopyrightAndVersion = (body: HTMLElement): void => {

@@ -152,22 +152,21 @@ const getPredictedSignOutInnerHTML = (attendances: Attendance[]): string => {
     }
 
     return `
-        <tfoot id="predicted-sign-out-progress-bar">
-            <tr>
-                <td colspan="4">
-                    <div style="position: relative;">
-                        <div class="progress" style="height: 30px;">
-                            <div class="${progressBar.textClass}" style="width: ${
+        <tr style="display: none;"></tr>
+        <tr id="predicted-sign-out-progress-bar">
+            <td colspan="4">
+                <div style="position: relative;">
+                    <div class="progress" style="height: 30px;">
+                        <div class="${progressBar.textClass}" style="width: ${
         progressBar.percentage
     }%; font-size: 16px; font-weight: bold">${progressBar.text}</div>
-                        </div>
-                        <div style="position: absolute;top: 0;right: 12px;font-size: 18px;font-weight: bold;line-height: 30px;">
-                            <i class="fa fa-sign-out" aria-hidden="true"></i>${formatTime(predictedSignOutDate)}
-                        </div>
                     </div>
-                </td>
-            </tr>
-        </tfoot>
+                    <div style="position: absolute;top: 0;right: 12px;font-size: 18px;font-weight: bold;line-height: 30px;color: black;">
+                        <i class="fa fa-sign-out" aria-hidden="true"></i>${formatTime(predictedSignOutDate)}
+                    </div>
+                </div>
+            </td>
+        </tr>
     `;
 };
 
@@ -198,6 +197,9 @@ const updateAttendanceContent = (table: HTMLTableElement, attendances: Attendanc
         const attendanceContentElement: HTMLTableRowElement = document.createElement('tr');
         if (isToday(attendance.signInDate) === false) {
             attendanceContentElement.style.opacity = '0.5';
+        }
+        if (isToday(attendance.signInDate) === true) {
+            attendanceContentElement.className = 'today';
         }
         attendanceContentElement.innerHTML = getAttendanceDateTemplate(attendance);
         attendanceContentElement.innerHTML += getAttendanceSignInTemplate(attendance);
@@ -235,7 +237,6 @@ const main = (): void => {
             const firstDayAttendance: Attendance = getAttendanceByTr(trs.item(0));
             const leaveNotes: LeaveNote[] = await fetchPersonalLeaveNotes(firstDayAttendance);
             const attendances: Attendance[] = getAttendanceByTrs(trs, leaveNotes);
-
             removeAllAttendanceContent(table);
             appendLeaveNoteCaption(table);
             updateAttendanceContent(table, attendances);
