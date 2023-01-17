@@ -2,6 +2,11 @@ import UpdateLog from '@/werp/interfaces/UpdateLog';
 
 const UPDATE_LOGS: UpdateLog[] = [
     {
+        version: '3.8.0',
+        date: '20230117 1900',
+        messages: ['顯示今日工作進度條'],
+    },
+    {
         version: '3.7.0',
         date: '20230106 1200',
         messages: ['提示未簽到', '顯示更新日誌的通知視窗'],
