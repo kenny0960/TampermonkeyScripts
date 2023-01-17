@@ -10,6 +10,7 @@ import AnnualLeave from '@/werp/interfaces/AnnualLeave';
 import SessionKeys from '@/werp/enums/SessionKeys';
 import {
     formatAttendance,
+    getLeaveMinutes,
     getPredictedSignOutDate,
     getRemainMinutes,
     getTodayAttendance,
@@ -119,7 +120,6 @@ const getPredictedSignOutInnerHTML = (attendances: Attendance[]): string => {
     }
 
     const predictedSignOutDate: Moment = getPredictedSignOutDate(attendances);
-    const predictedSignOutTimeString: string = formatTime(predictedSignOutDate);
     const predictedSignOutLeftMinutes: number = predictedSignOutDate.diff(moment(), 'minutes');
     const todaySignOutLeftMinutes: number = signInDate.clone().add(9, 'hours').diff(moment(), 'minutes');
     const progressBar: ProgressBar = {
@@ -128,16 +128,20 @@ const getPredictedSignOutInnerHTML = (attendances: Attendance[]): string => {
     };
 
     if (predictedSignOutLeftMinutes > 30) {
-        progressBar.percentage = Math.floor(100 - (predictedSignOutLeftMinutes / 540) * 100);
-        progressBar.text = `${predictedSignOutTimeString} ( 預計 ${predictedSignOutDate.fromNow()} )`;
+        // 確保所有文字都可以顯示，最小 20%
+        progressBar.percentage = Math.max(
+            Math.floor(100 - (predictedSignOutLeftMinutes / (540 - getLeaveMinutes(attendance))) * 100),
+            20
+        );
+        progressBar.text = `預計 ${predictedSignOutDate.fromNow()}`;
         progressBar.textClass += ' bg-secondary';
     } else if (predictedSignOutLeftMinutes > 0) {
-        progressBar.percentage = Math.floor(100 - (predictedSignOutLeftMinutes / 540) * 100);
-        progressBar.text = `${predictedSignOutTimeString} ( 預計 ${predictedSignOutLeftMinutes.toString()} 分鐘後 )`;
+        progressBar.percentage = Math.floor(100 - (predictedSignOutLeftMinutes / (540 - getLeaveMinutes(attendance))) * 100);
+        progressBar.text = `預計 ${predictedSignOutLeftMinutes.toString()} 分鐘後`;
         progressBar.textClass += ' bg-success';
     } else {
         progressBar.percentage = 100;
-        progressBar.text = `${predictedSignOutTimeString} ( 符合下班條件 )`;
+        progressBar.text = `符合下班條件`;
         progressBar.textClass += ' bg-warning';
     }
     // 已經下班且無負債
@@ -151,8 +155,15 @@ const getPredictedSignOutInnerHTML = (attendances: Attendance[]): string => {
         <tfoot id="predicted-sign-out-progress-bar">
             <tr>
                 <td colspan="4">
-                    <div class="progress" style="height: 30px;" role="progressbar" aria-label="Animated striped example" aria-valuenow="${progressBar.percentage}" aria-valuemin="0" aria-valuemax="100">
-                        <div class="${progressBar.textClass}" style="width: ${progressBar.percentage}%; font-size: 16px; font-weight: bold">${progressBar.text}</div>
+                    <div style="position: relative;">
+                        <div class="progress" style="height: 30px;">
+                            <div class="${progressBar.textClass}" style="width: ${
+        progressBar.percentage
+    }%; font-size: 16px; font-weight: bold">${progressBar.text}</div>
+                        </div>
+                        <div style="position: absolute;top: 0;right: 12px;font-size: 18px;font-weight: bold;line-height: 30px;">
+                            <i class="fa fa-sign-out" aria-hidden="true"></i>${formatTime(predictedSignOutDate)}
+                        </div>
                     </div>
                 </td>
             </tr>
