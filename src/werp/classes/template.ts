@@ -4,6 +4,25 @@ import AnnualLeave from '@/werp/interfaces/AnnualLeave';
 import LeaveNote from '@/werp/interfaces/LeaveNote';
 import * as moment from 'moment';
 import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
+import ProgressBar from '@/werp/interfaces/ProgressBar';
+
+export const getProgressBarTemplate = (progressBar: ProgressBar): string => {
+    return `
+        <tr style="display: none;"></tr>
+        <tr id="predicted-sign-out-progress-bar">
+            <td colspan="4">
+                <div style="position: relative;">
+                    <div class="progress" style="height: 30px;">
+                        <div class="${progressBar.leftBar.class}" style="width: ${progressBar.percentage}%; font-size: 16px; font-weight: bold">${progressBar.leftBar.text}</div>
+                    </div>
+                    <div style="position: absolute;top: 0;right: 12px;font-size: 18px;font-weight: bold;line-height: 30px;color: ${progressBar.rightBar.color};">
+                        <i class="fa fa-sign-out" aria-hidden="true"></i>${progressBar.rightBar.text}
+                    </div>
+                </div>
+            </td>
+        </tr>
+    `;
+};
 
 export const getAnnualLeaveTemplate = (annualLeave: AnnualLeave | null): string => {
     if (annualLeave === null) {
