@@ -1,6 +1,13 @@
 interface ProgressBar {
     percentage: number;
-    text: string;
+    leftBar: {
+        text: string;
+        class: string;
+    };
+    rightBar: {
+        text: string;
+        color: string;
+    };
     textClass: string;
 }
 
