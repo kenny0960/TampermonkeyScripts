@@ -227,59 +227,61 @@ const updateCompanyEmployeeCountSession = (companyEmployeeCount: number | null):
     SessionManager.setByKey(SessionKeys.COMPANY_EMPLOYEE_COUNT, JSON.stringify(companyEmployeeCountObject));
 };
 
-const main = (): void => {
-    // 出缺勤表格
-    waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then(
-        async (table: HTMLTableElement): Promise<void> => {
-            if (table.parentElement.parentElement.innerText.includes('ⓚ design') === true) {
-                return;
-            }
-            initializeFaviconBadge();
-            resetAttendanceTimers();
-            log('出缺勤表格已經載入');
-            const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = table.getElementsByTagName('tr');
-            const firstDayAttendance: Attendance = getAttendanceByTr(trs.item(0));
-            const leaveNotes: LeaveNote[] = await fetchPersonalLeaveNotes(firstDayAttendance);
-            const attendances: Attendance[] = getAttendanceByTrs(trs, leaveNotes);
-            removeAllAttendanceContent(table);
-            appendLeaveNoteCaption(table);
-            updateAttendanceContent(table, attendances);
-            appendPredictedSignOutProgressBar(table, getPredictedSignOutInnerHTML(attendances));
-            appendCopyrightAndVersion(table);
-            prependForgottenAttendanceButton();
-            restyleAttendanceButtons();
-            restyleAttendanceTable(table);
-            restyleWholePage();
-            startAttendanceTimers(table, attendances);
-        }
-    );
+const attendanceMain = async (table: HTMLTableElement): Promise<void> => {
+    if (table.parentElement.parentElement.innerText.includes('ⓚ design') === true) {
+        return;
+    }
+    initializeFaviconBadge();
+    resetAttendanceTimers();
+    log('出缺勤表格已經載入');
+    const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = table.getElementsByTagName('tr');
+    const firstDayAttendance: Attendance = getAttendanceByTr(trs.item(0));
+    const leaveNotes: LeaveNote[] = await fetchPersonalLeaveNotes(firstDayAttendance);
+    const attendances: Attendance[] = getAttendanceByTrs(trs, leaveNotes);
+    removeAllAttendanceContent(table);
+    appendLeaveNoteCaption(table);
+    updateAttendanceContent(table, attendances);
+    appendPredictedSignOutProgressBar(table, getPredictedSignOutInnerHTML(attendances));
+    appendCopyrightAndVersion(table);
+    prependForgottenAttendanceButton();
+    restyleAttendanceButtons();
+    restyleAttendanceTable(table);
+    restyleWholePage();
+    startAttendanceTimers(table, attendances);
+};
 
-    // 待辦事項表格
-    waitElementLoaded('.waitingTaskMClass').then(async (table: HTMLTableElement): Promise<void> => {
-        if (table.innerText.includes('特休狀況') === true) {
-            return;
-        }
-        log('待辦事項表格已經載入');
-        const annualLeave: AnnualLeave | null = await fetchAnnualLeave();
-        const leaveReceiptNotes: LeaveReceiptNote[] = await fetchPersonalLeaveReceiptNotes();
-        const companyEmployeeCount: number | null = await fetchAllCompanyEmployeeCount();
-        const annualTemplate: string = getAnnualLeaveTemplate(annualLeave);
-        const leaveReceiptNotesTemplate: string = getLeaveReceiptNotesTemplate(leaveReceiptNotes);
-        const companyEmployeeTemplate: string = getCompanyEmployeeTemplate(
-            companyEmployeeCount,
-            SessionManager.getObjectByKey(SessionKeys.COMPANY_EMPLOYEE_COUNT)
-        );
-        updateCompanyEmployeeCountSession(companyEmployeeCount);
-        table.insertAdjacentHTML('afterbegin', annualTemplate);
-        table.insertAdjacentHTML('afterbegin', leaveReceiptNotesTemplate);
-        // TODO 暫時隱藏公司狀況
-        // table.insertAdjacentHTML('beforeend', companyEmployeeTemplate);
-    });
+const taskMain = async (table: HTMLTableElement): Promise<void> => {
+    if (table.innerText.includes('特休狀況') === true) {
+        return;
+    }
+    log('待辦事項表格已經載入');
+    const annualLeave: AnnualLeave | null = await fetchAnnualLeave();
+    const leaveReceiptNotes: LeaveReceiptNote[] = await fetchPersonalLeaveReceiptNotes();
+    const companyEmployeeCount: number | null = await fetchAllCompanyEmployeeCount();
+    const annualTemplate: string = getAnnualLeaveTemplate(annualLeave);
+    const leaveReceiptNotesTemplate: string = getLeaveReceiptNotesTemplate(leaveReceiptNotes);
+    const companyEmployeeTemplate: string = getCompanyEmployeeTemplate(
+        companyEmployeeCount,
+        SessionManager.getObjectByKey(SessionKeys.COMPANY_EMPLOYEE_COUNT)
+    );
+    updateCompanyEmployeeCountSession(companyEmployeeCount);
+    table.insertAdjacentHTML('afterbegin', annualTemplate);
+    table.insertAdjacentHTML('afterbegin', leaveReceiptNotesTemplate);
+    // TODO 暫時隱藏公司狀況
+    // table.insertAdjacentHTML('beforeend', companyEmployeeTemplate);
+};
+
+const main = (): void => {
+    waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then(attendanceMain);
+    waitElementLoaded('.waitingTaskMClass').then(taskMain);
 };
 
 (function () {
     moment.locale('zh-tw');
     main();
+    window.setInterval((): void => {
+        waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then(attendanceMain);
+    }, 5 * 1000);
     // 覆寫 WERP 原有函式
     reloadNewHome = (): void => {
         location.reload();
