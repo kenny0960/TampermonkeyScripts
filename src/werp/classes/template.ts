@@ -10,7 +10,7 @@ export const getProgressBarTemplate = (progressBar: ProgressBar): string => {
     return `
         <tr style="display: none;"></tr>
         <tr id="predicted-sign-out-progress-bar">
-            <td colspan="4">
+            <td colspan="4" style="padding-top: 0; height: 35px;">
                 <div style="position: relative;">
                     <div class="progress" style="height: 30px;">
                         <div class="${progressBar.leftBar.class}" style="width: ${progressBar.percentage}%; font-size: 16px; font-weight: bold">${progressBar.leftBar.text}</div>
@@ -195,9 +195,7 @@ export const getCompanyEmployeeTemplate = (
 export const getAttendanceDateTemplate = (attendance: Attendance): string => {
     return `
         <td role="gridcell">
-            <label id="formTemplate:attend_rec_datatable:0:j_idt760" class="ui-outputlabel ui-widget">
-                ${attendance.signInDate.format('MM/DD', { trim: false })} (${formatWeekday(attendance.signInDate)})
-            </label>
+            ${attendance.signInDate.format('MM/DD', { trim: false })} (${formatWeekday(attendance.signInDate)})
         </td>
     `;
 };
