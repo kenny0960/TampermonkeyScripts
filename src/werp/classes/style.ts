@@ -64,23 +64,23 @@ export const restyleAttendanceButtons = (): void => {
         });
 };
 
-export const removeAllAttendanceContent = (table: HTMLTableElement): void => {
-    table.querySelectorAll('tr').forEach((tr: HTMLTableRowElement) => {
+export const removeAllAttendanceContent = (tableSectionElement: HTMLTableSectionElement): void => {
+    tableSectionElement.querySelectorAll('tr').forEach((tr: HTMLTableRowElement) => {
         tr.remove();
     });
 };
 
-export const appendLeaveNoteCaption = (table: HTMLTableElement): void => {
+export const appendLeaveNoteCaption = (tableSectionElement: HTMLTableSectionElement): void => {
     const leaveCaption: HTMLTableCaptionElement = document.createElement('th');
     leaveCaption.innerHTML = '<span class="ui-column-title">請假/異常</span>';
-    table.parentNode.querySelector('thead tr').append(leaveCaption);
+    tableSectionElement.parentNode.querySelector('thead tr').append(leaveCaption);
 };
 
-export const restyleAttendanceTable = (table: HTMLTableElement): void => {
-    table.parentElement.parentElement.parentElement.parentElement.style.height = '100%';
-    table.parentElement.parentElement.parentElement.style.height = '100%';
-    table.parentElement.parentElement.style.height = '100%';
-    table.parentElement.style.height = '90%';
+export const restyleAttendanceTable = (tableSectionElement: HTMLTableSectionElement): void => {
+    tableSectionElement.parentElement.parentElement.parentElement.parentElement.style.height = '100%';
+    tableSectionElement.parentElement.parentElement.parentElement.style.height = '100%';
+    tableSectionElement.parentElement.parentElement.style.height = '100%';
+    tableSectionElement.parentElement.style.height = '90%';
 };
 
 export const restyleWholePage = (): void => {

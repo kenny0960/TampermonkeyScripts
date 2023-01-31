@@ -12,10 +12,10 @@ export const resetAttendanceTimers = (): void => {
     window.clearTimeout(Number(SessionManager.getByKey(SessionKeys.ATTENDANCE_TIMER)));
 };
 
-export const startAttendanceTimers = (table: HTMLTableElement, attendances: Attendance[]) => {
+export const startAttendanceTimers = (tableSectionElement: HTMLTableSectionElement, attendances: Attendance[]) => {
     for (let i = 1; i < attendances.length; i++) {
         if (isToday(attendances[i].signInDate) === true) {
-            updatePredictedSignOutProgressBar(table, attendances);
+            updatePredictedSignOutProgressBar(tableSectionElement, attendances);
             updateAttendanceFavicon(attendances);
             showUpdateLogNotification(UPDATE_LOGS.slice(0, 1)[0]);
             showAttendanceNotification(attendances);
@@ -23,7 +23,7 @@ export const startAttendanceTimers = (table: HTMLTableElement, attendances: Atte
             // 定時更新內容
             const attendanceTimer: number = window.setTimeout((): void => {
                 log('更新資訊');
-                startAttendanceTimers(table, attendances);
+                startAttendanceTimers(tableSectionElement, attendances);
             }, 60 * 1000);
             SessionManager.setByKey(SessionKeys.ATTENDANCE_TIMER, String(attendanceTimer));
         }

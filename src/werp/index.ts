@@ -97,8 +97,13 @@ const getAttendanceByTrs = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, 
     return attendances;
 };
 
-export const updatePredictedSignOutProgressBar = (table: HTMLTableElement, attendances: Attendance[]): void => {
-    const progressBarElement: HTMLDivElement | null = table.parentElement.querySelector('#predicted-sign-out-progress-bar');
+export const updatePredictedSignOutProgressBar = (
+    tableSectionElement: HTMLTableSectionElement,
+    attendances: Attendance[]
+): void => {
+    const progressBarElement: HTMLDivElement | null = tableSectionElement.parentElement.querySelector(
+        '#predicted-sign-out-progress-bar'
+    );
     if (progressBarElement === null) {
         return;
     }
@@ -195,7 +200,7 @@ const getSignOutInnerHTML = (attendance: Attendance): string => {
     }">  (${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes})</span>`;
 };
 
-const updateAttendanceContent = (table: HTMLTableElement, attendances: Attendance[]) => {
+const updateAttendanceContent = (tableSectionElement: HTMLTableSectionElement, attendances: Attendance[]) => {
     for (let i = 1; i < attendances.length; i++) {
         const attendance: Attendance = attendances[i];
         const attendanceContentElement: HTMLTableRowElement = document.createElement('tr');
@@ -209,7 +214,7 @@ const updateAttendanceContent = (table: HTMLTableElement, attendances: Attendanc
         attendanceContentElement.innerHTML += getAttendanceSignInTemplate(attendance);
         attendanceContentElement.innerHTML += getAttendanceSignOutTemplate(getSignOutInnerHTML(attendance));
         attendanceContentElement.innerHTML += getLeaveNoteTemplate(attendance.leaveNote);
-        table.prepend(attendanceContentElement);
+        tableSectionElement.prepend(attendanceContentElement);
     }
 };
 
@@ -227,27 +232,27 @@ const updateCompanyEmployeeCountSession = (companyEmployeeCount: number | null):
     SessionManager.setByKey(SessionKeys.COMPANY_EMPLOYEE_COUNT, JSON.stringify(companyEmployeeCountObject));
 };
 
-const attendanceMain = async (table: HTMLTableElement): Promise<void> => {
-    if (table.parentElement.parentElement.innerText.includes('ⓚ design') === true) {
+const attendanceMain = async (tableSectionElement: HTMLTableSectionElement): Promise<void> => {
+    if (tableSectionElement.parentElement.parentElement.innerText.includes('ⓚ design') === true) {
         return;
     }
     initializeFaviconBadge();
     resetAttendanceTimers();
     log('出缺勤表格已經載入');
-    const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = table.getElementsByTagName('tr');
+    const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = tableSectionElement.getElementsByTagName('tr');
     const firstDayAttendance: Attendance = getAttendanceByTr(trs.item(0));
     const leaveNotes: LeaveNote[] = await fetchPersonalLeaveNotes(firstDayAttendance);
     const attendances: Attendance[] = getAttendanceByTrs(trs, leaveNotes);
-    removeAllAttendanceContent(table);
-    appendLeaveNoteCaption(table);
-    updateAttendanceContent(table, attendances);
-    appendPredictedSignOutProgressBar(table, getPredictedSignOutInnerHTML(attendances));
-    appendCopyrightAndVersion(table);
+    removeAllAttendanceContent(tableSectionElement);
+    appendLeaveNoteCaption(tableSectionElement);
+    updateAttendanceContent(tableSectionElement, attendances);
+    appendPredictedSignOutProgressBar(tableSectionElement, getPredictedSignOutInnerHTML(attendances));
+    appendCopyrightAndVersion(tableSectionElement);
     prependForgottenAttendanceButton();
     restyleAttendanceButtons();
-    restyleAttendanceTable(table);
+    restyleAttendanceTable(tableSectionElement);
     restyleWholePage();
-    startAttendanceTimers(table, attendances);
+    startAttendanceTimers(tableSectionElement, attendances);
 };
 
 const taskMain = async (table: HTMLTableElement): Promise<void> => {
