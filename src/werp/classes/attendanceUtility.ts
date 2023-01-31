@@ -45,6 +45,10 @@ export const getWorkingMinutes = ({ signOutDate, signInDate }: Attendance): numb
     return signOutDate.diff(signInDate, 'minutes');
 };
 
+export const isNoBackLeaveNote = (leaveNote: LeaveNote): boolean => {
+    return leaveNote.receiptNote.includes('1800');
+};
+
 export const getLeaveMinutes = ({ signInDate, leaveNote }: Attendance): number => {
     const matches: RegExpMatchArray | null = leaveNote.receiptNote.match(/^(?<leaveTime>\d+)-(?<backTime>\d+).+$/);
 
@@ -58,7 +62,7 @@ export const getLeaveMinutes = ({ signInDate, leaveNote }: Attendance): number =
     const backDate: Moment = moment(`${date} ${backTime.slice(0, 2)}:${backTime.slice(2, 4)}`);
 
     // 上班途中請假不算累積分鐘
-    if (signInDate.isBefore(leaveDate)) {
+    if (isNoBackLeaveNote(leaveNote) === false && signInDate.isBefore(leaveDate)) {
         return 0;
     }
 
@@ -71,7 +75,11 @@ export const getRemainMinutes = (attendance: Attendance): number => {
 
 export const getPredictedSignOutDate = (attendances: Attendance[]): Moment => {
     const todayAttendance: Attendance = getTodayAttendance(attendances);
-    const { signOutDate }: Attendance = formatAttendance(todayAttendance);
-    // 根據剩餘分鐘來更新當日的預測可簽退時間
-    return formatEarliestSignOutDate(signOutDate.clone().subtract(getTotalRemainMinutes(attendances), 'minutes'));
+    const { signOutDate, leaveNote }: Attendance = formatAttendance(todayAttendance);
+    const predictedSignOutDate: Moment = signOutDate.clone().subtract(getTotalRemainMinutes(attendances), 'minutes');
+    // 請假到下班，無需校正
+    if (isNoBackLeaveNote(leaveNote) === true) {
+        return predictedSignOutDate;
+    }
+    return formatEarliestSignOutDate(predictedSignOutDate);
 };
