@@ -241,8 +241,9 @@ const attendanceMain = async (tableSectionElement: HTMLTableSectionElement): Pro
     log('出缺勤表格已經載入');
     const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = tableSectionElement.getElementsByTagName('tr');
     const firstDayAttendance: Attendance = getAttendanceByTr(trs.item(0));
-    const leaveNotes: LeaveNote[] = await fetchPersonalLeaveNotes(firstDayAttendance);
-    const attendances: Attendance[] = getAttendanceByTrs(trs, leaveNotes);
+    // TODO 優化後打開
+    //const leaveNotes: LeaveNote[] = await fetchPersonalLeaveNotes(firstDayAttendance);
+    const attendances: Attendance[] = getAttendanceByTrs(trs, []);
     removeAllAttendanceContent(tableSectionElement);
     appendLeaveNoteCaption(tableSectionElement);
     updateAttendanceContent(tableSectionElement, attendances);
@@ -278,17 +279,19 @@ const taskMain = async (table: HTMLTableElement): Promise<void> => {
 
 const main = (): void => {
     waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then(attendanceMain);
-    waitElementLoaded('.waitingTaskMClass').then(taskMain);
+    // TODO 優化後打開
+    // waitElementLoaded('.waitingTaskMClass').then(taskMain);
 };
 
 (function () {
     moment.locale('zh-tw');
     main();
-    window.setInterval((): void => {
-        waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then(attendanceMain);
-    }, 5 * 1000);
+    // TODO 優化後打開
+    // window.setInterval((): void => {
+    //     waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then(attendanceMain);
+    // }, 5 * 1000);
     // 覆寫 WERP 原有函式
-    reloadNewHome = (): void => {
-        location.reload();
-    };
+    // reloadNewHome = (): void => {
+    //     location.reload();
+    // };
 })();
