@@ -286,10 +286,10 @@ const main = (): void => {
 (function () {
     moment.locale('zh-tw');
     main();
+    window.setInterval((): void => {
+        waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then(attendanceMain);
+    }, 5 * 1000);
     // TODO 優化後打開
-    // window.setInterval((): void => {
-    //     waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then(attendanceMain);
-    // }, 5 * 1000);
     // 覆寫 WERP 原有函式
     // reloadNewHome = (): void => {
     //     location.reload();
