@@ -240,9 +240,9 @@ const attendanceMain = async (tableSectionElement: HTMLTableSectionElement): Pro
     resetAttendanceTimers();
     log('出缺勤表格已經載入');
     const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = tableSectionElement.getElementsByTagName('tr');
-    const firstDayAttendance: Attendance = getAttendanceByTr(trs.item(0));
     // TODO 優化後打開
-    //const leaveNotes: LeaveNote[] = await fetchPersonalLeaveNotes(firstDayAttendance);
+    // const firstDayAttendance: Attendance = getAttendanceByTr(trs.item(0));
+    // const leaveNotes: LeaveNote[] = await fetchPersonalLeaveNotes(firstDayAttendance);
     const attendances: Attendance[] = getAttendanceByTrs(trs, []);
     removeAllAttendanceContent(tableSectionElement);
     appendLeaveNoteCaption(tableSectionElement);
@@ -289,9 +289,8 @@ const main = (): void => {
     window.setInterval((): void => {
         waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then(attendanceMain);
     }, 5 * 1000);
-    // TODO 優化後打開
     // 覆寫 WERP 原有函式
-    // reloadNewHome = (): void => {
-    //     location.reload();
-    // };
+    reloadNewHome = (): void => {
+        location.reload();
+    };
 })();
