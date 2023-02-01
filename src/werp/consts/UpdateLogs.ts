@@ -2,6 +2,11 @@ import UpdateLog from '@/werp/interfaces/UpdateLog';
 
 const UPDATE_LOGS: UpdateLog[] = [
     {
+        version: '3.8.1',
+        date: '20230201 1300',
+        messages: ['關閉所有 ajax 行為'],
+    },
+    {
         version: '3.8.0',
         date: '20230117 1900',
         messages: ['顯示今日工作進度條'],
