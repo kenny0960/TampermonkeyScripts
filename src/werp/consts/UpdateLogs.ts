@@ -2,6 +2,11 @@ import UpdateLog from '@/werp/interfaces/UpdateLog';
 
 const UPDATE_LOGS: UpdateLog[] = [
     {
+        version: '3.8.2',
+        date: '20230201 1330',
+        messages: ['每隔十分鐘之後仍然顯示簽到退表格'],
+    },
+    {
         version: '3.8.1',
         date: '20230201 1300',
         messages: ['關閉所有 ajax 行為'],
