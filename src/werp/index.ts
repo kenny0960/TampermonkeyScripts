@@ -47,6 +47,7 @@ import {
     getLeaveNotes,
     getLeaveReceiptNotes,
 } from '@/werp/classes/sessionManager';
+import { sleep } from '@/common/timer';
 
 export const getCurrentYear = (): number => {
     const yearElement: HTMLSpanElement | null = document.querySelector('.ui-datepicker-year');
@@ -239,6 +240,7 @@ const attendanceMain = async (tableSectionElement: HTMLTableSectionElement): Pro
 };
 
 const taskMain = async (table: HTMLTableElement): Promise<void> => {
+    await sleep(1);
     if (table.innerText.includes('特休狀況') === true) {
         return;
     }
