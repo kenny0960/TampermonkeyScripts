@@ -3,11 +3,9 @@ import 'favIcon-badge';
 
 import { log } from '@/common/logger';
 import { waitElementLoaded } from '@/common/dom';
-import SessionManager from '@/common/SessionManager';
 import { Moment } from '@/moment';
 import Attendance from '@/werp/interfaces/Attendance';
 import AnnualLeave from '@/werp/interfaces/AnnualLeave';
-import SessionKeys from '@/werp/enums/SessionKeys';
 import {
     formatAttendance,
     getLeaveMinutes,
@@ -22,17 +20,10 @@ import {
     getAttendanceDateTemplate,
     getAttendanceSignInTemplate,
     getAttendanceSignOutTemplate,
-    getCompanyEmployeeTemplate,
     getLeaveNoteTemplate,
     getLeaveReceiptNotesTemplate,
     getProgressBarTemplate,
 } from '@/werp/classes/template';
-import {
-    fetchAllCompanyEmployeeCount,
-    fetchAnnualLeave,
-    fetchPersonalLeaveNotes,
-    fetchPersonalLeaveReceiptNotes,
-} from '@/werp/classes/ajax';
 import LeaveNote from '@/werp/interfaces/LeaveNote';
 import { defaultLeaveNote } from '@/werp/classes/leaveNote';
 import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
@@ -50,6 +41,12 @@ import {
 import { resetAttendanceTimers, startAttendanceTimers } from '@/werp/classes/timer';
 import ProgressBar from '@/werp/interfaces/ProgressBar';
 import { defaultProgressBar } from '@/werp/classes/progressBar';
+import {
+    getAnnualLeave,
+    getCompanyEmployeeCountObject,
+    getLeaveNotes,
+    getLeaveReceiptNotes,
+} from '@/werp/classes/sessionManager';
 
 export const getCurrentYear = (): number => {
     const yearElement: HTMLSpanElement | null = document.querySelector('.ui-datepicker-year');
@@ -218,20 +215,6 @@ const updateAttendanceContent = (tableSectionElement: HTMLTableSectionElement, a
     }
 };
 
-const updateCompanyEmployeeCountSession = (companyEmployeeCount: number | null): void => {
-    if (companyEmployeeCount === null) {
-        return;
-    }
-    const year: number = moment().year();
-    const week: number = moment().week();
-    const companyEmployeeCountObject: Object = SessionManager.getObjectByKey(SessionKeys.COMPANY_EMPLOYEE_COUNT);
-    companyEmployeeCountObject[year] = {
-        ...companyEmployeeCountObject[year],
-        [week]: companyEmployeeCount,
-    };
-    SessionManager.setByKey(SessionKeys.COMPANY_EMPLOYEE_COUNT, JSON.stringify(companyEmployeeCountObject));
-};
-
 const attendanceMain = async (tableSectionElement: HTMLTableSectionElement): Promise<void> => {
     if (tableSectionElement.parentElement.parentElement.innerText.includes('ⓚ design') === true) {
         return;
@@ -240,10 +223,9 @@ const attendanceMain = async (tableSectionElement: HTMLTableSectionElement): Pro
     resetAttendanceTimers();
     log('出缺勤表格已經載入');
     const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = tableSectionElement.getElementsByTagName('tr');
-    // TODO 優化後打開
-    // const firstDayAttendance: Attendance = getAttendanceByTr(trs.item(0));
-    // const leaveNotes: LeaveNote[] = await fetchPersonalLeaveNotes(firstDayAttendance);
-    const attendances: Attendance[] = getAttendanceByTrs(trs, []);
+    const firstDayAttendance: Attendance = getAttendanceByTr(trs.item(0));
+    const leaveNotes: LeaveNote[] = await getLeaveNotes(firstDayAttendance);
+    const attendances: Attendance[] = getAttendanceByTrs(trs, leaveNotes);
     removeAllAttendanceContent(tableSectionElement);
     appendLeaveNoteCaption(tableSectionElement);
     updateAttendanceContent(tableSectionElement, attendances);
@@ -261,26 +243,19 @@ const taskMain = async (table: HTMLTableElement): Promise<void> => {
         return;
     }
     log('待辦事項表格已經載入');
-    const annualLeave: AnnualLeave | null = await fetchAnnualLeave();
-    const leaveReceiptNotes: LeaveReceiptNote[] = await fetchPersonalLeaveReceiptNotes();
-    const companyEmployeeCount: number | null = await fetchAllCompanyEmployeeCount();
+    const annualLeave: AnnualLeave | null = await getAnnualLeave();
+    const leaveReceiptNotes: LeaveReceiptNote[] = await getLeaveReceiptNotes();
+    // TODO 暫時隱藏公司狀況
+    await getCompanyEmployeeCountObject();
     const annualTemplate: string = getAnnualLeaveTemplate(annualLeave);
     const leaveReceiptNotesTemplate: string = getLeaveReceiptNotesTemplate(leaveReceiptNotes);
-    const companyEmployeeTemplate: string = getCompanyEmployeeTemplate(
-        companyEmployeeCount,
-        SessionManager.getObjectByKey(SessionKeys.COMPANY_EMPLOYEE_COUNT)
-    );
-    updateCompanyEmployeeCountSession(companyEmployeeCount);
     table.insertAdjacentHTML('afterbegin', annualTemplate);
     table.insertAdjacentHTML('afterbegin', leaveReceiptNotesTemplate);
-    // TODO 暫時隱藏公司狀況
-    // table.insertAdjacentHTML('beforeend', companyEmployeeTemplate);
 };
 
 const main = (): void => {
     waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then(attendanceMain);
-    // TODO 優化後打開
-    // waitElementLoaded('.waitingTaskMClass').then(taskMain);
+    waitElementLoaded('.waitingTaskMClass').then(taskMain);
 };
 
 (function () {
