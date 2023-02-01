@@ -23,6 +23,17 @@ class SessionManager {
         return {};
     }
 
+    static getArrayByKey(key: string): [] {
+        if (SessionManager.has(key) === false) {
+            return [];
+        }
+        const jsonString: string = sessionStorage.getItem(key);
+        if (isJson(jsonString) === true) {
+            return JSON.parse(jsonString);
+        }
+        return [];
+    }
+
     static setByKey(key: string, value: string): void {
         sessionStorage.setItem(key, value);
     }
