@@ -1,6 +1,5 @@
 import { Moment } from '@/moment';
 import * as moment from 'moment';
-import { getTotalRemainMinutes } from '@/werp/classes/attendanceUtility';
 
 export const formatWeekday = (moment: Moment): string => {
     switch (moment.day()) {
@@ -28,6 +27,10 @@ export const formatTime = (moment: Moment): string => {
         return '';
     }
     return time;
+};
+
+export const formatDatetime = (moment: Moment): string => {
+    return moment.format('YYYY/MM/DD HH:mm', { trim: false });
 };
 
 export const isToday = (targetMoment: Moment): boolean => {
