@@ -19,7 +19,7 @@ export const isValidTimestamp = (sessionKey: SessionKeys, timeoutSeconds: number
     if (timestamp === '') {
         return false;
     }
-    return moment().unix() - Number(timestamp) < timeoutSeconds;
+    return moment().valueOf() - Number(timestamp) < timeoutSeconds * 1000;
 };
 
 export const getLeaveNotes = async (attendance: Attendance): Promise<LeaveNote[]> => {
@@ -29,7 +29,7 @@ export const getLeaveNotes = async (attendance: Attendance): Promise<LeaveNote[]
     }
     const leaveNotes: LeaveNote[] = await fetchPersonalLeaveNotes(attendance);
     SessionManager.setByKey(SessionKeys.AJAX_LEAVE_NOTES, JSON.stringify(leaveNotes));
-    SessionManager.setByKey(SessionKeys.AJAX_LEAVE_NOTES_TIMESTAMP, String(moment().unix()));
+    SessionManager.setByKey(SessionKeys.AJAX_LEAVE_NOTES_TIMESTAMP, String(moment().valueOf()));
     log('從伺服器取得請假/異常記錄');
     return leaveNotes;
 };
@@ -41,7 +41,7 @@ export const getAnnualLeave = async (): Promise<AnnualLeave | null> => {
     }
     const annualLeave: AnnualLeave | null = await fetchAnnualLeave();
     SessionManager.setByKey(SessionKeys.AJAX_ANNUAL_LEAVE, JSON.stringify(annualLeave));
-    SessionManager.setByKey(SessionKeys.AJAX_ANNUAL_LEAVE_TIMESTAMP, String(moment().unix()));
+    SessionManager.setByKey(SessionKeys.AJAX_ANNUAL_LEAVE_TIMESTAMP, String(moment().valueOf()));
     log('從伺服器取得特休記錄');
     return annualLeave;
 };
@@ -53,7 +53,7 @@ export const getLeaveReceiptNotes = async (): Promise<LeaveReceiptNote[]> => {
     }
     const leaveReceiptNotes: LeaveReceiptNote[] = await fetchPersonalLeaveReceiptNotes();
     SessionManager.setByKey(SessionKeys.AJAX_LEAVE_RECEIPT_NOTES, JSON.stringify(leaveReceiptNotes));
-    SessionManager.setByKey(SessionKeys.AJAX_LEAVE_RECEIPT_NOTES_TIMESTAMP, String(moment().unix()));
+    SessionManager.setByKey(SessionKeys.AJAX_LEAVE_RECEIPT_NOTES_TIMESTAMP, String(moment().valueOf()));
     log('從伺服器取得請假記錄');
     return leaveReceiptNotes;
 };
@@ -64,7 +64,7 @@ export const getCompanyEmployeeCountObject = async (): Promise<Object | null> =>
         return SessionManager.getObjectByKey(SessionKeys.AJAX_COMPANY_EMPLOYEE_COUNT);
     }
     const companyEmployeeCount: number | null = await fetchAllCompanyEmployeeCount();
-    SessionManager.setByKey(SessionKeys.AJAX_COMPANY_EMPLOYEE_COUNT_TIMESTAMP, String(moment().unix()));
+    SessionManager.setByKey(SessionKeys.AJAX_COMPANY_EMPLOYEE_COUNT_TIMESTAMP, String(moment().valueOf()));
 
     if (companyEmployeeCount === null) {
         return;
