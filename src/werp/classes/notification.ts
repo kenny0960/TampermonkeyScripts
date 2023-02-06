@@ -9,7 +9,47 @@ import SessionKeys from '@/werp/enums/SessionKeys';
 import { showNotification } from '@/common/notification';
 import { log } from '@/common/logger';
 import UpdateLog from '@/werp/interfaces/UpdateLog';
-import { GOOD_BYE_IMAGE, NEW_VERSION_IMAGE, STITCH_IN_PAINTING_IMAGE, WARNING_IMAGE } from '@/werp/consts/Base64Image';
+import {
+    GOOD_BYE_IMAGE,
+    NEW_VERSION_IMAGE,
+    RING_BELL_IMAGE,
+    STITCH_IN_PAINTING_IMAGE,
+    WARNING_IMAGE,
+} from '@/werp/consts/Base64Image';
+
+export const showCompanyNotification = (): void => {
+    const currentDate: Moment = moment();
+    const currentDateString: string = currentDate.format('YYYYMMDD', { trim: false });
+    const notificationElements: NodeListOf<HTMLTableRowElement> = document.querySelectorAll(
+        '#formTemplate\\:dtAlert2_data > tr'
+    );
+    const notifications: string[] = [];
+
+    if (notificationElements.length === 0) {
+        return;
+    }
+
+    if (SessionManager.getByKey(SessionKeys.COMPANY_NOTIFICATION) === currentDateString) {
+        return;
+    }
+
+    notificationElements.forEach((notificationElement: HTMLTableRowElement): void => {
+        // 範本：'公告 (2023年 2月事業群聚餐)\n                \n                admin'
+        notifications.push(notificationElement.innerText.split('\n')[0]);
+    });
+
+    showNotification(
+        '公告',
+        {
+            body: `${notifications.join('、')}...`,
+            icon: RING_BELL_IMAGE,
+        },
+        (): void => {
+            log(`已經關閉公司公告通知`);
+            SessionManager.setByKey(SessionKeys.COMPANY_NOTIFICATION, currentDateString);
+        }
+    );
+};
 
 export const showAttendanceNotification = (attendances: Attendance[]): void => {
     const currentDate: Moment = moment();

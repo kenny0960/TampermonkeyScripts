@@ -3,7 +3,7 @@ import SessionKeys from '@/werp/enums/SessionKeys';
 import Attendance from '@/werp/interfaces/Attendance';
 import { isToday } from '@/werp/classes/momentUtility';
 import { updateAttendanceFavicon } from '@/werp/classes/favicon';
-import { showAttendanceNotification, showUpdateLogNotification } from '@/werp/classes/notification';
+import { showAttendanceNotification, showCompanyNotification, showUpdateLogNotification } from '@/werp/classes/notification';
 import { log } from '@/common/logger';
 import { updatePredictedSignOutProgressBar } from '@/werp';
 import UPDATE_LOGS from '@/werp/consts/UpdateLogs';
@@ -19,6 +19,7 @@ export const startAttendanceTimers = (tableSectionElement: HTMLTableSectionEleme
             updateAttendanceFavicon(attendances);
             showUpdateLogNotification(UPDATE_LOGS.slice(0, 1)[0]);
             showAttendanceNotification(attendances);
+            showCompanyNotification();
 
             // 定時更新內容
             const attendanceTimer: number = window.setTimeout((): void => {
