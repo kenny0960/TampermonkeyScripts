@@ -18,18 +18,12 @@ import {
 } from '@/werp/consts/Base64Image';
 
 export const showCompanyNotification = (): void => {
-    const currentDate: Moment = moment();
-    const currentDateString: string = currentDate.format('YYYYMMDD', { trim: false });
     const notificationElements: NodeListOf<HTMLTableRowElement> = document.querySelectorAll(
         '#formTemplate\\:dtAlert2_data > tr'
     );
     const notifications: string[] = [];
 
-    if (notificationElements.length === 0) {
-        return;
-    }
-
-    if (SessionManager.getByKey(SessionKeys.COMPANY_NOTIFICATION) === currentDateString) {
+    if (notificationElements.length === 0 || notificationElements.item(0).innerText.trim() === '無最新消息資料') {
         return;
     }
 
@@ -45,8 +39,11 @@ export const showCompanyNotification = (): void => {
             icon: RING_BELL_IMAGE,
         },
         (): void => {
-            log(`已經關閉公司公告通知`);
-            SessionManager.setByKey(SessionKeys.COMPANY_NOTIFICATION, currentDateString);
+            const closeBtn: HTMLAnchorElement | null = document.querySelector('#formTemplate\\:j_idt55');
+            if (closeBtn === null) {
+                return;
+            }
+            closeBtn.click();
         }
     );
 };
