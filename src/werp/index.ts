@@ -48,6 +48,7 @@ import {
     getLeaveReceiptNotes,
 } from '@/werp/classes/sessionManager';
 import { sleep } from '@/common/timer';
+import { appendUpdateAnnualLeaveFunction } from '@/werp/classes/annualLeave';
 
 export const getCurrentYear = (): number => {
     const yearElement: HTMLSpanElement | null = document.querySelector('.ui-datepicker-year');
@@ -252,6 +253,7 @@ const taskMain = async (table: HTMLTableElement): Promise<void> => {
     const annualTemplate: string = getAnnualLeaveTemplate(annualLeave);
     const leaveReceiptNotesTemplate: string = getLeaveReceiptNotesTemplate(leaveReceiptNotes);
     table.insertAdjacentHTML('afterbegin', annualTemplate);
+    appendUpdateAnnualLeaveFunction();
     table.insertAdjacentHTML('afterbegin', leaveReceiptNotesTemplate);
 };
 

@@ -1,10 +1,13 @@
+import * as moment from 'moment';
+
 import Attendance from '@/werp/interfaces/Attendance';
-import { formatTime, formatWeekday, isToday } from '@/werp/classes/momentUtility';
+import { formatDatetime, formatTime, formatWeekday, isToday } from '@/werp/classes/momentUtility';
 import AnnualLeave from '@/werp/interfaces/AnnualLeave';
 import LeaveNote from '@/werp/interfaces/LeaveNote';
-import * as moment from 'moment';
 import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
 import ProgressBar from '@/werp/interfaces/ProgressBar';
+import SessionManager from '@/common/SessionManager';
+import SessionKeys from '@/werp/enums/SessionKeys';
 
 export const getProgressBarTemplate = (progressBar: ProgressBar): string => {
     return `
@@ -28,35 +31,44 @@ export const getAnnualLeaveTemplate = (annualLeave: AnnualLeave | null): string 
     if (annualLeave === null) {
         return '';
     }
+    const lastUpdateDatetime: string = formatDatetime(
+        moment(Number(SessionManager.getByKey(SessionKeys.AJAX_ANNUAL_LEAVE_TIMESTAMP)))
+    );
     return `
-<div id="formTemplate:j_idt323" class="ui-outputpanel ui-widget">
-  <div class="ui-g-12 waiting-task-g">
-    <div class="title-name ui-g-4 ">特休狀況
-    </div>
-    <div class="ui-g-8 ">
-      <span class="todocss">
-        <ul class="todo-ul-list">
-          <li>
-            <img id="formTemplate:j_idt329:0:j_idt331" src="/portal/javax.faces.resource/werp_blue.png.xhtml?ln=images" alt="">
-            <label id="formTemplate:j_idt329:0:j_idt333" class="ui-outputlabel ui-widget" style=" width: 0px;"></label>
-            已休(含在途)：${annualLeave.leaveHours}
-          </li>
-          <li>
-            <img id="formTemplate:j_idt329:2:j_idt332" src="/portal/javax.faces.resource/werp_red.png.xhtml?ln=images" alt="">
-            <label id="formTemplate:j_idt329:2:j_idt333" class="ui-outputlabel ui-widget" style=" width: 0px;"></label>
-            <a href="/hr-attendance/leave/personal/personal-apply.xhtml" target="_blank" class="select-link-red">未休：${annualLeave.notLeaveHours}</a>
-          </li>
-          <li>
-            <img id="formTemplate:j_idt329:0:j_idt331" src="/portal/javax.faces.resource/werp_blue.png.xhtml?ln=images" alt="">
-            <label id="formTemplate:j_idt329:0:j_idt333" class="ui-outputlabel ui-widget" style=" width: 0px;"></label>
-            有效日：${annualLeave.endDatetime}
-          </li>
-        </ul>
-      </span>
-    </div>
-  </div>
-</div>
-<table id="formTemplate:j_idt319" class="ui-panelgrid ui-widget" style=" width: 100%; border: none;margin-top: 2px;margin-bottom: 2px; " role="grid"><tbody><tr class="ui-widget-content ui-panelgrid-even" role="row"><td role="gridcell" class="ui-panelgrid-cell" style="border-bottom-color: #C4C4C4;border-bottom-width: 0.5px;border-top-color: white;                                border-left-color: white;border-right-color: white;"></td></tr></tbody></table>
+        <div id="annual-leave-template">
+            <div class="ui-outputpanel ui-widget">
+              <div class="ui-g-12 waiting-task-g">
+                <div class="title-name ui-g-4 ">特休狀況
+                </div>
+                <div class="ui-g-8 ">
+                  <span class="todocss">
+                    <ul class="todo-ul-list">
+                      <li>
+                        <img id="formTemplate:j_idt329:0:j_idt331" src="/portal/javax.faces.resource/werp_blue.png.xhtml?ln=images" alt="">
+                        <label id="formTemplate:j_idt329:0:j_idt333" class="ui-outputlabel ui-widget" style=" width: 0px;"></label>
+                        已休(含在途)：${annualLeave.leaveHours}
+                      </li>
+                      <li>
+                        <img id="formTemplate:j_idt329:2:j_idt332" src="/portal/javax.faces.resource/werp_red.png.xhtml?ln=images" alt="">
+                        <label id="formTemplate:j_idt329:2:j_idt333" class="ui-outputlabel ui-widget" style=" width: 0px;"></label>
+                        <a href="/hr-attendance/leave/personal/personal-apply.xhtml" target="_blank" class="select-link-red">未休：${annualLeave.notLeaveHours}</a>
+                      </li>
+                      <li>
+                        <img id="formTemplate:j_idt329:0:j_idt331" src="/portal/javax.faces.resource/werp_blue.png.xhtml?ln=images" alt="">
+                        <label id="formTemplate:j_idt329:0:j_idt333" class="ui-outputlabel ui-widget" style=" width: 0px;"></label>
+                        有效日：${annualLeave.endDatetime}
+                      </li>
+                      <li style="text-align: end;font-size: 12px;">
+                        最後更新：${lastUpdateDatetime}
+                        <i id="update-annual-leave" class="fa fa-refresh" style="cursor: pointer;"></i>
+                      </li>
+                    </ul>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <table id="formTemplate:j_idt319" class="ui-panelgrid ui-widget" style=" width: 100%; border: none;margin-top: 2px;margin-bottom: 2px; " role="grid"><tbody><tr class="ui-widget-content ui-panelgrid-even" role="row"><td role="gridcell" class="ui-panelgrid-cell" style="border-bottom-color: #C4C4C4;border-bottom-width: 0.5px;border-top-color: white;                                border-left-color: white;border-right-color: white;"></td></tr></tbody></table>
+        </div>
     `;
 };
 
