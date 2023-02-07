@@ -14,7 +14,7 @@ import {
     getTodayAttendance,
     getWeekAttendances,
 } from '@/werp/classes/attendanceUtility';
-import { formatTime, getToday, isToday } from '@/werp/classes/momentUtility';
+import { formatTime, isToday } from '@/werp/classes/momentUtility';
 import {
     getAnnualLeaveTemplate,
     getAttendanceDateTemplate,
@@ -49,21 +49,12 @@ import {
 } from '@/werp/classes/sessionManager';
 import { sleep } from '@/common/timer';
 import { appendUpdateAnnualLeaveFunction } from '@/werp/classes/annualLeave';
-
-export const getCurrentYear = (): number => {
-    const yearElement: HTMLSpanElement | null = document.querySelector('.ui-datepicker-year');
-
-    if (yearElement === null) {
-        return moment().year();
-    }
-
-    return Number(yearElement.innerText);
-};
+import { getPickedYear } from '@/werp/classes/calendar';
 
 const getAttendanceByTr = (tr: HTMLTableRowElement): Attendance => {
     // ['09/12 (一)', '09:38', '18:41']
     const datetimeStrings: string[] = tr.innerText.split('\t');
-    const dateString: string = `${getCurrentYear()}/${datetimeStrings[0].split(' ')[0]}`;
+    const dateString: string = `${getPickedYear()}/${datetimeStrings[0].split(' ')[0]}`;
     const signInDate: Moment = moment(`${dateString} ${datetimeStrings[1]}`);
     const signOutDate: Moment = moment(`${dateString} ${datetimeStrings[2]}`);
     return {
@@ -74,8 +65,7 @@ const getAttendanceByTr = (tr: HTMLTableRowElement): Attendance => {
 };
 
 const getAttendanceByTrs = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, leaveNotes: LeaveNote[]): Attendance[] => {
-    const today: Moment = getToday();
-    const attendances: Attendance[] = getWeekAttendances(today, leaveNotes);
+    const attendances: Attendance[] = getWeekAttendances(leaveNotes);
 
     for (let i = 0; i < trs.length; i++) {
         const tr: HTMLTableRowElement = trs[i];
@@ -225,8 +215,7 @@ const attendanceMain = async (tableSectionElement: HTMLTableSectionElement): Pro
     resetAttendanceTimers();
     log('出缺勤表格已經載入');
     const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = tableSectionElement.getElementsByTagName('tr');
-    const today: Moment = getToday();
-    const leaveNotes: LeaveNote[] = await getLeaveNotes(today);
+    const leaveNotes: LeaveNote[] = await getLeaveNotes();
     const attendances: Attendance[] = getAttendanceByTrs(trs, leaveNotes);
     removeAllAttendanceContent(tableSectionElement);
     appendLeaveNoteCaption(tableSectionElement);

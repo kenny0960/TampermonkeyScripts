@@ -3,12 +3,13 @@ import { Moment } from '@/moment';
 import * as moment from 'moment';
 import LeaveNote from '@/werp/interfaces/LeaveNote';
 import { defaultLeaveNote } from '@/werp/classes/leaveNote';
-import { formatEarliestSignInDate, formatEarliestSignOutDate } from '@/werp/classes/momentUtility';
+import { formatEarliestSignInDate, formatEarliestSignOutDate, getPickedDate } from '@/werp/classes/momentUtility';
 
-export const getWeekAttendances = (today: Moment, leaveNotes: LeaveNote[]): Attendance[] => {
+export const getWeekAttendances = (leaveNotes: LeaveNote[]): Attendance[] => {
+    const pickedDate: Moment = getPickedDate();
     const attendances: Attendance[] = [];
     for (let i = 1; i < 6; i++) {
-        const initialDate: Moment = moment(today.day(i).format('YYYY/MM/DD 00:00', { trim: false }));
+        const initialDate: Moment = moment(pickedDate.day(i).format('YYYY/MM/DD 00:00', { trim: false }));
         attendances[i] = {
             signInDate: initialDate,
             signOutDate: initialDate,

@@ -1,5 +1,6 @@
 import { Moment } from '@/moment';
 import * as moment from 'moment';
+import { getPickedDateString } from '@/werp/classes/calendar';
 
 export const formatWeekday = (moment: Moment): string => {
     switch (moment.day()) {
@@ -37,9 +38,8 @@ export const isToday = (targetMoment: Moment): boolean => {
     return moment().isSame(targetMoment.format('YYYY/MM/DD', { trim: false }), 'day') === true;
 };
 
-export const getToday = (): Moment => {
-    // TODO 透過畫面去取的當天
-    return moment();
+export const getPickedDate = (): Moment => {
+    return moment(getPickedDateString());
 };
 
 export const formatEarliestSignInDate = (signInDate: Moment): Moment => {
