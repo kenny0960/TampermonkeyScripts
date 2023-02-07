@@ -58,7 +58,7 @@ export const prependForgottenAttendanceButton = (): void => {
 
 export const restyleAttendanceButtons = (): void => {
     document
-        .querySelectorAll('table[id="formTemplate:attend_rec_panel-title"] .ui-panel-content button,span,a')
+        .querySelectorAll('#formTemplate\\:attend_rec_panel-title .ui-panel-content > *')
         .forEach((buttonElement: HTMLButtonElement): void => {
             buttonElement.style.marginRight = '4px';
         });
