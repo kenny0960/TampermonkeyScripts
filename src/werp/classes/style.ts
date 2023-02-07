@@ -72,7 +72,10 @@ export const removeAllAttendanceContent = (tableSectionElement: HTMLTableSection
 
 export const appendLeaveNoteCaption = (tableSectionElement: HTMLTableSectionElement): void => {
     const leaveCaption: HTMLTableCaptionElement = document.createElement('th');
-    leaveCaption.innerHTML = '<span class="ui-column-title">請假/異常</span>';
+    leaveCaption.innerHTML = `
+        <span class="ui-column-title">請假/異常</span>
+        <i id="update-leave-note" class="fa fa-refresh" style="cursor: pointer;"></i>
+    `;
     tableSectionElement.parentNode.querySelector('thead tr').append(leaveCaption);
 };
 

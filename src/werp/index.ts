@@ -25,7 +25,7 @@ import {
     getProgressBarTemplate,
 } from '@/werp/classes/template';
 import LeaveNote from '@/werp/interfaces/LeaveNote';
-import { defaultLeaveNote } from '@/werp/classes/leaveNote';
+import { appendUpdateLeaveNoteFunction, defaultLeaveNote } from '@/werp/classes/leaveNote';
 import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
 import { initializeFaviconBadge } from '@/werp/classes/favicon';
 import {
@@ -219,6 +219,7 @@ const attendanceMain = async (tableSectionElement: HTMLTableSectionElement): Pro
     const attendances: Attendance[] = getAttendanceByTrs(trs, leaveNotes);
     removeAllAttendanceContent(tableSectionElement);
     appendLeaveNoteCaption(tableSectionElement);
+    appendUpdateLeaveNoteFunction();
     updateAttendanceContent(tableSectionElement, attendances);
     appendPredictedSignOutProgressBar(tableSectionElement, getPredictedSignOutInnerHTML(attendances));
     appendCopyrightAndVersion(tableSectionElement);
