@@ -14,7 +14,7 @@ import {
     getTodayAttendance,
     getWeekAttendances,
 } from '@/werp/classes/attendanceUtility';
-import { formatTime, isToday } from '@/werp/classes/momentUtility';
+import { formatTime, getToday, isToday } from '@/werp/classes/momentUtility';
 import {
     getAnnualLeaveTemplate,
     getAttendanceDateTemplate,
@@ -74,8 +74,8 @@ const getAttendanceByTr = (tr: HTMLTableRowElement): Attendance => {
 };
 
 const getAttendanceByTrs = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, leaveNotes: LeaveNote[]): Attendance[] => {
-    const firstDayAttendance: Attendance = getAttendanceByTr(trs.item(0));
-    const attendances: Attendance[] = getWeekAttendances(firstDayAttendance, leaveNotes);
+    const today: Moment = getToday();
+    const attendances: Attendance[] = getWeekAttendances(today, leaveNotes);
 
     for (let i = 0; i < trs.length; i++) {
         const tr: HTMLTableRowElement = trs[i];
@@ -225,8 +225,8 @@ const attendanceMain = async (tableSectionElement: HTMLTableSectionElement): Pro
     resetAttendanceTimers();
     log('出缺勤表格已經載入');
     const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = tableSectionElement.getElementsByTagName('tr');
-    const firstDayAttendance: Attendance = getAttendanceByTr(trs.item(0));
-    const leaveNotes: LeaveNote[] = await getLeaveNotes(firstDayAttendance);
+    const today: Moment = getToday();
+    const leaveNotes: LeaveNote[] = await getLeaveNotes(today);
     const attendances: Attendance[] = getAttendanceByTrs(trs, leaveNotes);
     removeAllAttendanceContent(tableSectionElement);
     appendLeaveNoteCaption(tableSectionElement);

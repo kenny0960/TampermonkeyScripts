@@ -37,6 +37,11 @@ export const isToday = (targetMoment: Moment): boolean => {
     return moment().isSame(targetMoment.format('YYYY/MM/DD', { trim: false }), 'day') === true;
 };
 
+export const getToday = (): Moment => {
+    // TODO 透過畫面去取的當天
+    return moment();
+};
+
 export const formatEarliestSignInDate = (signInDate: Moment): Moment => {
     const signInDateString: string = signInDate.format('YYYY/MM/DD', { trim: false });
     // 打卡最早只能計算到 08:00

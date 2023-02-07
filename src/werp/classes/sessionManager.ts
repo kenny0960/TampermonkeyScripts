@@ -1,10 +1,10 @@
 import * as moment from 'moment';
 
+import { Moment } from '@/moment';
 import LeaveNote from '@/werp/interfaces/LeaveNote';
 import { log } from '@/common/logger';
 import SessionManager from '@/common/SessionManager';
 import SessionKeys from '@/werp/enums/SessionKeys';
-import Attendance from '@/werp/interfaces/Attendance';
 import {
     fetchAllCompanyEmployeeCount,
     fetchAnnualLeave,
@@ -22,12 +22,12 @@ export const isValidTimestamp = (sessionKey: SessionKeys, timeoutSeconds: number
     return moment().valueOf() - Number(timestamp) < timeoutSeconds * 1000;
 };
 
-export const getLeaveNotes = async (attendance: Attendance): Promise<LeaveNote[]> => {
+export const getLeaveNotes = async (today: Moment): Promise<LeaveNote[]> => {
     if (isValidTimestamp(SessionKeys.AJAX_LEAVE_NOTES_TIMESTAMP, 4 * 60 * 60) === true) {
         log('從本地取得請假/異常記錄');
         return SessionManager.getArrayByKey(SessionKeys.AJAX_LEAVE_NOTES);
     }
-    const leaveNotes: LeaveNote[] = await fetchPersonalLeaveNotes(attendance);
+    const leaveNotes: LeaveNote[] = await fetchPersonalLeaveNotes(today);
     SessionManager.setByKey(SessionKeys.AJAX_LEAVE_NOTES, JSON.stringify(leaveNotes));
     SessionManager.setByKey(SessionKeys.AJAX_LEAVE_NOTES_TIMESTAMP, String(moment().valueOf()));
     log('從伺服器取得請假/異常記錄');

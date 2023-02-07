@@ -5,10 +5,10 @@ import LeaveNote from '@/werp/interfaces/LeaveNote';
 import { defaultLeaveNote } from '@/werp/classes/leaveNote';
 import { formatEarliestSignInDate, formatEarliestSignOutDate } from '@/werp/classes/momentUtility';
 
-export const getWeekAttendances = (firstDayAttendance: Attendance, leaveNotes: LeaveNote[]): Attendance[] => {
+export const getWeekAttendances = (today: Moment, leaveNotes: LeaveNote[]): Attendance[] => {
     const attendances: Attendance[] = [];
     for (let i = 1; i < 6; i++) {
-        const initialDate: Moment = moment(firstDayAttendance.signInDate.day(i).format('YYYY/MM/DD 00:00', { trim: false }));
+        const initialDate: Moment = moment(today.day(i).format('YYYY/MM/DD 00:00', { trim: false }));
         attendances[i] = {
             signInDate: initialDate,
             signOutDate: initialDate,

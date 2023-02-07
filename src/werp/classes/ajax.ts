@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 import AnnualLeave from '@/werp/interfaces/AnnualLeave';
-import Attendance from '@/werp/interfaces/Attendance';
+import { Moment } from '@/moment';
 import LeaveNote from '@/werp/interfaces/LeaveNote';
 import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
 
@@ -226,10 +226,10 @@ export const fetchPersonalLeaveNotesSearchPattern = async (): Promise<string[]> 
         });
 };
 
-export const fetchPersonalLeaveNotes = async (firstDayAttendance: Attendance): Promise<LeaveNote[]> => {
+export const fetchPersonalLeaveNotes = async (today: Moment): Promise<LeaveNote[]> => {
     const searchPattern: string[] = await fetchPersonalLeaveNotesSearchPattern();
-    const endDate: string = firstDayAttendance.signInDate.day(5).format('YYYY/MM/DD', { trim: false });
-    const startDate: string = firstDayAttendance.signInDate.day(1).format('YYYY/MM/DD', { trim: false });
+    const endDate: string = today.day(5).format('YYYY/MM/DD', { trim: false });
+    const startDate: string = today.day(1).format('YYYY/MM/DD', { trim: false });
     const searchDateRange: string = `&${searchPattern[0]}=${startDate}&${searchPattern[1]}=${endDate}`;
 
     return fetch('https://cy.iwerp.net/hr-attendance/merge/personal.xhtml', {
