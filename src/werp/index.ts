@@ -9,6 +9,7 @@ import AnnualLeave from '@/werp/interfaces/AnnualLeave';
 import {
     formatAttendance,
     getLeaveMinutes,
+    getSummaryRemainMinutes,
     getPredictedSignOutDate,
     getRemainMinutes,
     getTodayAttendance,
@@ -207,6 +208,25 @@ const updateAttendanceContent = (tableSectionElement: HTMLTableSectionElement, a
     }
 };
 
+const appendAttendanceSummary = (tableSectionElement: HTMLTableSectionElement, attendances: Attendance[]): void => {
+    const remainMinutes: number = getSummaryRemainMinutes(attendances);
+    tableSectionElement.parentElement.insertAdjacentHTML(
+        'afterbegin',
+        `
+        <tfoot>
+            <tr style="border-top: solid 1px darkgrey;">
+                <td>小計</td>
+                <td></td>
+                <td style="letter-spacing: 1px; font-weight: bold; color: ${remainMinutes >= 0 ? 'green' : 'red'};">
+                    ${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes}
+                </td>
+                <td></td>
+            </tr>
+      </tfoot>
+    `
+    );
+};
+
 const attendanceMain = async (tableSectionElement: HTMLTableSectionElement): Promise<void> => {
     if (tableSectionElement.parentElement.parentElement.innerText.includes('ⓚ design') === true) {
         return;
@@ -222,6 +242,7 @@ const attendanceMain = async (tableSectionElement: HTMLTableSectionElement): Pro
     appendUpdateLeaveNoteFunction();
     updateAttendanceContent(tableSectionElement, attendances);
     appendPredictedSignOutProgressBar(tableSectionElement, getPredictedSignOutInnerHTML(attendances));
+    appendAttendanceSummary(tableSectionElement, attendances);
     appendCopyrightAndVersion(tableSectionElement);
     prependForgottenAttendanceButton();
     restyleAttendanceButtons();

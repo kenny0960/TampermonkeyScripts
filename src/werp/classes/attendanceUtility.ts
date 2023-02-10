@@ -3,7 +3,12 @@ import { Moment } from '@/moment';
 import * as moment from 'moment';
 import LeaveNote from '@/werp/interfaces/LeaveNote';
 import { defaultLeaveNote } from '@/werp/classes/leaveNote';
-import { formatEarliestSignInDate, formatEarliestSignOutDate, getPickedDate } from '@/werp/classes/momentUtility';
+import {
+    formatEarliestSignInDate,
+    formatEarliestSignOutDate,
+    formatTime,
+    getPickedDate,
+} from '@/werp/classes/momentUtility';
 
 export const getWeekAttendances = (leaveNotes: LeaveNote[]): Attendance[] => {
     const pickedDate: Moment = getPickedDate();
@@ -28,6 +33,24 @@ export const formatAttendance = (attendance: Attendance): Attendance => {
         ...attendance,
         signInDate: formatEarliestSignInDate(attendance.signInDate),
     };
+};
+
+export const getSummaryRemainMinutes = (attendances: Attendance[]): number => {
+    let remainMinutes: number = 0;
+    const todayIndex: number = moment().day();
+    for (let i = todayIndex; i > 0; i--) {
+        const attendance: Attendance = attendances[i];
+        // 國定假日或請假直接不計算
+        if (getWorkingMinutes(attendance) === 0) {
+            continue;
+        }
+        // 沒有簽退記錄直接不計算
+        if (formatTime(attendance.signOutDate) === '') {
+            continue;
+        }
+        remainMinutes += getRemainMinutes(attendance);
+    }
+    return remainMinutes;
 };
 
 export const getTotalRemainMinutes = (attendances: Attendance[]): number => {
