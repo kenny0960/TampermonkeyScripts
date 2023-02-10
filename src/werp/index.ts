@@ -30,7 +30,7 @@ import { appendUpdateLeaveNoteFunction, defaultLeaveNote } from '@/werp/classes/
 import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
 import { initializeFaviconBadge } from '@/werp/classes/favicon';
 import {
-    appendCopyrightAndVersion,
+    appendAttendanceSummary,
     appendLeaveNoteCaption,
     appendPredictedSignOutProgressBar,
     prependForgottenAttendanceButton,
@@ -208,25 +208,6 @@ const updateAttendanceContent = (tableSectionElement: HTMLTableSectionElement, a
     }
 };
 
-const appendAttendanceSummary = (tableSectionElement: HTMLTableSectionElement, attendances: Attendance[]): void => {
-    const remainMinutes: number = getSummaryRemainMinutes(attendances);
-    tableSectionElement.parentElement.insertAdjacentHTML(
-        'afterbegin',
-        `
-        <tfoot>
-            <tr style="border-top: solid 1px darkgrey;">
-                <td>小計</td>
-                <td></td>
-                <td style="letter-spacing: 1px; font-weight: bold; color: ${remainMinutes >= 0 ? 'green' : 'red'};">
-                    ${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes}
-                </td>
-                <td></td>
-            </tr>
-      </tfoot>
-    `
-    );
-};
-
 const attendanceMain = async (tableSectionElement: HTMLTableSectionElement): Promise<void> => {
     if (tableSectionElement.parentElement.parentElement.innerText.includes('ⓚ design') === true) {
         return;
@@ -243,7 +224,6 @@ const attendanceMain = async (tableSectionElement: HTMLTableSectionElement): Pro
     updateAttendanceContent(tableSectionElement, attendances);
     appendPredictedSignOutProgressBar(tableSectionElement, getPredictedSignOutInnerHTML(attendances));
     appendAttendanceSummary(tableSectionElement, attendances);
-    appendCopyrightAndVersion(tableSectionElement);
     prependForgottenAttendanceButton();
     restyleAttendanceButtons();
     restyleAttendanceTable(tableSectionElement);

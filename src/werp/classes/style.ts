@@ -2,6 +2,8 @@ import { log } from '@/common/logger';
 import * as PackageJson from '@/../package.json';
 import UPDATE_LOGS from '@/werp/consts/UpdateLogs';
 import UpdateLog from '@/werp/interfaces/UpdateLog';
+import Attendance from '@/werp/interfaces/Attendance';
+import { getSummaryRemainMinutes } from '@/werp/classes/attendanceUtility';
 
 export const stringifyUpdateLog = (updateLog: UpdateLog): string => {
     return `v${updateLog.version} ${updateLog.date} ${updateLog.messages}`;
@@ -14,13 +16,32 @@ export const appendPredictedSignOutProgressBar = (body: HTMLElement, innerHTML: 
     document.querySelector('tr.today').insertAdjacentHTML('afterend', innerHTML);
 };
 
-export const appendCopyrightAndVersion = (body: HTMLElement): void => {
+export const appendAttendanceSummary = (tableSectionElement: HTMLTableSectionElement, attendances: Attendance[]): void => {
+    const remainMinutes: number = getSummaryRemainMinutes(attendances);
+    tableSectionElement.parentElement.insertAdjacentHTML(
+        'afterbegin',
+        `
+        <tfoot>
+            <tr style="border-top: solid 1px darkgrey;">
+                <td>小計</td>
+                <td></td>
+                <td style="letter-spacing: 1px; font-weight: bold; color: ${remainMinutes >= 0 ? 'green' : 'red'};">
+                    ${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes}
+                </td>
+                <td>${getCopyrightAndVersionElement().outerHTML}</td>
+            </tr>
+      </tfoot>
+    `
+    );
+};
+
+export const getCopyrightAndVersionElement = (): HTMLDivElement => {
     const copyRightDiv: HTMLDivElement = document.createElement('div');
     copyRightDiv.innerText = `ⓚ design © V${PackageJson['wrep-version']}`;
     copyRightDiv.style.textAlign = 'right';
-    copyRightDiv.style.padding = '0.25rem';
+    copyRightDiv.style.padding = '0.25rem 0';
     copyRightDiv.title = UPDATE_LOGS.slice(0, 5).map(stringifyUpdateLog).join('\n');
-    body.parentElement.parentElement.append(copyRightDiv);
+    return copyRightDiv;
 };
 
 export const createAttendanceButton = (text: string, link: string): HTMLElement => {
@@ -83,7 +104,7 @@ export const restyleAttendanceTable = (tableSectionElement: HTMLTableSectionElem
     tableSectionElement.parentElement.parentElement.parentElement.parentElement.style.height = '100%';
     tableSectionElement.parentElement.parentElement.parentElement.style.height = '100%';
     tableSectionElement.parentElement.parentElement.style.height = '100%';
-    tableSectionElement.parentElement.style.height = '90%';
+    tableSectionElement.parentElement.style.height = '100%';
 };
 
 export const restyleWholePage = (): void => {
