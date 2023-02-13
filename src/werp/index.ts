@@ -50,6 +50,7 @@ import {
 import { sleep } from '@/common/timer';
 import { appendUpdateAnnualLeaveFunction } from '@/werp/classes/annualLeave';
 import { getPickedYear } from '@/werp/classes/calendar';
+import { appendUpdateLeaveReceiptNoteFunction } from '@/werp/classes/LeaveReceiptNote';
 
 const getAttendanceByTr = (tr: HTMLTableRowElement): Attendance => {
     // ['09/12 (一)', '09:38', '18:41']
@@ -245,6 +246,7 @@ const taskMain = async (table: HTMLTableElement): Promise<void> => {
     table.insertAdjacentHTML('afterbegin', annualTemplate);
     appendUpdateAnnualLeaveFunction();
     table.insertAdjacentHTML('afterbegin', leaveReceiptNotesTemplate);
+    appendUpdateLeaveReceiptNoteFunction();
 };
 
 const main = (): void => {
