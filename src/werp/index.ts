@@ -9,7 +9,6 @@ import AnnualLeave from '@/werp/interfaces/AnnualLeave';
 import {
     formatAttendance,
     getLeaveMinutes,
-    getSummaryRemainMinutes,
     getPredictedSignOutDate,
     getRemainMinutes,
     getTodayAttendance,

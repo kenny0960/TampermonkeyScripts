@@ -35,15 +35,13 @@ export const formatAttendance = (attendance: Attendance): Attendance => {
     };
 };
 
+export const filterUndefinedAttendance = (attendances: Attendance[]): Attendance[] => {
+    return attendances.filter(Boolean);
+};
+
 export const getSummaryRemainMinutes = (attendances: Attendance[]): number => {
     let remainMinutes: number = 0;
-    const todayIndex: number = moment().day();
-    for (let i = todayIndex; i > 0; i--) {
-        const attendance: Attendance = attendances[i];
-        // 國定假日或請假直接不計算
-        if (getWorkingMinutes(attendance) === 0) {
-            continue;
-        }
+    for (const attendance of filterUndefinedAttendance(attendances)) {
         // 沒有簽退記錄直接不計算
         if (formatTime(attendance.signOutDate) === '') {
             continue;
@@ -55,17 +53,14 @@ export const getSummaryRemainMinutes = (attendances: Attendance[]): number => {
 
 export const getTotalRemainMinutes = (attendances: Attendance[]): number => {
     let remainMinutes: number = 0;
-    for (let i = 1; i < attendances.length; i++) {
-        // 國定假日或請假直接不計算
-        if (getWorkingMinutes(attendances[i]) === 0) {
-            continue;
-        }
-        remainMinutes += getRemainMinutes(attendances[i]);
+    for (const attendance of filterUndefinedAttendance(attendances)) {
+        remainMinutes += getRemainMinutes(attendance);
     }
     return remainMinutes;
 };
 
-export const getWorkingMinutes = ({ signOutDate, signInDate }: Attendance): number => {
+export const getWorkingMinutes = (attendance: Attendance): number => {
+    const { signOutDate, signInDate }: Attendance = formatAttendance(attendance);
     return signOutDate.diff(signInDate, 'minutes');
 };
 
@@ -94,7 +89,11 @@ export const getLeaveMinutes = ({ signInDate, leaveNote }: Attendance): number =
 };
 
 export const getRemainMinutes = (attendance: Attendance): number => {
-    return getWorkingMinutes(formatAttendance(attendance)) + getLeaveMinutes(attendance) - 9 * 60;
+    // 國定假日或請假直接不計算
+    if (getWorkingMinutes(attendance) === 0) {
+        return 0;
+    }
+    return getWorkingMinutes(attendance) + getLeaveMinutes(attendance) - 9 * 60;
 };
 
 export const getPredictedSignOutDate = (attendances: Attendance[]): Moment => {

@@ -44,6 +44,10 @@ export const getPickedDate = (): Moment => {
 
 export const formatEarliestSignInDate = (signInDate: Moment): Moment => {
     const signInDateString: string = signInDate.format('YYYY/MM/DD', { trim: false });
+    // 忽略初始化的時間 00:00
+    if (signInDate.isSame(moment(`${signInDateString} 00:00`))) {
+        return signInDate;
+    }
     // 打卡最早只能計算到 08:00
     if (signInDate.isBefore(moment(`${signInDateString} 08:00`))) {
         return moment(`${signInDateString} 08:00`);
