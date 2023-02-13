@@ -32,9 +32,9 @@ export const getAnnualLeaveTemplate = (annualLeave: AnnualLeave | null): string 
     if (annualLeave === null) {
         return '';
     }
-    const lastUpdateDatetime: string = formatDatetime(
-        moment(Number(SessionManager.getByKey(SessionKeys.AJAX_ANNUAL_LEAVE_TIMESTAMP)))
-    );
+    const lastUpdateDatetime: string = moment(
+        Number(SessionManager.getByKey(SessionKeys.AJAX_ANNUAL_LEAVE_TIMESTAMP))
+    ).fromNow();
     return `
         <div id="annual-leave-template">
             <div class="ui-outputpanel ui-widget">
@@ -75,9 +75,9 @@ export const getAnnualLeaveTemplate = (annualLeave: AnnualLeave | null): string 
 
 export const getLeaveReceiptNotesTemplate = (leaveReceiptNotes: LeaveReceiptNote[]): string => {
     const templates: string[] = [];
-    const lastUpdateDatetime: string = formatDatetime(
-        moment(Number(SessionManager.getByKey(SessionKeys.AJAX_LEAVE_RECEIPT_NOTES_TIMESTAMP)))
-    );
+    const lastUpdateDatetime: string = moment(
+        Number(SessionManager.getByKey(SessionKeys.AJAX_LEAVE_RECEIPT_NOTES_TIMESTAMP))
+    ).fromNow();
     for (const leaveReceiptNote of leaveReceiptNotes.reverse()) {
         const startDate: Moment = moment(leaveReceiptNote.start);
         const endDate: Moment = moment(leaveReceiptNote.end);
