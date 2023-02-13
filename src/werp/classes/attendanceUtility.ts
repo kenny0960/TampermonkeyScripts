@@ -42,8 +42,13 @@ export const filterUndefinedAttendance = (attendances: Attendance[]): Attendance
 export const getSummaryRemainMinutes = (attendances: Attendance[]): number => {
     let remainMinutes: number = 0;
     for (const attendance of filterUndefinedAttendance(attendances)) {
-        // 沒有簽退記錄直接不計算
+        const todaySignOutLeftMinutes: number = attendance.signInDate.clone().add(9, 'hours').diff(moment(), 'minutes');
+        // 沒有簽退記錄
         if (formatTime(attendance.signOutDate) === '') {
+            // 計算超時工作的分鐘數
+            if (todaySignOutLeftMinutes < 0) {
+                remainMinutes += Math.abs(todaySignOutLeftMinutes);
+            }
             continue;
         }
         remainMinutes += getRemainMinutes(attendance);
