@@ -8,6 +8,7 @@ import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
 import ProgressBar from '@/werp/interfaces/ProgressBar';
 import SessionManager from '@/common/SessionManager';
 import SessionKeys from '@/werp/enums/SessionKeys';
+import { Moment } from '@/moment';
 
 export const getProgressBarTemplate = (progressBar: ProgressBar): string => {
     return `
@@ -75,36 +76,37 @@ export const getAnnualLeaveTemplate = (annualLeave: AnnualLeave | null): string 
 export const getLeaveReceiptNotesTemplate = (leaveReceiptNotes: LeaveReceiptNote[]): string => {
     const templates: string[] = [];
     for (const leaveReceiptNote of leaveReceiptNotes.reverse()) {
+        const startDate: Moment = moment(leaveReceiptNote.start);
+        const endDate: Moment = moment(leaveReceiptNote.end);
         // 不顯示已結案的過往記錄
-        if (leaveReceiptNote.status === '結案' && leaveReceiptNote.start.isBefore(moment()) === true) {
+        if (leaveReceiptNote.status === '結案' && startDate.isBefore(moment()) === true) {
             continue;
         }
         templates.push(`
-            <tr data-ri="0" style="${
-                leaveReceiptNote.start.isBefore(moment()) ? 'opacity: 0.5;' : ''
-            }" class="ui-widget-content ui-datatable-even" role="row">
-                <td role="gridcell" style="text-align: center;" class="notSign">
+            <tr style="${startDate.isBefore(moment()) ? 'opacity: 0.5;' : ''}" >
+                <td class="align-middle">
                     ${
                         leaveReceiptNote.status === '結案'
                             ? '<i style="color: darkgreen;" class="fa fa-1 fa-check-square-o"></i>'
                             : '<i style="color: chocolate;" class="fa fa-spinner fa-1 fa-spin fa-fw"></i>'
                     }
                 </td>
-                <td role="gridcell" style="text-align: center; font-size: 12px;" class="notSign">
+                <td class="align-middle">
                     ${leaveReceiptNote.type}
                 </td>
-                <td role="gridcell" style="text-align: center; font-size: 12px;">
-                    ${leaveReceiptNote.start.format('YYYY/MM/DD (dd) HH:mm', { trim: false })}
-                    ${leaveReceiptNote.end.format('YYYY/MM/DD (dd) HH:mm', { trim: false })}
+                <td class="align-middle">
+                    ${startDate.format('YYYY/MM/DD (dd) HH:mm', { trim: false })}
+                    <br />
+                    ${endDate.format('YYYY/MM/DD (dd) HH:mm', { trim: false })}
                 </td>
-                <td role="gridcell" style="text-align: center;" class="notSign">
+                <td class="align-middle">
                     ${leaveReceiptNote.hours}
                 </td>
-                <td role="gridcell" style="text-align: center; font-size: 12px;" class="notSign">
+                <td class="align-middle">
                     ${leaveReceiptNote.status}
                 </td>
-                 <td role="gridcell" style="text-align: center; font-size: 12px;" class="notSign">
-                    ${leaveReceiptNote.start.fromNow()}
+                 <td class="align-middle">
+                    ${startDate.fromNow()}
                 </td>
             </tr>
         `);
@@ -120,30 +122,18 @@ export const getLeaveReceiptNotesTemplate = (leaveReceiptNotes: LeaveReceiptNote
     <div class="title-name ui-g-4">近期請假狀況</div>
     <div class="ui-g-8">
       <span class="todocss">
-        <table role="grid" style="width: 100%;">
-          <thead id="formTemplate:anno-datatable_head">
-            <tr role="row" style="border-bottom: 1px solid darkgray;">
-            <th id="formTemplate:anno-datatable:j_idt707" role="columnheader" aria-label="" scope="col" style="text-align: center;width:8px">
-                <span class="ui-column-title" style="margin-right: 2px;"></span>
-              </th>
-              <th id="formTemplate:anno-datatable:j_idt707" role="columnheader" aria-label="假別" scope="col" style="text-align: center;">
-                <span class="ui-column-title" style="margin-right: 2px;">假別</span>
-              </th>
-              <th id="formTemplate:anno-datatable:j_idt710" role="columnheader" scope="col" style="text-align: center;width:130px">
-                <span class="ui-column-title" style="margin-right: 2px;">時間</span>
-              </th>
-              <th id="formTemplate:anno-datatable:j_idt713" role="columnheader" aria-label="小時" scope="col" style="text-align: center;width:35px">
-                <span class="ui-column-title" style="margin-right: 2px;">小時</span>
-              </th>
-              <th id="formTemplate:anno-datatable:j_idt715" role="columnheader" aria-label="狀態" scope="col" style="text-align: center;">
-                <span class="ui-column-title" style="margin-right: 2px;">狀態</span>
-              </th>
-              <th id="formTemplate:anno-datatable:j_idt715" role="columnheader" aria-label="" scope="col" style="text-align: center;">
-                <span class="ui-column-title" style="margin-right: 2px;"></span>
-              </th>
+        <table style="font-size: 12px;" class="table table-striped table-sm text-center">
+          <thead class="table-borderless">
+            <tr>
+              <th style="width:8px"></th>
+              <th>假別</th>
+              <th style="width:130px">時間</th>
+              <th style="width:40px">小時</th>
+              <th>狀態</th>
+              <th></th>
             </tr>
           </thead>
-          <tbody id="formTemplate:anno-datatable_data" class="ui-datatable-data ui-widget-content">
+          <tbody>
             ${templates.join('')}
           </tbody>
         </table>
