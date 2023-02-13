@@ -75,6 +75,9 @@ export const getAnnualLeaveTemplate = (annualLeave: AnnualLeave | null): string 
 
 export const getLeaveReceiptNotesTemplate = (leaveReceiptNotes: LeaveReceiptNote[]): string => {
     const templates: string[] = [];
+    const lastUpdateDatetime: string = formatDatetime(
+        moment(Number(SessionManager.getByKey(SessionKeys.AJAX_LEAVE_RECEIPT_NOTES_TIMESTAMP)))
+    );
     for (const leaveReceiptNote of leaveReceiptNotes.reverse()) {
         const startDate: Moment = moment(leaveReceiptNote.start);
         const endDate: Moment = moment(leaveReceiptNote.end);
@@ -122,7 +125,11 @@ export const getLeaveReceiptNotesTemplate = (leaveReceiptNotes: LeaveReceiptNote
     <div class="title-name ui-g-4">近期請假狀況</div>
     <div class="ui-g-8">
       <span class="todocss">
-        <table style="font-size: 12px;" class="table table-striped table-sm text-center">
+        <table style="font-size: 12px; margin-bottom: 0;" class="table table-sm text-center">
+          <caption class="text-right" style="color: #4f4f4f; padding-bottom: 0;">
+            最後更新：${lastUpdateDatetime}
+            <i id="update-leave-receipt-note" class="fa fa-refresh" style="cursor: pointer;"></i>
+          </caption>
           <thead class="table-borderless">
             <tr>
               <th style="width:8px"></th>
