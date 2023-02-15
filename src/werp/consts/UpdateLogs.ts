@@ -2,6 +2,11 @@ import UpdateLog from '@/werp/interfaces/UpdateLog';
 
 const UPDATE_LOGS: UpdateLog[] = [
     {
+        version: '3.9.0',
+        date: '20230215 1830',
+        messages: ['定時從伺服器取得資料', '可即時更新請假、特休資訊', '顯示公司公告通知視窗', '顯示累積至今天的剩餘分鐘數'],
+    },
+    {
         version: '3.8.2',
         date: '20230201 1330',
         messages: ['每隔十分鐘之後仍然顯示簽到退表格'],
