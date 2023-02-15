@@ -39,7 +39,7 @@ export const showCompanyNotification = (): void => {
             icon: RING_BELL_IMAGE,
         },
         (): void => {
-            const closeBtn: HTMLAnchorElement | null = document.querySelector('#formTemplate\\:j_idt55');
+            const closeBtn: HTMLAnchorElement | null = document.querySelector('#news-top a.newClearButton');
             if (closeBtn === null) {
                 return;
             }
