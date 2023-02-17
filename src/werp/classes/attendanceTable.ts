@@ -5,9 +5,9 @@ import {
     getAttendanceDateTemplate,
     getAttendanceSignInTemplate,
     getAttendanceSignOutTemplate,
+    getAttendanceSummaryTemplate,
     getLeaveNoteTemplate,
 } from '@/werp/classes/template';
-import { getSummaryRemainMinutes } from '@/werp/classes/attendanceUtility';
 import { getCopyrightAndVersionElement } from '@/werp/classes/style';
 
 const getAttendanceTableBodyElement = (attendances: Attendance[]): HTMLTableSectionElement => {
@@ -53,16 +53,18 @@ const getAttendanceTableHeaderElement = (): HTMLTableSectionElement => {
     return tableHeadElement;
 };
 
+export const updateAttendanceSummary = (attendances: Attendance[]): void => {
+    document.querySelector('#formTemplate\\:attend_rec_datatable > div > table > tfoot > tr > td:nth-child(3)').innerHTML =
+        getAttendanceSummaryTemplate(attendances);
+};
+
 const getAttendanceTableFooterElement = (attendances: Attendance[]): HTMLTableSectionElement => {
     const tableFooterElement: HTMLTableSectionElement = document.createElement('tfoot');
-    const remainMinutes: number = getSummaryRemainMinutes(attendances);
     tableFooterElement.innerHTML = `
         <tr style="border-top: solid 1px darkgrey;">
             <td>小計</td>
             <td></td>
-            <td style="letter-spacing: 1px; font-weight: bold; color: ${remainMinutes >= 0 ? 'green' : 'red'};">
-                ${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes}
-            </td>
+            <td>${getAttendanceSummaryTemplate(attendances)}</td>
             <td>${getCopyrightAndVersionElement().outerHTML}</td>
         </tr>
     `;

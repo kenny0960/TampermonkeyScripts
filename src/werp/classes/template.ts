@@ -9,7 +9,16 @@ import ProgressBar from '@/werp/interfaces/ProgressBar';
 import SessionManager from '@/common/SessionManager';
 import SessionKeys from '@/werp/enums/SessionKeys';
 import { Moment } from '@/moment';
-import { getRemainMinutes } from '@/werp/classes/attendanceUtility';
+import { getRemainMinutes, getSummaryRemainMinutes } from '@/werp/classes/attendanceUtility';
+
+export const getAttendanceSummaryTemplate = (attendances: Attendance[]): string => {
+    const remainMinutes: number = getSummaryRemainMinutes(attendances);
+    return `
+        <span style="letter-spacing: 1px; font-weight: bold; color: ${remainMinutes >= 0 ? 'green' : 'red'};">
+            ${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes}
+        </span>
+    `;
+};
 
 export const getProgressBarTemplate = (progressBar: ProgressBar): string => {
     return `
