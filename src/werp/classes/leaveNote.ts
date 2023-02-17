@@ -27,21 +27,11 @@ export const appendUpdateLeaveNoteFunction = (): void => {
 };
 
 export const updateLeaveNoteView = (leaveNotes: LeaveNote[] | null): void => {
-    if (document.querySelector('#formTemplate\\:attend_rec_datatable_data > tr:nth-child(7) > td:nth-child(4)') !== null) {
-        document.querySelector('#formTemplate\\:attend_rec_datatable_data > tr:nth-child(7) > td:nth-child(4)').innerHTML =
-            getLeaveNoteTemplate(leaveNotes[1]);
-    } else {
-        document.querySelector('#formTemplate\\:attend_rec_datatable_data > tr:nth-child(5) > td:nth-child(4)').innerHTML =
-            getLeaveNoteTemplate(leaveNotes[1]);
-    }
-    document.querySelector('#formTemplate\\:attend_rec_datatable_data > tr:nth-child(4) > td:nth-child(4)').innerHTML =
-        getLeaveNoteTemplate(leaveNotes[2]);
-    document.querySelector('#formTemplate\\:attend_rec_datatable_data > tr:nth-child(3) > td:nth-child(4)').innerHTML =
-        getLeaveNoteTemplate(leaveNotes[3]);
-    document.querySelector('#formTemplate\\:attend_rec_datatable_data > tr:nth-child(2) > td:nth-child(4)').innerHTML =
-        getLeaveNoteTemplate(leaveNotes[4]);
-    document.querySelector('#formTemplate\\:attend_rec_datatable_data > tr:nth-child(1) > td:nth-child(4)').innerHTML =
-        getLeaveNoteTemplate(leaveNotes[5]);
+    document
+        .querySelectorAll('#formTemplate\\:attend_rec_datatable > div > table > tbody > tr:not(.progress-bar-tr)')
+        .forEach((tr: HTMLTableRowElement, index: number): void => {
+            tr.querySelector('td:nth-child(4)').innerHTML = getLeaveNoteTemplate(leaveNotes[5 - index]);
+        });
 };
 
 export const updateLeaveNote = async (): Promise<void> => {
