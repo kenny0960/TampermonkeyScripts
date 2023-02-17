@@ -5,8 +5,8 @@ import { isToday } from '@/werp/classes/momentUtility';
 import { updateAttendanceFavicon } from '@/werp/classes/favicon';
 import { showAttendanceNotification, showCompanyNotification, showUpdateLogNotification } from '@/werp/classes/notification';
 import { log } from '@/common/logger';
-import { updatePredictedSignOutProgressBar } from '@/werp';
 import UPDATE_LOGS from '@/werp/consts/UpdateLogs';
+import { updatePredictedSignOutProgressBar } from '@/werp/classes/progressBar';
 
 export const resetAttendanceTimers = (): void => {
     window.clearTimeout(Number(SessionManager.getByKey(SessionKeys.ATTENDANCE_TIMER)));

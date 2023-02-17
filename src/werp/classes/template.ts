@@ -9,11 +9,12 @@ import ProgressBar from '@/werp/interfaces/ProgressBar';
 import SessionManager from '@/common/SessionManager';
 import SessionKeys from '@/werp/enums/SessionKeys';
 import { Moment } from '@/moment';
+import { getRemainMinutes } from '@/werp/classes/attendanceUtility';
 
 export const getProgressBarTemplate = (progressBar: ProgressBar): string => {
     return `
-        <tr style="display: none;"></tr>
-        <tr id="predicted-sign-out-progress-bar">
+        <tr class="progress-bar-tr" style="display: none;"></tr>
+        <tr class="progress-bar-tr" id="predicted-sign-out-progress-bar">
             <td colspan="4" style="padding-top: 0; height: 35px;">
                 <div style="position: relative;">
                     <div class="progress" style="height: 30px;">
@@ -205,7 +206,7 @@ export const getCompanyEmployeeTemplate = (
 
 export const getAttendanceDateTemplate = (attendance: Attendance): string => {
     return `
-        <td role="gridcell">
+        <td>
             ${attendance.signInDate.format('MM/DD', { trim: false })} (${formatWeekday(attendance.signInDate)})
         </td>
     `;
@@ -213,8 +214,13 @@ export const getAttendanceDateTemplate = (attendance: Attendance): string => {
 
 export const getAttendanceSignInTemplate = (attendance: Attendance): string => {
     const time: string = formatTime(attendance.signInDate);
+
+    if (time === '') {
+        return `<td></td>`;
+    }
+
     return `
-        <td role="gridcell" style="text-align: center;">
+        <td>
             ${
                 time === '' && isToday(attendance.signInDate) === true
                     ? `<i style="color: crimson;" class="fa fa-1 fa-exclamation-triangle" aria-hidden="true"></i> 未簽到`
@@ -224,10 +230,20 @@ export const getAttendanceSignInTemplate = (attendance: Attendance): string => {
     `;
 };
 
-export const getAttendanceSignOutTemplate = (innerHTML: string): string => {
+export const getAttendanceSignOutTemplate = (attendance: Attendance): string => {
+    const time: string = formatTime(attendance.signOutDate);
+    const remainMinutes: number = getRemainMinutes(attendance);
+
+    if (time === '') {
+        return `<td></td>`;
+    }
+
     return `
-        <td role="gridcell" style="text-align: center;">
-            ${innerHTML}
+        <td>
+            ${time}
+            <span style="letter-spacing:1px; font-weight:bold; color: ${remainMinutes >= 0 ? 'green' : 'red'}">
+                (${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes})
+            </span>
         </td>
     `;
 };
@@ -278,7 +294,7 @@ export const getLeaveNoteTemplate = ({ unusualNote, unsignedNote, receiptNote }:
     }
 
     return `
-        <td role="gridcell" style="text-align: center;">
+        <td>
             ${icons.join('')}
         </td>
     `;

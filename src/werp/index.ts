@@ -6,41 +6,19 @@ import { waitElementLoaded } from '@/common/dom';
 import { Moment } from '@/moment';
 import Attendance from '@/werp/interfaces/Attendance';
 import AnnualLeave from '@/werp/interfaces/AnnualLeave';
-import {
-    formatAttendance,
-    getLeaveMinutes,
-    getPredictedSignOutDate,
-    getRemainMinutes,
-    getTodayAttendance,
-    getWeekAttendances,
-} from '@/werp/classes/attendanceUtility';
-import { formatTime, isToday } from '@/werp/classes/momentUtility';
-import {
-    getAnnualLeaveTemplate,
-    getAttendanceDateTemplate,
-    getAttendanceSignInTemplate,
-    getAttendanceSignOutTemplate,
-    getLeaveNoteTemplate,
-    getLeaveReceiptNotesTemplate,
-    getProgressBarTemplate,
-} from '@/werp/classes/template';
+import { getWeekAttendances } from '@/werp/classes/attendanceUtility';
+import { getAnnualLeaveTemplate, getLeaveReceiptNotesTemplate } from '@/werp/classes/template';
 import LeaveNote from '@/werp/interfaces/LeaveNote';
 import { appendUpdateLeaveNoteFunction, defaultLeaveNote } from '@/werp/classes/leaveNote';
 import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
 import { initializeFaviconBadge } from '@/werp/classes/favicon';
 import {
-    appendAttendanceSummary,
-    appendLeaveNoteCaption,
-    appendPredictedSignOutProgressBar,
     prependForgottenAttendanceButton,
-    removeAllAttendanceContent,
     restyleAttendanceButtons,
     restyleAttendanceTable,
     restyleWholePage,
 } from '@/werp/classes/style';
 import { resetAttendanceTimers, startAttendanceTimers } from '@/werp/classes/timer';
-import ProgressBar from '@/werp/interfaces/ProgressBar';
-import { defaultProgressBar } from '@/werp/classes/progressBar';
 import {
     getAnnualLeave,
     getCompanyEmployeeCountObject,
@@ -51,6 +29,7 @@ import { sleep } from '@/common/timer';
 import { appendUpdateAnnualLeaveFunction } from '@/werp/classes/annualLeave';
 import { getPickedYear } from '@/werp/classes/calendar';
 import { appendUpdateLeaveReceiptNoteFunction } from '@/werp/classes/LeaveReceiptNote';
+import { getAttendanceTableElement } from '@/werp/classes/attendanceTable';
 
 const getAttendanceByTr = (tr: HTMLTableRowElement): Attendance => {
     // ['09/12 (一)', '09:38', '18:41']
@@ -87,129 +66,9 @@ const getAttendanceByTrs = (trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']>, 
     return attendances;
 };
 
-export const updatePredictedSignOutProgressBar = (
-    tableSectionElement: HTMLTableSectionElement,
-    attendances: Attendance[]
-): void => {
-    const progressBarElement: HTMLDivElement | null = tableSectionElement.parentElement.querySelector(
-        '#predicted-sign-out-progress-bar'
-    );
-    if (progressBarElement === null) {
-        return;
-    }
-    progressBarElement.innerHTML = getPredictedSignOutInnerHTML(attendances);
-};
-
-const getPredictedSignOutInnerHTML = (attendances: Attendance[]): string => {
-    const todayAttendance: Attendance = getTodayAttendance(attendances);
-    const attendance: Attendance = formatAttendance(todayAttendance);
-    const { signInDate }: Attendance = attendance;
-
-    // 未簽到：不再預測可簽退時間
-    if (formatTime(todayAttendance.signInDate) === '') {
-        return '';
-    }
-
-    // 已簽退：不再預測可簽退時間
-    if (formatTime(attendance.signOutDate) !== '') {
-        return '';
-    }
-
-    const predictedSignOutDate: Moment = getPredictedSignOutDate(attendances);
-    const predictedSignOutLeftMinutes: number = predictedSignOutDate.diff(moment(), 'minutes');
-    const todaySignOutLeftMinutes: number = signInDate.clone().add(9, 'hours').diff(moment(), 'minutes');
-    const progressBar: ProgressBar = {
-        ...defaultProgressBar,
-        leftBar: {
-            ...defaultProgressBar.leftBar,
-            class: 'progress-bar progress-bar-striped progress-bar-animated',
-        },
-        rightBar: {
-            ...defaultProgressBar.rightBar,
-            text: formatTime(predictedSignOutDate),
-        },
-    };
-
-    if (predictedSignOutLeftMinutes > 30) {
-        // 確保所有文字都可以顯示，最小 20%
-        progressBar.percentage = Math.max(
-            Math.floor(100 - (predictedSignOutLeftMinutes / (540 - getLeaveMinutes(attendance))) * 100),
-            20
-        );
-        progressBar.leftBar = {
-            text: `預計 ${predictedSignOutDate.fromNow()}`,
-            class: `${progressBar.leftBar.class} bg-secondary`,
-        };
-        progressBar.rightBar.color = 'black';
-    } else if (predictedSignOutLeftMinutes > 0) {
-        progressBar.percentage = Math.floor(100 - (predictedSignOutLeftMinutes / (540 - getLeaveMinutes(attendance))) * 100);
-        progressBar.leftBar = {
-            text: `預計 ${predictedSignOutLeftMinutes.toString()} 分鐘後`,
-            class: `${progressBar.leftBar.class} bg-success`,
-        };
-        progressBar.rightBar.color = 'white';
-    } else {
-        progressBar.percentage = 100;
-        progressBar.leftBar = {
-            text: '符合下班條件',
-            class: `${progressBar.leftBar.class} bg-warning`,
-        };
-        progressBar.rightBar.color = 'white';
-    }
-    // 已經下班且無負債
-    if (predictedSignOutLeftMinutes < 0 && todaySignOutLeftMinutes < 0) {
-        progressBar.percentage = 100;
-        progressBar.leftBar = {
-            text: `超時工作 (+${Math.abs(todaySignOutLeftMinutes)})`,
-            class: `${progressBar.leftBar.class} bg-danger`,
-        };
-        progressBar.rightBar.color = 'white';
-    }
-
-    return getProgressBarTemplate(progressBar);
-};
-
-const getSignOutInnerHTML = (attendance: Attendance): string => {
-    const signInTimeString: string = formatTime(attendance.signInDate);
-    const signOutTimeString: string = formatTime(attendance.signOutDate);
-
-    // 國定假日或請假
-    if (signOutTimeString === '' && signInTimeString === '') {
-        return '';
-    }
-
-    // 未簽到：不再預測可簽退時間
-    if (signOutTimeString === '') {
-        return '';
-    }
-
-    const remainMinutes: number = getRemainMinutes(attendance);
-    // 顯示超過或不足的分鐘數
-    return `${signOutTimeString} <span style="letter-spacing:1px; font-weight:bold; color: ${
-        remainMinutes >= 0 ? 'green' : 'red'
-    }">  (${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes})</span>`;
-};
-
-const updateAttendanceContent = (tableSectionElement: HTMLTableSectionElement, attendances: Attendance[]) => {
-    for (let i = 1; i < attendances.length; i++) {
-        const attendance: Attendance = attendances[i];
-        const attendanceContentElement: HTMLTableRowElement = document.createElement('tr');
-        if (isToday(attendance.signInDate) === false) {
-            attendanceContentElement.style.opacity = '0.5';
-        }
-        if (isToday(attendance.signInDate) === true) {
-            attendanceContentElement.className = 'today';
-        }
-        attendanceContentElement.innerHTML = getAttendanceDateTemplate(attendance);
-        attendanceContentElement.innerHTML += getAttendanceSignInTemplate(attendance);
-        attendanceContentElement.innerHTML += getAttendanceSignOutTemplate(getSignOutInnerHTML(attendance));
-        attendanceContentElement.innerHTML += getLeaveNoteTemplate(attendance.leaveNote);
-        tableSectionElement.prepend(attendanceContentElement);
-    }
-};
-
 const attendanceMain = async (tableSectionElement: HTMLTableSectionElement): Promise<void> => {
-    if (tableSectionElement.parentElement.parentElement.innerText.includes('ⓚ design') === true) {
+    const wrapperElement: HTMLDivElement = tableSectionElement.parentElement.parentElement as HTMLDivElement;
+    if (wrapperElement.innerText.includes('ⓚ design') === true) {
         return;
     }
     initializeFaviconBadge();
@@ -218,17 +77,16 @@ const attendanceMain = async (tableSectionElement: HTMLTableSectionElement): Pro
     const trs: HTMLCollectionOf<HTMLElementTagNameMap['tr']> = tableSectionElement.getElementsByTagName('tr');
     const leaveNotes: LeaveNote[] = await getLeaveNotes();
     const attendances: Attendance[] = getAttendanceByTrs(trs, leaveNotes);
-    removeAllAttendanceContent(tableSectionElement);
-    appendLeaveNoteCaption(tableSectionElement);
+    wrapperElement.querySelector('table').remove();
+    wrapperElement.append(getAttendanceTableElement(attendances));
     appendUpdateLeaveNoteFunction();
-    updateAttendanceContent(tableSectionElement, attendances);
-    appendPredictedSignOutProgressBar(tableSectionElement, getPredictedSignOutInnerHTML(attendances));
-    appendAttendanceSummary(tableSectionElement, attendances);
+
+    const newTableSectionElement: HTMLTableSectionElement = wrapperElement.querySelector('table > tbody');
     prependForgottenAttendanceButton();
     restyleAttendanceButtons();
-    restyleAttendanceTable(tableSectionElement);
+    restyleAttendanceTable(newTableSectionElement);
     restyleWholePage();
-    startAttendanceTimers(tableSectionElement, attendances);
+    startAttendanceTimers(newTableSectionElement, attendances);
 };
 
 const taskMain = async (table: HTMLTableElement): Promise<void> => {

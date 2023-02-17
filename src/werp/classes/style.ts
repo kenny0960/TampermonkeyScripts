@@ -2,37 +2,9 @@ import { log } from '@/common/logger';
 import * as PackageJson from '@/../package.json';
 import UPDATE_LOGS from '@/werp/consts/UpdateLogs';
 import UpdateLog from '@/werp/interfaces/UpdateLog';
-import Attendance from '@/werp/interfaces/Attendance';
-import { getSummaryRemainMinutes } from '@/werp/classes/attendanceUtility';
 
 export const stringifyUpdateLog = (updateLog: UpdateLog): string => {
     return `v${updateLog.version} ${updateLog.date} ${updateLog.messages}`;
-};
-
-export const appendPredictedSignOutProgressBar = (body: HTMLElement, innerHTML: string): void => {
-    if (innerHTML === '') {
-        return;
-    }
-    document.querySelector('tr.today').insertAdjacentHTML('afterend', innerHTML);
-};
-
-export const appendAttendanceSummary = (tableSectionElement: HTMLTableSectionElement, attendances: Attendance[]): void => {
-    const remainMinutes: number = getSummaryRemainMinutes(attendances);
-    tableSectionElement.parentElement.insertAdjacentHTML(
-        'afterbegin',
-        `
-        <tfoot>
-            <tr style="border-top: solid 1px darkgrey;">
-                <td>小計</td>
-                <td></td>
-                <td style="letter-spacing: 1px; font-weight: bold; color: ${remainMinutes >= 0 ? 'green' : 'red'};">
-                    ${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes}
-                </td>
-                <td>${getCopyrightAndVersionElement().outerHTML}</td>
-            </tr>
-      </tfoot>
-    `
-    );
 };
 
 export const getCopyrightAndVersionElement = (): HTMLDivElement => {
@@ -85,26 +57,10 @@ export const restyleAttendanceButtons = (): void => {
         });
 };
 
-export const removeAllAttendanceContent = (tableSectionElement: HTMLTableSectionElement): void => {
-    tableSectionElement.querySelectorAll('tr').forEach((tr: HTMLTableRowElement) => {
-        tr.remove();
-    });
-};
-
-export const appendLeaveNoteCaption = (tableSectionElement: HTMLTableSectionElement): void => {
-    const leaveCaption: HTMLTableCaptionElement = document.createElement('th');
-    leaveCaption.innerHTML = `
-        <span class="ui-column-title">請假/異常</span>
-        <i id="update-leave-note" class="fa fa-refresh" style="cursor: pointer;"></i>
-    `;
-    tableSectionElement.parentNode.querySelector('thead tr').append(leaveCaption);
-};
-
 export const restyleAttendanceTable = (tableSectionElement: HTMLTableSectionElement): void => {
     tableSectionElement.parentElement.parentElement.parentElement.parentElement.style.height = '100%';
     tableSectionElement.parentElement.parentElement.parentElement.style.height = '100%';
     tableSectionElement.parentElement.parentElement.style.height = '100%';
-    tableSectionElement.parentElement.style.height = '100%';
 };
 
 export const restyleWholePage = (): void => {
