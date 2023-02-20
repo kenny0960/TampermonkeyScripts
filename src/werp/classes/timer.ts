@@ -7,7 +7,7 @@ import { showAttendanceNotification, showCompanyNotification, showUpdateLogNotif
 import { log } from '@/common/logger';
 import UPDATE_LOGS from '@/werp/consts/UpdateLogs';
 import { updatePredictedSignOutProgressBar } from '@/werp/classes/progressBar';
-import { updateAttendanceSummary } from '@/werp/classes/attendanceTable';
+import { updatePredictedSignOutTemplate, updateAttendanceSummary } from '@/werp/classes/attendanceTable';
 
 export const resetAttendanceTimers = (): void => {
     window.clearTimeout(Number(SessionManager.getByKey(SessionKeys.ATTENDANCE_TIMER)));
@@ -16,6 +16,7 @@ export const resetAttendanceTimers = (): void => {
 export const startAttendanceTimers = (tableSectionElement: HTMLTableSectionElement, attendances: Attendance[]) => {
     for (let i = 1; i < attendances.length; i++) {
         if (isToday(attendances[i].signInDate) === true) {
+            updatePredictedSignOutTemplate(attendances);
             updatePredictedSignOutProgressBar(tableSectionElement, attendances);
             updateAttendanceSummary(attendances);
             updateAttendanceFavicon(attendances);

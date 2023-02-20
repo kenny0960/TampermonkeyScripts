@@ -1,3 +1,5 @@
+import * as moment from 'moment';
+
 import Attendance from '@/werp/interfaces/Attendance';
 import { isToday } from '@/werp/classes/momentUtility';
 import { getPredictedProgressBar } from '@/werp/classes/progressBar';
@@ -9,6 +11,7 @@ import {
     getLeaveNoteTemplate,
 } from '@/werp/classes/template';
 import { getCopyrightAndVersionElement } from '@/werp/classes/style';
+import { getTodayAttendance } from '@/werp/classes/attendanceUtility';
 
 const getAttendanceTableBodyElement = (attendances: Attendance[]): HTMLTableSectionElement => {
     const tableBodyElement: HTMLTableSectionElement = document.createElement('tbody');
@@ -56,6 +59,14 @@ const getAttendanceTableHeaderElement = (): HTMLTableSectionElement => {
 export const updateAttendanceSummary = (attendances: Attendance[]): void => {
     document.querySelector('#formTemplate\\:attend_rec_datatable > div > table > tfoot > tr > td:nth-child(3)').innerHTML =
         getAttendanceSummaryTemplate(attendances);
+};
+
+export const updatePredictedSignOutTemplate = (attendances: Attendance[]): void => {
+    document.querySelector(
+        `#formTemplate\\:attend_rec_datatable > div > table > tbody > tr:not(.progress-bar-tr):nth-child(${
+            6 - moment().day()
+        }) > td:nth-child(3)`
+    ).innerHTML = getAttendanceSignOutTemplate(getTodayAttendance(attendances));
 };
 
 const getAttendanceTableFooterElement = (attendances: Attendance[]): HTMLTableSectionElement => {

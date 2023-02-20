@@ -242,8 +242,19 @@ export const getAttendanceSignInTemplate = (attendance: Attendance): string => {
 export const getAttendanceSignOutTemplate = (attendance: Attendance): string => {
     const time: string = formatTime(attendance.signOutDate);
     const remainMinutes: number = getRemainMinutes(attendance);
+    const todaySignOutLeftMinutes: number = attendance.signInDate.clone().add(9, 'hours').diff(moment(), 'minutes');
 
+    // 沒有簽退記錄
     if (time === '') {
+        // 計算超時工作的分鐘數
+        if (todaySignOutLeftMinutes < 0) {
+            return `
+                <td>
+                    <span style="letter-spacing:1px; font-weight:bold; color: green">
+                        (+${Math.abs(todaySignOutLeftMinutes)})
+                    </span>
+                </td>`;
+        }
         return `<td></td>`;
     }
 
