@@ -8,5 +8,6 @@ module.exports = merge(config(), {
     },
     externals: {
         moment: 'moment',
+        chart: 'Chart',
     }
 });
