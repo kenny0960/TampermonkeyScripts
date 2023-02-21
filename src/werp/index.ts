@@ -7,7 +7,7 @@ import { Moment } from '@/moment';
 import Attendance from '@/werp/interfaces/Attendance';
 import AnnualLeave from '@/werp/interfaces/AnnualLeave';
 import { getWeekAttendances } from '@/werp/classes/attendanceUtility';
-import { getAnnualLeaveTemplate, getLeaveReceiptNotesTemplate } from '@/werp/classes/template';
+import { getAnnualLeaveTemplate, getCompanyEmployeeTemplate, getLeaveReceiptNotesTemplate } from '@/werp/classes/template';
 import LeaveNote from '@/werp/interfaces/LeaveNote';
 import { appendUpdateLeaveNoteFunction, defaultLeaveNote } from '@/werp/classes/leaveNote';
 import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
@@ -19,17 +19,13 @@ import {
     restyleWholePage,
 } from '@/werp/classes/style';
 import { resetAttendanceTimers, startAttendanceTimers } from '@/werp/classes/timer';
-import {
-    getAnnualLeave,
-    getCompanyEmployeeCountObject,
-    getLeaveNotes,
-    getLeaveReceiptNotes,
-} from '@/werp/classes/sessionManager';
+import { getAnnualLeave, getLeaveNotes, getLeaveReceiptNotes } from '@/werp/classes/sessionManager';
 import { sleep } from '@/common/timer';
 import { appendUpdateAnnualLeaveFunction } from '@/werp/classes/annualLeave';
 import { getPickedYear } from '@/werp/classes/calendar';
 import { appendUpdateLeaveReceiptNoteFunction } from '@/werp/classes/LeaveReceiptNote';
 import { getAttendanceTableElement } from '@/werp/classes/attendanceTable';
+import { displayCompanyEmployeeCountLineChart } from '@/werp/classes/companyEmployeeCount';
 
 const getAttendanceByTr = (tr: HTMLTableRowElement): Attendance => {
     // ['09/12 (一)', '09:38', '18:41']
@@ -97,14 +93,15 @@ const taskMain = async (table: HTMLTableElement): Promise<void> => {
     log('待辦事項表格已經載入');
     const annualLeave: AnnualLeave | null = await getAnnualLeave();
     const leaveReceiptNotes: LeaveReceiptNote[] = await getLeaveReceiptNotes();
-    // TODO 暫時隱藏公司狀況
-    await getCompanyEmployeeCountObject();
+    const companyEmployeeTemplate: string = getCompanyEmployeeTemplate();
     const annualTemplate: string = getAnnualLeaveTemplate(annualLeave);
     const leaveReceiptNotesTemplate: string = getLeaveReceiptNotesTemplate(leaveReceiptNotes);
     table.insertAdjacentHTML('afterbegin', annualTemplate);
     appendUpdateAnnualLeaveFunction();
     table.insertAdjacentHTML('afterbegin', leaveReceiptNotesTemplate);
     appendUpdateLeaveReceiptNoteFunction();
+    table.insertAdjacentHTML('afterend', companyEmployeeTemplate);
+    await displayCompanyEmployeeCountLineChart();
 };
 
 const main = (): void => {
