@@ -85,7 +85,7 @@ export const getPredictedProgressBar = (attendances: Attendance[]): string => {
     if (predictedSignOutLeftMinutes < 0 && todaySignOutLeftMinutes < 0) {
         progressBar.percentage = 100;
         progressBar.leftBar = {
-            text: `超時工作 (+${Math.abs(todaySignOutLeftMinutes)})`,
+            text: '超時工作',
             class: `${progressBar.leftBar.class} bg-danger`,
         };
         progressBar.rightBar.color = 'white';
