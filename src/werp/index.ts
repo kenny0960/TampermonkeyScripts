@@ -19,7 +19,12 @@ import {
     restyleWholePage,
 } from '@/werp/classes/style';
 import { resetAttendanceTimers, startAttendanceTimers } from '@/werp/classes/timer';
-import { getAnnualLeave, getLeaveNotes, getLeaveReceiptNotes } from '@/werp/classes/sessionManager';
+import {
+    getAnnualLeave,
+    getCompanyEmployeeCountObject,
+    getLeaveNotes,
+    getLeaveReceiptNotes,
+} from '@/werp/classes/sessionManager';
 import { sleep } from '@/common/timer';
 import { appendUpdateAnnualLeaveFunction } from '@/werp/classes/annualLeave';
 import { getPickedYear } from '@/werp/classes/calendar';
@@ -96,6 +101,7 @@ const taskMain = async (table: HTMLTableElement): Promise<void> => {
     log('待辦事項表格已經載入');
     const annualLeave: AnnualLeave | null = await getAnnualLeave();
     const leaveReceiptNotes: LeaveReceiptNote[] = await getLeaveReceiptNotes();
+    const companyEmployeeCountObject: Object = await getCompanyEmployeeCountObject();
     const companyEmployeeTemplate: string = getCompanyEmployeeTemplate();
     const annualTemplate: string = getAnnualLeaveTemplate(annualLeave);
     const leaveReceiptNotesTemplate: string = getLeaveReceiptNotesTemplate(leaveReceiptNotes);
@@ -105,7 +111,7 @@ const taskMain = async (table: HTMLTableElement): Promise<void> => {
     appendUpdateLeaveReceiptNoteFunction();
     table.insertAdjacentHTML('afterend', companyEmployeeTemplate);
     appendUpdateCompanyEmployeeCountFunction();
-    await displayCompanyEmployeeCountLineChart();
+    await displayCompanyEmployeeCountLineChart(companyEmployeeCountObject);
 };
 
 const main = (): void => {

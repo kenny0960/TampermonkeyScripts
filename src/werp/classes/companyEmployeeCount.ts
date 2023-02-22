@@ -1,7 +1,6 @@
 import * as moment from 'moment';
 import { Chart } from 'chart';
 
-import { getCompanyEmployeeCountObject } from '@/werp/classes/sessionManager';
 import { mergeObject } from '@/common/object';
 import { sleep } from '@/common/timer';
 import { fetchAllCompanyEmployeeCount } from '@/werp/classes/ajax';
@@ -15,19 +14,16 @@ export const OLD_COMPANY_EMPLOYEE_COUNT: Object = {
     '2023': { '1': 1498, '2': 1496, '3': 1475, '5': 1448, '6': 1401, '7': 1396 },
 };
 
-export const displayCompanyEmployeeCountLineChart = async (): Promise<void> => {
-    const companyEmployeeCountObject: Object = mergeObject(
-        await getCompanyEmployeeCountObject(),
-        OLD_COMPANY_EMPLOYEE_COUNT
-    );
+export const displayCompanyEmployeeCountLineChart = async (companyEmployeeCountObject: Object): Promise<void> => {
+    const completeCompanyEmployeeCountObject: Object = mergeObject(companyEmployeeCountObject, OLD_COMPANY_EMPLOYEE_COUNT);
     const canvasElement: HTMLCanvasElement = document.getElementById('company_employee_count') as HTMLCanvasElement;
     const data = [];
 
-    for (const year in companyEmployeeCountObject) {
-        for (const week in companyEmployeeCountObject[year]) {
+    for (const year in completeCompanyEmployeeCountObject) {
+        for (const week in completeCompanyEmployeeCountObject[year]) {
             data.push({
                 label: `${year}/${week}`,
-                count: companyEmployeeCountObject[year][week],
+                count: completeCompanyEmployeeCountObject[year][week],
             });
         }
     }
@@ -94,7 +90,7 @@ export const updateCompanyEmployeeCount = async (): Promise<void> => {
     log('從伺服器取得公司職員狀況');
     updateCompanyEmployeeCountView();
     appendUpdateCompanyEmployeeCountFunction();
-    await displayCompanyEmployeeCountLineChart();
+    await displayCompanyEmployeeCountLineChart(companyEmployeeCountObject);
     getUpdateCompanyEmployeeCountButton().className = getUpdateCompanyEmployeeCountButton().className.replace(
         ' fa-spin',
         ''
