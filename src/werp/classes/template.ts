@@ -165,23 +165,32 @@ export const getLeaveReceiptNotesTemplate = (leaveReceiptNotes: LeaveReceiptNote
 };
 
 export const getCompanyEmployeeTemplate = (): string => {
+    const lastUpdateDatetime: string = moment(
+        Number(SessionManager.getByKey(SessionKeys.AJAX_COMPANY_EMPLOYEE_COUNT_TIMESTAMP))
+    ).fromNow();
     return `
-<table id="formTemplate:j_idt319" class="ui-panelgrid ui-widget" style=" width: 100%; border: none;margin-top: 2px;margin-bottom: 2px; " role="grid"><tbody><tr class="ui-widget-content ui-panelgrid-even" role="row"><td role="gridcell" class="ui-panelgrid-cell" style="border-bottom-color: #C4C4C4;border-bottom-width: 0.5px;border-top-color: white;                                border-left-color: white;border-right-color: white;"></td></tr></tbody></table>
-<div id="formTemplate:j_idt323" class="ui-outputpanel ui-widget">
-  <div class="ui-g-12 waiting-task-g">
-    <div class="title-name ui-g-4 ">公司在職人數
-    </div>
-    <div class="ui-g-8 ">
-      <span class="todocss">
-        <ul class="todo-ul-list">
-          <li>
-            <canvas id="company_employee_count"></canvas>
-          </li>
-        </ul>
-      </span>
-    </div>
-  </div>
-</div>
+        <div id="company-employee-count-template">
+            <table id="formTemplate:j_idt319" class="ui-panelgrid ui-widget" style=" width: 100%; border: none;margin-top: 2px;margin-bottom: 2px; " role="grid"><tbody><tr class="ui-widget-content ui-panelgrid-even" role="row"><td role="gridcell" class="ui-panelgrid-cell" style="border-bottom-color: #C4C4C4;border-bottom-width: 0.5px;border-top-color: white;                                border-left-color: white;border-right-color: white;"></td></tr></tbody></table>
+            <div id="formTemplate:j_idt323" class="ui-outputpanel ui-widget">
+              <div class="ui-g-12 waiting-task-g">
+                <div class="title-name ui-g-4 ">公司在職人數
+                </div>
+                <div class="ui-g-8 ">
+                  <span class="todocss">
+                    <ul class="todo-ul-list">
+                      <li>
+                        <canvas id="company_employee_count"></canvas>
+                      </li>
+                      <li style="text-align: end;font-size: 12px;">
+                        最後更新：${lastUpdateDatetime}
+                        <i id="update-company-employee-count" class="fa fa-refresh" style="cursor: pointer;"></i>
+                      </li>
+                    </ul>
+                  </span>
+                </div>
+              </div>
+            </div>
+        </div>
     `;
 };
 

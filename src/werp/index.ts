@@ -25,7 +25,10 @@ import { appendUpdateAnnualLeaveFunction } from '@/werp/classes/annualLeave';
 import { getPickedYear } from '@/werp/classes/calendar';
 import { appendUpdateLeaveReceiptNoteFunction } from '@/werp/classes/LeaveReceiptNote';
 import { getAttendanceTableElement } from '@/werp/classes/attendanceTable';
-import { displayCompanyEmployeeCountLineChart } from '@/werp/classes/companyEmployeeCount';
+import {
+    appendUpdateCompanyEmployeeCountFunction,
+    displayCompanyEmployeeCountLineChart,
+} from '@/werp/classes/companyEmployeeCount';
 
 const getAttendanceByTr = (tr: HTMLTableRowElement): Attendance => {
     // ['09/12 (一)', '09:38', '18:41']
@@ -101,6 +104,7 @@ const taskMain = async (table: HTMLTableElement): Promise<void> => {
     table.insertAdjacentHTML('afterbegin', leaveReceiptNotesTemplate);
     appendUpdateLeaveReceiptNoteFunction();
     table.insertAdjacentHTML('afterend', companyEmployeeTemplate);
+    appendUpdateCompanyEmployeeCountFunction();
     await displayCompanyEmployeeCountLineChart();
 };
 
