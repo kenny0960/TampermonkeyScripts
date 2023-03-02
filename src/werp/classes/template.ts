@@ -220,31 +220,40 @@ export const getAttendanceSignInTemplate = (attendance: Attendance): string => {
     `;
 };
 
-export const getAttendanceSignOutTemplate = (attendance: Attendance): string => {
-    const time: string = formatTime(attendance.signOutDate);
+export const getAttendanceSignOutLeftMinutesTemplate = (attendance: Attendance): string => {
     const remainMinutes: number = getRemainMinutes(attendance);
     const todaySignOutLeftMinutes: number = attendance.signInDate.clone().add(9, 'hours').diff(moment(), 'minutes');
 
     // 沒有簽退記錄
-    if (time === '') {
+    if (formatTime(attendance.signOutDate) === '') {
+        // 國定假日或請假直接不計算
+        if (formatTime(attendance.signInDate) == '') {
+            return '';
+        }
         // 計算超時工作的分鐘數
         if (todaySignOutLeftMinutes < 0) {
             return `
-                <td>
-                    <span style="letter-spacing:1px; font-weight:bold; color: green">
-                        (+${Math.abs(todaySignOutLeftMinutes)})
-                    </span>
-                </td>`;
+                <span style="letter-spacing:1px; font-weight:bold; color: green">
+                    (+${Math.abs(todaySignOutLeftMinutes)})
+                </span>
+            `;
         }
-        return `<td></td>`;
+        return '';
     }
 
     return `
+        <span style="letter-spacing:1px; font-weight:bold; color: ${remainMinutes >= 0 ? 'green' : 'red'}">
+            (${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes})
+        </span>
+    `;
+};
+
+export const getAttendanceSignOutTemplate = (attendance: Attendance): string => {
+    const time: string = formatTime(attendance.signOutDate);
+    return `
         <td>
             ${time}
-            <span style="letter-spacing:1px; font-weight:bold; color: ${remainMinutes >= 0 ? 'green' : 'red'}">
-                (${remainMinutes >= 0 ? `+${remainMinutes}` : remainMinutes})
-            </span>
+            ${getAttendanceSignOutLeftMinutesTemplate(attendance)}
         </td>
     `;
 };
