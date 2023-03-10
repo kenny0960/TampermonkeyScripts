@@ -205,19 +205,15 @@ export const getAttendanceDateTemplate = (attendance: Attendance): string => {
 export const getAttendanceSignInTemplate = (attendance: Attendance): string => {
     const time: string = formatTime(attendance.signInDate);
 
-    if (time === '') {
-        return `<td></td>`;
+    if (time === '' && isToday(attendance.signInDate) === true) {
+        return `
+            <td>
+                <i style="color: crimson;" class="fa fa-1 fa-exclamation-triangle" aria-hidden="true"></i> 未簽到
+            </td>
+        `;
     }
 
-    return `
-        <td>
-            ${
-                time === '' && isToday(attendance.signInDate) === true
-                    ? `<i style="color: crimson;" class="fa fa-1 fa-exclamation-triangle" aria-hidden="true"></i> 未簽到`
-                    : time
-            }
-        </td>
-    `;
+    return `<td>${time}</td>`;
 };
 
 export const getAttendanceSignOutLeftMinutesTemplate = (attendance: Attendance): string => {
