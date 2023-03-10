@@ -266,7 +266,7 @@ export const fetchPersonalLeaveReceiptNotesAjaxPattern = async (): Promise<AjaxP
 
 export const fetchPersonalLeaveReceiptNotes = async (): Promise<LeaveReceiptNote[]> => {
     const { session, searchRange }: AjaxPattern = await fetchPersonalLeaveReceiptNotesAjaxPattern();
-    const endDate: string = moment().add(1, 'months').format('YYYY/MM/DD', { trim: false });
+    const endDate: string = moment().add(2, 'months').format('YYYY/MM/DD', { trim: false });
     const startDate: string = moment().subtract(7, 'days').format('YYYY/MM/DD', { trim: false });
     const searchDateRange: string = `&${searchRange.start}=${startDate}&${searchRange.end}=${endDate}`;
 
