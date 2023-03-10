@@ -1,7 +1,7 @@
 import * as moment from 'moment';
 
 import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
-import { fetchPersonalLeaveReceiptNotes } from '@/werp/classes/ajax';
+import { fetchLeaveReceiptNotes } from '@/werp/classes/ajax';
 import SessionManager from '@/common/SessionManager';
 import SessionKeys from '@/werp/enums/SessionKeys';
 import { log } from '@/common/logger';
@@ -31,7 +31,7 @@ export const updateLeaveReceiptNoteView = (leaveReceiptNotes: LeaveReceiptNote[]
 export const updateLeaveReceiptNote = async (): Promise<void> => {
     getUpdateLeaveReceiptNoteButton().className += ' fa-spin';
     await sleep(3);
-    const leaveReceiptNote: LeaveReceiptNote[] = await fetchPersonalLeaveReceiptNotes();
+    const leaveReceiptNote: LeaveReceiptNote[] = await fetchLeaveReceiptNotes();
     SessionManager.setByKey(SessionKeys.AJAX_LEAVE_RECEIPT_NOTES, JSON.stringify(leaveReceiptNote));
     SessionManager.setByKey(SessionKeys.AJAX_LEAVE_RECEIPT_NOTES_TIMESTAMP, String(moment().valueOf()));
     log('手動從伺服器取得請假記錄');

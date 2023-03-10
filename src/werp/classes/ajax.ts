@@ -79,7 +79,7 @@ export const fetchAllCompanyEmployeeCount = async (): Promise<number | null> => 
 };
 
 export const fetchAnnualLeave = async (): Promise<AnnualLeave | null> => {
-    const { session }: AjaxPattern = await fetchPersonalLeaveReceiptNotesAjaxPattern();
+    const { session }: AjaxPattern = await fetchLeaveReceiptNotesAjaxPattern();
     return await fetch('https://cy.iwerp.net/hr-attendance/leave/personal/personal-apply.xhtml', {
         headers: {
             accept: 'application/xml, text/xml, */*; q=0.01',
@@ -121,7 +121,7 @@ export const fetchAnnualLeave = async (): Promise<AnnualLeave | null> => {
         });
 };
 
-export const fetchPersonalLeaveNotesAjaxPattern = async (): Promise<AjaxPattern | null> => {
+export const fetchLeaveNotesAjaxPattern = async (): Promise<AjaxPattern | null> => {
     return await fetch('https://cy.iwerp.net/hr-attendance/merge/personal.xhtml', {
         headers: {
             accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
@@ -164,9 +164,9 @@ export const fetchPersonalLeaveNotesAjaxPattern = async (): Promise<AjaxPattern 
         });
 };
 
-export const fetchPersonalLeaveNotes = async (): Promise<LeaveNote[]> => {
+export const fetchLeaveNotes = async (): Promise<LeaveNote[]> => {
     const pickedDate: Moment = getPickedDate();
-    const { searchRange, session }: AjaxPattern = await fetchPersonalLeaveNotesAjaxPattern();
+    const { searchRange, session }: AjaxPattern = await fetchLeaveNotesAjaxPattern();
     const endDate: string = pickedDate.day(5).format('YYYY/MM/DD', { trim: false });
     const startDate: string = pickedDate.day(1).format('YYYY/MM/DD', { trim: false });
     const searchDateRange: string = `&${searchRange.start}=${startDate}&${searchRange.end}=${endDate}`;
@@ -220,7 +220,7 @@ export const fetchPersonalLeaveNotes = async (): Promise<LeaveNote[]> => {
         });
 };
 
-export const fetchPersonalLeaveReceiptNotesAjaxPattern = async (): Promise<AjaxPattern> => {
+export const fetchLeaveReceiptNotesAjaxPattern = async (): Promise<AjaxPattern> => {
     return await fetch('https://cy.iwerp.net/hr-attendance/leave/personal/personal-apply.xhtml', {
         headers: {
             accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
@@ -264,8 +264,8 @@ export const fetchPersonalLeaveReceiptNotesAjaxPattern = async (): Promise<AjaxP
         });
 };
 
-export const fetchPersonalLeaveReceiptNotes = async (): Promise<LeaveReceiptNote[]> => {
-    const { session, searchRange }: AjaxPattern = await fetchPersonalLeaveReceiptNotesAjaxPattern();
+export const fetchLeaveReceiptNotes = async (): Promise<LeaveReceiptNote[]> => {
+    const { session, searchRange }: AjaxPattern = await fetchLeaveReceiptNotesAjaxPattern();
     const endDate: string = moment().add(2, 'months').format('YYYY/MM/DD', { trim: false });
     const startDate: string = moment().subtract(7, 'days').format('YYYY/MM/DD', { trim: false });
     const searchDateRange: string = `&${searchRange.start}=${startDate}&${searchRange.end}=${endDate}`;

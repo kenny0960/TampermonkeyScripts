@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import LeaveNote from '@/werp/interfaces/LeaveNote';
 import { getLeaveNoteTemplate } from '@/werp/classes/template';
 import { sleep } from '@/common/timer';
-import { fetchPersonalLeaveNotes } from '@/werp/classes/ajax';
+import { fetchLeaveNotes } from '@/werp/classes/ajax';
 import SessionManager from '@/common/SessionManager';
 import SessionKeys from '@/werp/enums/SessionKeys';
 import { log } from '@/common/logger';
@@ -37,7 +37,7 @@ export const updateLeaveNoteView = (leaveNotes: LeaveNote[] | null): void => {
 export const updateLeaveNote = async (): Promise<void> => {
     getUpdateLeaveNoteButton().className += ' fa-spin';
     await sleep(3);
-    const leaveNotes: LeaveNote[] | null = await fetchPersonalLeaveNotes();
+    const leaveNotes: LeaveNote[] | null = await fetchLeaveNotes();
     SessionManager.setByKey(SessionKeys.AJAX_LEAVE_NOTES, JSON.stringify(leaveNotes));
     SessionManager.setByKey(SessionKeys.AJAX_LEAVE_NOTES_TIMESTAMP, String(moment().valueOf()));
     log('手動從伺服器取得請假/異常記錄');

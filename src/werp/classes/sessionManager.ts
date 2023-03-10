@@ -7,8 +7,8 @@ import SessionKeys from '@/werp/enums/SessionKeys';
 import {
     fetchAllCompanyEmployeeCount,
     fetchAnnualLeave,
-    fetchPersonalLeaveNotes,
-    fetchPersonalLeaveReceiptNotes,
+    fetchLeaveNotes,
+    fetchLeaveReceiptNotes,
 } from '@/werp/classes/ajax';
 import AnnualLeave from '@/werp/interfaces/AnnualLeave';
 import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
@@ -26,7 +26,7 @@ export const getLeaveNotes = async (): Promise<LeaveNote[]> => {
         log('從本地取得請假/異常記錄');
         return SessionManager.getArrayByKey(SessionKeys.AJAX_LEAVE_NOTES);
     }
-    const leaveNotes: LeaveNote[] = await fetchPersonalLeaveNotes();
+    const leaveNotes: LeaveNote[] = await fetchLeaveNotes();
     SessionManager.setByKey(SessionKeys.AJAX_LEAVE_NOTES, JSON.stringify(leaveNotes));
     SessionManager.setByKey(SessionKeys.AJAX_LEAVE_NOTES_TIMESTAMP, String(moment().valueOf()));
     log('從伺服器取得請假/異常記錄');
@@ -50,7 +50,7 @@ export const getLeaveReceiptNotes = async (): Promise<LeaveReceiptNote[]> => {
         log('從本地取得請假記錄');
         return SessionManager.getArrayByKey(SessionKeys.AJAX_LEAVE_RECEIPT_NOTES);
     }
-    const leaveReceiptNotes: LeaveReceiptNote[] = await fetchPersonalLeaveReceiptNotes();
+    const leaveReceiptNotes: LeaveReceiptNote[] = await fetchLeaveReceiptNotes();
     SessionManager.setByKey(SessionKeys.AJAX_LEAVE_RECEIPT_NOTES, JSON.stringify(leaveReceiptNotes));
     SessionManager.setByKey(SessionKeys.AJAX_LEAVE_RECEIPT_NOTES_TIMESTAMP, String(moment().valueOf()));
     log('從伺服器取得請假記錄');
