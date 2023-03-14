@@ -2,6 +2,11 @@ import UpdateLog from '@/werp/interfaces/UpdateLog';
 
 const UPDATE_LOGS: UpdateLog[] = [
     {
+        version: '3.9.2',
+        date: '20230314 1500',
+        messages: ['顯示近期請假「已銷假」的標示'],
+    },
+    {
         version: '3.9.1',
         date: '20230302 1100',
         messages: ['即時更新累積至今天的剩餘分鐘數', '定時更新當日的簽退內容'],
