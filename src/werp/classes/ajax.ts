@@ -319,14 +319,17 @@ export const fetchLeaveReceiptNotes = async (): Promise<LeaveReceiptNote[]> => {
                     const endTimeElement: HTMLDivElement | null = tds.item(11);
                     const hoursElement: HTMLDivElement | null = tds.item(12);
                     const statusElement: HTMLDivElement | null = tds.item(15);
+                    const isCanceledElement: HTMLDivElement | null = tds.item(17);
                     if (typeElement !== null && statusElement !== null) {
                         leaveReceiptNotes.push({
+                            id: tr.getAttribute('data-rk').trim(),
                             type: typeElement.innerText.trim(),
                             note: noteElement.innerText.trim(),
                             start: moment(`${startDateElement.innerText.trim()} ${startTimeElement.innerText.trim()}`),
                             end: moment(`${endDateElement.innerText.trim()} ${endTimeElement.innerText.trim()}`),
                             hours: Number(hoursElement.innerText.trim()),
                             status: statusElement.innerText.trim(),
+                            isCanceled: isCanceledElement.innerText.trim() === '是',
                         });
                     }
                 }

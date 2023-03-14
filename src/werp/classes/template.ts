@@ -83,6 +83,16 @@ export const getAnnualLeaveTemplate = (annualLeave: AnnualLeave | null): string 
     `;
 };
 
+export const getLeaveReceiptNoteStatusIconTemplate = (leaveReceiptNote: LeaveReceiptNote): string => {
+    if (leaveReceiptNote.isCanceled === true) {
+        return `<i style="color: #dc3545;" class="fa fa-ban" aria-hidden="true"></i>`;
+    }
+    if (leaveReceiptNote.status === '結案') {
+        return `<i style="color: darkgreen;" class="fa fa-1 fa-check-square-o"></i>`;
+    }
+    return `<i style="color: chocolate;" class="fa fa-spinner fa-1 fa-spin fa-fw"></i>`;
+};
+
 export const getLeaveReceiptNotesTemplate = (leaveReceiptNotes: LeaveReceiptNote[]): string => {
     const templates: string[] = [];
     const lastUpdateDatetime: string = moment(
@@ -98,11 +108,7 @@ export const getLeaveReceiptNotesTemplate = (leaveReceiptNotes: LeaveReceiptNote
         templates.push(`
             <tr style="${startDate.isBefore(moment()) ? 'opacity: 0.5;' : ''}" >
                 <td class="align-middle">
-                    ${
-                        leaveReceiptNote.status === '結案'
-                            ? '<i style="color: darkgreen;" class="fa fa-1 fa-check-square-o"></i>'
-                            : '<i style="color: chocolate;" class="fa fa-spinner fa-1 fa-spin fa-fw"></i>'
-                    }
+                    ${getLeaveReceiptNoteStatusIconTemplate(leaveReceiptNote)}
                 </td>
                 <td class="align-middle">
                     ${leaveReceiptNote.type}
@@ -116,7 +122,12 @@ export const getLeaveReceiptNotesTemplate = (leaveReceiptNotes: LeaveReceiptNote
                     ${leaveReceiptNote.hours}
                 </td>
                 <td class="align-middle">
-                    ${leaveReceiptNote.status}
+                    <a style="color: #000FFF; text-decoration: underline;" href="../../hr-attendance/leave/personal/personal-apply.xhtml?single-form=portal&form-sid=${
+                        leaveReceiptNote.id
+                    }" target="_blank">
+                        ${leaveReceiptNote.status}
+                        ${leaveReceiptNote.isCanceled === true ? '<br /><span class="badge badge-danger">已銷假</span>' : ''}
+                    </a>
                 </td>
                  <td class="align-middle">
                     ${startDate.fromNow()}
