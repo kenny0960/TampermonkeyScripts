@@ -31,11 +31,11 @@ export const updateLeaveReceiptNoteView = (leaveReceiptNotes: LeaveReceiptNote[]
 export const updateLeaveReceiptNote = async (): Promise<void> => {
     getUpdateLeaveReceiptNoteButton().className += ' fa-spin';
     await sleep(3);
-    const leaveReceiptNote: LeaveReceiptNote[] = await fetchLeaveReceiptNotes();
-    SessionManager.setByKey(SessionKeys.AJAX_LEAVE_RECEIPT_NOTES, JSON.stringify(leaveReceiptNote));
+    const leaveReceiptNotes: LeaveReceiptNote[] = await fetchLeaveReceiptNotes();
+    SessionManager.setByKey(SessionKeys.AJAX_LEAVE_RECEIPT_NOTES, JSON.stringify(leaveReceiptNotes));
     SessionManager.setByKey(SessionKeys.AJAX_LEAVE_RECEIPT_NOTES_TIMESTAMP, String(moment().valueOf()));
     log('手動從伺服器取得請假記錄');
-    updateLeaveReceiptNoteView(leaveReceiptNote);
+    updateLeaveReceiptNoteView(leaveReceiptNotes);
     appendUpdateLeaveReceiptNoteFunction();
     getUpdateLeaveReceiptNoteButton().className = getUpdateLeaveReceiptNoteButton().className.replace(' fa-spin', '');
 };
