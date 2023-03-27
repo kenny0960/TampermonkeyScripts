@@ -9,6 +9,7 @@ import SessionKeys from '@/werp/enums/SessionKeys';
 import { log } from '@/common/logger';
 
 export const defaultLeaveNote: LeaveNote = {
+    datetime: '',
     unusualNote: '',
     unsignedNote: '',
     receiptNote: '',

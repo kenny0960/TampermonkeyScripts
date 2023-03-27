@@ -204,11 +204,15 @@ export const fetchLeaveNotes = async (): Promise<LeaveNote[]> => {
             html.innerHTML = body;
             html.querySelectorAll('.ui-datatable-frozenlayout-right tbody tr').forEach(
                 (tr: HTMLTableRowElement, index: number) => {
+                    const datetimeElement: HTMLDivElement | null = html.querySelector(
+                        `.ui-datatable-frozenlayout-left tbody tr:nth-child(${index + 1}) td:nth-child(5)`
+                    );
                     const unusualNoteElement: HTMLDivElement | null = tr.querySelectorAll('td').item(2);
                     const unsignedNoteElement: HTMLDivElement | null = tr.querySelectorAll('td').item(5);
                     const receiptNoteElement: HTMLDivElement | null = tr.querySelectorAll('td').item(3);
                     if (unusualNoteElement !== null && unsignedNoteElement !== null && receiptNoteElement !== null) {
                         leaveNotes[index + 1] = {
+                            datetime: datetimeElement.innerText.trim(),
                             unusualNote: unusualNoteElement.innerText.trim(),
                             unsignedNote: unsignedNoteElement.innerText.trim(),
                             receiptNote: receiptNoteElement.innerText.trim(),
