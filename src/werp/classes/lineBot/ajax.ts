@@ -3,6 +3,11 @@ import { Message } from '@/werp/types/lineBot';
 import { LINE_MESSAGING_API_ACCESS_TOKEN, LINE_NOTIFY_CHANNEL_ACCESS_TOKEN, LINE_USER_ID } from '@/werp/consts/env';
 
 export const sendMessages = (messages: Message[]): void => {
+    if (LINE_MESSAGING_API_ACCESS_TOKEN === '' && LINE_USER_ID === '') {
+        log(`請設定 LINE_MESSAGING_API_ACCESS_TOKEN 和 LINE_USER_ID 環境變數`);
+        return;
+    }
+
     GM_xmlhttpRequest({
         url: 'https://api.line.me/v2/bot/message/push',
         headers: {
@@ -25,6 +30,11 @@ export const sendMessages = (messages: Message[]): void => {
 };
 
 export const notify = (message: string): void => {
+    if (LINE_NOTIFY_CHANNEL_ACCESS_TOKEN === '') {
+        log(`請設定 LINE_NOTIFY_CHANNEL_ACCESS_TOKEN 環境變數`);
+        return;
+    }
+
     GM_xmlhttpRequest({
         url: 'https://notify-api.line.me/api/notify',
         headers: {
