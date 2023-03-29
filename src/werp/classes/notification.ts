@@ -16,6 +16,7 @@ import {
     STITCH_IN_PAINTING_IMAGE,
     WARNING_IMAGE,
 } from '@/werp/consts/Base64Image';
+import { notify } from '@/werp/classes/lineBot/ajax';
 
 export const showCompanyNotification = (): void => {
     const notificationElements: NodeListOf<HTMLTableRowElement> = document.querySelectorAll(
@@ -46,6 +47,8 @@ export const showCompanyNotification = (): void => {
             closeBtn.click();
         }
     );
+
+    notify(`公告：${notifications.join('、')}...`);
 };
 
 export const showAttendanceNotification = (attendances: Attendance[]): void => {
@@ -74,6 +77,8 @@ export const showAttendanceNotification = (attendances: Attendance[]): void => {
                 SessionManager.setByKey(SessionKeys.SIGN_OUT_ALREADY_NOTIFICATION, currentDateString);
             }
         );
+
+        notify(`已經簽退：請馬上離開辦公室`);
         return;
     }
 
@@ -94,6 +99,8 @@ export const showAttendanceNotification = (attendances: Attendance[]): void => {
                 SessionManager.setByKey(SessionKeys.SIGN_IN_NOTIFICATION, currentDateString);
             }
         );
+
+        notify(`記得簽到：尚未有簽到的紀錄`);
         return;
     }
 
@@ -114,6 +121,8 @@ export const showAttendanceNotification = (attendances: Attendance[]): void => {
                 SessionManager.setByKey(SessionKeys.OFF_WORK_NOTIFICATION, currentDateString);
             }
         );
+
+        notify(`記得簽退：超時工作(+${Math.abs(todaySignOutLeftMinutes)})`);
     }
     // 即將下班
     else if (predictedSignOutLeftMinutes < 30) {
@@ -133,6 +142,8 @@ export const showAttendanceNotification = (attendances: Attendance[]): void => {
                     SessionManager.setByKey(SessionKeys.SIGN_OUT_NOTIFICATION, currentDateString);
                 }
             );
+
+            notify(`記得簽退：預計 ${predictedSignOutDate.fromNow()}下班`);
             return;
         }
 
@@ -147,6 +158,8 @@ export const showAttendanceNotification = (attendances: Attendance[]): void => {
                 SessionManager.setByKey(SessionKeys.SIGN_OUT_NOTIFICATION, currentDateString);
             }
         );
+
+        notify(`記得簽退：符合下班條件`);
     }
 };
 
@@ -167,6 +180,7 @@ export const showUpdateLogNotification = (updateLog: UpdateLog): void => {
         }
     );
 
+    notify(`更新日誌 v${updateLog.version} (${moment(updateLog.date).fromNow()})：${updateLog.messages.join('、')}...`);
     // 顯示一次就好
     SessionManager.setByKey(SessionKeys.UPDATE_LOG_NOTIFICATION, updateLog.version);
 };
