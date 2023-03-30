@@ -2,6 +2,9 @@ import { log } from '@/common/logger';
 import * as PackageJson from '@/../package.json';
 import UPDATE_LOGS from '@/werp/consts/UpdateLogs';
 import UpdateLog from '@/werp/interfaces/UpdateLog';
+import Attendance from '@/werp/interfaces/Attendance';
+import { sendAttendances } from '@/werp/classes/lineBot/messagingApi';
+import { HAS_LINE_MESSAGE_API_AUTH } from '@/werp/consts/env';
 
 export const stringifyUpdateLog = (updateLog: UpdateLog): string => {
     return `v${updateLog.version} ${updateLog.date} ${updateLog.messages}`;
@@ -18,7 +21,9 @@ export const getCopyrightAndVersionElement = (): HTMLDivElement => {
 
 export const createAttendanceButton = (text: string, link: string): HTMLElement => {
     const anchorElement: HTMLAnchorElement = document.createElement('a');
-    anchorElement.href = link;
+    if (link !== '') {
+        anchorElement.href = link;
+    }
     anchorElement.innerText = text;
     anchorElement.title = text;
     anchorElement.className =
@@ -32,6 +37,33 @@ export const createAttendanceButton = (text: string, link: string): HTMLElement 
     anchorElement.style.width = 'fit-content';
     anchorElement.style.padding = '0 3px';
     return anchorElement;
+};
+
+export const getSendIcon = (): HTMLUnknownElement => {
+    const iconElement: HTMLUnknownElement = document.createElement('i');
+    iconElement.className = 'fa fa-paper-plane';
+    iconElement.style.cursor = 'pointer';
+    return iconElement;
+};
+
+export const prependSendAttendancesButton = (attendances: Attendance[]): void => {
+    const toolbarElement: HTMLTableElement | null = document.querySelector(
+        'table[id="formTemplate:attend_rec_panel-title"] .ui-panel-content'
+    );
+    if (toolbarElement === null || toolbarElement.innerHTML.includes('fa-paper-plane') === true) {
+        log('傳送出缺勤按鍵已經載入');
+        return;
+    }
+    if (HAS_LINE_MESSAGE_API_AUTH === false) {
+        return;
+    }
+    const sendAttendanceButton: HTMLElement = createAttendanceButton('', '');
+    sendAttendanceButton.style.padding = '0 10px';
+    sendAttendanceButton.onclick = (): void => {
+        sendAttendances(attendances);
+    };
+    sendAttendanceButton.insertAdjacentElement('afterbegin', getSendIcon());
+    toolbarElement.prepend(sendAttendanceButton);
 };
 
 export const prependForgottenAttendanceButton = (): void => {

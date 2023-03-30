@@ -14,6 +14,7 @@ import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
 import { initializeFaviconBadge } from '@/werp/classes/favicon';
 import {
     prependForgottenAttendanceButton,
+    prependSendAttendancesButton,
     restyleAttendanceButtons,
     restyleAttendanceTable,
     restyleWholePage,
@@ -87,6 +88,7 @@ const attendanceMain = async (tableSectionElement: HTMLTableSectionElement): Pro
 
     const newTableSectionElement: HTMLTableSectionElement = wrapperElement.querySelector('table > tbody');
     prependForgottenAttendanceButton();
+    prependSendAttendancesButton(attendances);
     restyleAttendanceButtons();
     restyleAttendanceTable(newTableSectionElement);
     restyleWholePage();

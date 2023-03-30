@@ -12,7 +12,7 @@ import {
 } from '@/werp/classes/template';
 import { getCopyrightAndVersionElement } from '@/werp/classes/style';
 import { getTodayAttendance } from '@/werp/classes/attendanceUtility';
-import { HAS_LINE_MESSAGE_API_AUTH, LINE_MESSAGING_API_ACCESS_TOKEN, LINE_USER_ID } from '@/werp/consts/env';
+import { HAS_LINE_MESSAGE_API_AUTH } from '@/werp/consts/env';
 
 const getAttendanceTableBodyElement = (attendances: Attendance[]): HTMLTableSectionElement => {
     const tableBodyElement: HTMLTableSectionElement = document.createElement('tbody');
