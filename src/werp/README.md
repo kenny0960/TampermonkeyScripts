@@ -21,9 +21,16 @@
 // @require      https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js
 // @require      https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js
 // @icon         https://cy.iwerp.net/portal/images/chungyo.ico
-// @require      https://raw.githubusercontent.com/kenny0960/TampermonkeyScripts/master/dist/werp.bundle.js
-// @grant        none
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_deleteValue
+// @grant        GM_xmlhttpRequest
 // ==/UserScript==
+
+// 調整出缺勤更新頻率
+GM_setValue('TIMER_ATTENDANCE_SECONDS', 60);
+// 調整通知視窗更新頻率
+GM_setValue('TIMER_NOTIFICATION_MINUTES', 5);
 ```
 
 ![image](https://raw.githubusercontent.com/kenny0960/TampermonkeyScripts/master/dist/images/wrep-step2.png)
