@@ -27,6 +27,7 @@
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
-    "favicon-badge": "^2.0.0"
+    "favicon-badge": "^2.0.0",
+    "upload-js": "^2.11.2"
   }
 }
