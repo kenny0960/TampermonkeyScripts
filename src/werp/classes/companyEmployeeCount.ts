@@ -8,6 +8,7 @@ import SessionManager from '@/common/SessionManager';
 import SessionKeys from '@/werp/enums/SessionKeys';
 import { log } from '@/common/logger';
 import { getCompanyEmployeeTemplate } from '@/werp/classes/template';
+import { sendCompanyEmployeeCountChart } from '@/werp/classes/lineBot/messagingApi';
 
 export const OLD_COMPANY_EMPLOYEE_COUNT: Object = {
     '2022': { '52': 1497, '53': 1497 },
@@ -58,8 +59,17 @@ export const getUpdateCompanyEmployeeCountButton = (): HTMLAnchorElement => {
     return anchorElement;
 };
 
+export const getSendCompanyEmployeeCountButton = (): HTMLAnchorElement => {
+    const anchorElement: HTMLAnchorElement | null = document.querySelector('#send-company-employee-count');
+    if (anchorElement === null) {
+        return document.createElement('a');
+    }
+    return anchorElement;
+};
+
 export const appendUpdateCompanyEmployeeCountFunction = (): void => {
     getUpdateCompanyEmployeeCountButton().onclick = updateCompanyEmployeeCount;
+    getSendCompanyEmployeeCountButton().onclick = sendCompanyEmployeeCountChart;
 };
 
 export const updateCompanyEmployeeCountView = (): void => {

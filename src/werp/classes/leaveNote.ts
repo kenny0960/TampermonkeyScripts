@@ -7,6 +7,7 @@ import { fetchLeaveNotes } from '@/werp/classes/ajax';
 import SessionManager from '@/common/SessionManager';
 import SessionKeys from '@/werp/enums/SessionKeys';
 import { log } from '@/common/logger';
+import { sendLeaveNotes } from '@/werp/classes/lineBot/messagingApi';
 
 export const defaultLeaveNote: LeaveNote = {
     datetime: '',
@@ -23,8 +24,17 @@ export const getUpdateLeaveNoteButton = (): HTMLAnchorElement => {
     return anchorElement;
 };
 
+export const getSendLeaveNoteButton = (): HTMLAnchorElement => {
+    const anchorElement: HTMLAnchorElement | null = document.querySelector('#send-leave-note');
+    if (anchorElement === null) {
+        return document.createElement('a');
+    }
+    return anchorElement;
+};
+
 export const appendUpdateLeaveNoteFunction = (): void => {
     getUpdateLeaveNoteButton().onclick = updateLeaveNote;
+    getSendLeaveNoteButton().onclick = sendLeaveNotes;
 };
 
 export const updateLeaveNoteView = (leaveNotes: LeaveNote[] | null): void => {

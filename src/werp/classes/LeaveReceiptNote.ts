@@ -7,6 +7,7 @@ import SessionKeys from '@/werp/enums/SessionKeys';
 import { log } from '@/common/logger';
 import { getLeaveReceiptNotesTemplate } from '@/werp/classes/template';
 import { sleep } from '@/common/timer';
+import { sendLeaveReceiptNotes } from '@/werp/classes/lineBot/messagingApi';
 
 export const getUpdateLeaveReceiptNoteButton = (): HTMLAnchorElement => {
     const anchorElement: HTMLAnchorElement | null = document.querySelector('#update-leave-receipt-note');
@@ -16,8 +17,17 @@ export const getUpdateLeaveReceiptNoteButton = (): HTMLAnchorElement => {
     return anchorElement;
 };
 
+export const getSendLeaveReceiptNoteButton = (): HTMLAnchorElement => {
+    const anchorElement: HTMLAnchorElement | null = document.querySelector('#send-leave-receipt-note');
+    if (anchorElement === null) {
+        return document.createElement('a');
+    }
+    return anchorElement;
+};
+
 export const appendUpdateLeaveReceiptNoteFunction = (): void => {
     getUpdateLeaveReceiptNoteButton().onclick = updateLeaveReceiptNote;
+    getSendLeaveReceiptNoteButton().onclick = sendLeaveReceiptNotes;
 };
 
 export const updateLeaveReceiptNoteView = (leaveReceiptNotes: LeaveReceiptNote[]): void => {

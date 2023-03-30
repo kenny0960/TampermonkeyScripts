@@ -10,6 +10,7 @@ import SessionManager from '@/common/SessionManager';
 import SessionKeys from '@/werp/enums/SessionKeys';
 import { Moment } from '@/moment';
 import { getRemainMinutes, getSummaryRemainMinutes } from '@/werp/classes/attendanceUtility';
+import { HAS_LINE_MESSAGE_API_AUTH } from '@/werp/consts/env';
 
 export const getAttendanceSummaryTemplate = (attendances: Attendance[]): string => {
     const remainMinutes: number = getSummaryRemainMinutes(attendances);
@@ -62,7 +63,9 @@ export const getAnnualLeaveTemplate = (annualLeave: AnnualLeave | null): string 
                       <li>
                         <img id="formTemplate:j_idt329:2:j_idt332" src="/portal/javax.faces.resource/werp_red.png.xhtml?ln=images" alt="">
                         <label id="formTemplate:j_idt329:2:j_idt333" class="ui-outputlabel ui-widget" style=" width: 0px;"></label>
-                        <a href="/hr-attendance/leave/personal/personal-apply.xhtml" target="_blank" class="select-link-red">未休：${annualLeave.notLeaveHours}</a>
+                        <a href="/hr-attendance/leave/personal/personal-apply.xhtml" target="_blank" class="select-link-red">未休：${
+                            annualLeave.notLeaveHours
+                        }</a>
                       </li>
                       <li>
                         <img id="formTemplate:j_idt329:0:j_idt331" src="/portal/javax.faces.resource/werp_blue.png.xhtml?ln=images" alt="">
@@ -72,6 +75,11 @@ export const getAnnualLeaveTemplate = (annualLeave: AnnualLeave | null): string 
                       <li style="text-align: end;font-size: 12px;">
                         最後更新：${lastUpdateDatetime}
                         <i id="update-annual-leave" class="fa fa-refresh" style="cursor: pointer;"></i>
+                        ${
+                            HAS_LINE_MESSAGE_API_AUTH === true
+                                ? `<i id="send-annual-leave" class="fa fa-paper-plane" style="cursor: pointer;"></i>`
+                                : ''
+                        }
                       </li>
                     </ul>
                   </span>
@@ -151,6 +159,11 @@ export const getLeaveReceiptNotesTemplate = (leaveReceiptNotes: LeaveReceiptNote
                       <caption class="text-right" style="color: #4f4f4f; padding: 0.25rem 0;">
                         最後更新：${lastUpdateDatetime}
                         <i id="update-leave-receipt-note" class="fa fa-refresh" style="cursor: pointer;"></i>
+                        ${
+                            HAS_LINE_MESSAGE_API_AUTH === true
+                                ? `<i id="send-leave-receipt-note" class="fa fa-paper-plane" style="cursor: pointer;"></i>`
+                                : ''
+                        }
                       </caption>
                       <thead class="table-borderless">
                         <tr>
@@ -195,6 +208,11 @@ export const getCompanyEmployeeTemplate = (): string => {
                       <li style="text-align: end;font-size: 12px;">
                         最後更新：${lastUpdateDatetime}
                         <i id="update-company-employee-count" class="fa fa-refresh" style="cursor: pointer;"></i>
+                         ${
+                             HAS_LINE_MESSAGE_API_AUTH === true
+                                 ? `<i id="send-company-employee-count" class="fa fa-paper-plane" style="cursor: pointer;"></i>`
+                                 : ''
+                         }
                       </li>
                     </ul>
                   </span>
