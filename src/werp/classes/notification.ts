@@ -17,6 +17,7 @@ import {
     WARNING_IMAGE,
 } from '@/werp/consts/Base64Image';
 import { notify } from '@/werp/classes/lineBot/ajax';
+import { sendAttendances } from '@/werp/classes/lineBot/messagingApi';
 
 export const showCompanyNotification = (): void => {
     const notificationElements: NodeListOf<HTMLTableRowElement> = document.querySelectorAll(
@@ -78,6 +79,7 @@ export const showAttendanceNotification = (attendances: Attendance[]): void => {
             }
         );
 
+        sendAttendances(attendances);
         notify(`已經簽退：請馬上離開辦公室`);
         return;
     }
