@@ -7,4 +7,5 @@ export const LINE_NOTIFY_CHANNEL_ACCESS_TOKEN: string = GM_getValue('LINE_NOTIFY
 
 export const HAS_LINE_MESSAGE_API_AUTH: boolean = LINE_USER_ID !== '' && LINE_MESSAGING_API_ACCESS_TOKEN !== '';
 
+export const FUN_COMPANY_EMPLOYEE_COUNT: boolean = GM_getValue('FUN_COMPANY_EMPLOYEE_COUNT', false);
 export const UPLOAD_JS_TOKEN: string = GM_getValue('UPLOAD_JS_TOKEN', '');

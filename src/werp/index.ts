@@ -35,6 +35,7 @@ import {
     appendUpdateCompanyEmployeeCountFunction,
     displayCompanyEmployeeCountLineChart,
 } from '@/werp/classes/companyEmployeeCount';
+import { FUN_COMPANY_EMPLOYEE_COUNT } from '@/werp/consts/env';
 
 const getAttendanceByTr = (tr: HTMLTableRowElement): Attendance => {
     // ['09/12 (一)', '09:38', '18:41']
@@ -103,17 +104,19 @@ const taskMain = async (table: HTMLTableElement): Promise<void> => {
     log('待辦事項表格已經載入');
     const annualLeave: AnnualLeave | null = await getAnnualLeave();
     const leaveReceiptNotes: LeaveReceiptNote[] = await getLeaveReceiptNotes();
-    const companyEmployeeCountObject: Object = await getCompanyEmployeeCountObject();
-    const companyEmployeeTemplate: string = getCompanyEmployeeTemplate();
     const annualTemplate: string = getAnnualLeaveTemplate(annualLeave);
     const leaveReceiptNotesTemplate: string = getLeaveReceiptNotesTemplate(leaveReceiptNotes);
     table.insertAdjacentHTML('afterbegin', annualTemplate);
     appendUpdateAnnualLeaveFunction();
     table.insertAdjacentHTML('afterbegin', leaveReceiptNotesTemplate);
     appendUpdateLeaveReceiptNoteFunction();
-    table.insertAdjacentHTML('afterend', companyEmployeeTemplate);
-    appendUpdateCompanyEmployeeCountFunction();
-    await displayCompanyEmployeeCountLineChart(companyEmployeeCountObject);
+    if (FUN_COMPANY_EMPLOYEE_COUNT == true) {
+        const companyEmployeeCountObject: Object = await getCompanyEmployeeCountObject();
+        const companyEmployeeTemplate: string = getCompanyEmployeeTemplate();
+        table.insertAdjacentHTML('afterend', companyEmployeeTemplate);
+        appendUpdateCompanyEmployeeCountFunction();
+        await displayCompanyEmployeeCountLineChart(companyEmployeeCountObject);
+    }
 };
 
 const main = (): void => {
