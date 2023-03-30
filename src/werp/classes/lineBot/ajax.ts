@@ -1,9 +1,14 @@
 import { log } from '@/common/logger';
-import { Message } from '@/werp/types/lineBot';
-import { LINE_MESSAGING_API_ACCESS_TOKEN, LINE_NOTIFY_CHANNEL_ACCESS_TOKEN, LINE_USER_ID } from '@/werp/consts/env';
+import { FlexMessage, Message } from '@/werp/types/lineBot';
+import {
+    HAS_LINE_MESSAGE_API_AUTH,
+    LINE_MESSAGING_API_ACCESS_TOKEN,
+    LINE_NOTIFY_CHANNEL_ACCESS_TOKEN,
+    LINE_USER_ID,
+} from '@/werp/consts/env';
 
 export const sendMessages = (messages: Message[]): void => {
-    if (LINE_MESSAGING_API_ACCESS_TOKEN === '' && LINE_USER_ID === '') {
+    if (HAS_LINE_MESSAGE_API_AUTH === false) {
         log(`請設定 LINE_MESSAGING_API_ACCESS_TOKEN 和 LINE_USER_ID 環境變數`);
         return;
     }
@@ -21,7 +26,7 @@ export const sendMessages = (messages: Message[]): void => {
         method: 'POST',
         onload: (response): void => {
             if (response.readyState === 4 && response.status === 200) {
-                log(`LINE 發送成功：${response.responseText}`);
+                log(`LINE 發送成功：${(messages[0] as FlexMessage).altText}`);
             } else {
                 log(`LINE 發送失敗：${response.status}`);
             }
@@ -45,7 +50,7 @@ export const notify = (message: string): void => {
         method: 'POST',
         onload: (response): void => {
             if (response.readyState === 4 && response.status === 200) {
-                log(`LINE 通知成功：${response.responseText}`);
+                log(`LINE 通知成功：${message}`);
             } else {
                 log(`LINE 通知失敗：${response.status}`);
             }

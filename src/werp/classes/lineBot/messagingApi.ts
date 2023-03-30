@@ -15,6 +15,7 @@ import {
     getLeaveReceiptNotesFlexCarousel,
 } from '@/werp/classes/lineBot/flexMessageTemplate';
 import { getCanvasImageUrl } from '@/werp/classes/uploader';
+import { log } from '@/common/logger';
 
 export const getLinBotLeaveReceiptNotes = async (): Promise<LeaveReceiptNote[]> => {
     const leaveReceiptNotes: LeaveReceiptNote[] = [];
@@ -50,6 +51,7 @@ export const sendLeaveReceiptNotes = async (): Promise<void> => {
     const leaveReceiptNotes: LeaveReceiptNote[] = await getLinBotLeaveReceiptNotes();
 
     if (leaveReceiptNotes.length === 0) {
+        log('近期沒有請假單可以傳送');
         return;
     }
 
@@ -66,6 +68,7 @@ export const sendLeaveNotes = async (): Promise<void> => {
     const leaveNotes: LeaveNote[] = await getLinBotLeaveNotes();
 
     if (leaveNotes.length === 0) {
+        log('近期沒有考勤異常可以傳送');
         return;
     }
 
@@ -102,6 +105,12 @@ export const sendAttendances = (attendances: Attendance[]): void => {
 export const sendCompanyEmployeeCountChart = async (): Promise<void> => {
     const canvasElement: HTMLCanvasElement = document.querySelector('#company_employee_count');
     const canvasImageUrl: string = await getCanvasImageUrl(canvasElement);
+
+    if (canvasImageUrl === '') {
+        log('無法生成公司在職人數的圖片');
+        return;
+    }
+
     sendMessages([
         {
             type: 'flex',
