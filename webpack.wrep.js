@@ -9,5 +9,6 @@ module.exports = merge(config(), {
     externals: {
         moment: 'moment',
         chart: 'Chart',
+        html2canvas: 'html2canvas',
     }
 });
