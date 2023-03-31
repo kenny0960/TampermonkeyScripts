@@ -2,6 +2,11 @@ import UpdateLog from '@/werp/interfaces/UpdateLog';
 
 const UPDATE_LOGS: UpdateLog[] = [
     {
+        version: '3.9.3',
+        date: '20230331 1200',
+        messages: ['新增手動設定更新「出缺勤」和「通知視窗」更新頻率的功能'],
+    },
+    {
         version: '3.9.2',
         date: '20230314 1500',
         messages: ['顯示近期請假「已銷假」的標示'],
