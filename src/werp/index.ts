@@ -15,6 +15,7 @@ import { initializeFaviconBadge } from '@/werp/classes/favicon';
 import {
     prependForgottenAttendanceButton,
     prependSendAttendancesButton,
+    prependSendAttendancesScreenshotButton,
     restyleAttendanceButtons,
     restyleAttendanceTable,
     restyleWholePage,
@@ -90,6 +91,7 @@ const attendanceMain = async (tableSectionElement: HTMLTableSectionElement): Pro
     const newTableSectionElement: HTMLTableSectionElement = wrapperElement.querySelector('table > tbody');
     prependForgottenAttendanceButton();
     prependSendAttendancesButton(attendances);
+    prependSendAttendancesScreenshotButton();
     restyleAttendanceButtons();
     restyleAttendanceTable(newTableSectionElement);
     restyleWholePage();

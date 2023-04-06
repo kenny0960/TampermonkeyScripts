@@ -3,7 +3,7 @@ import * as PackageJson from '@/../package.json';
 import UPDATE_LOGS from '@/werp/consts/UpdateLogs';
 import UpdateLog from '@/werp/interfaces/UpdateLog';
 import Attendance from '@/werp/interfaces/Attendance';
-import { sendAttendances } from '@/werp/classes/lineBot/messagingApi';
+import { sendAttendances, sendAttendancesScreenshot } from '@/werp/classes/lineBot/messagingApi';
 import { HAS_LINE_MESSAGE_API_AUTH } from '@/werp/consts/env';
 
 export const stringifyUpdateLog = (updateLog: UpdateLog): string => {
@@ -39,6 +39,13 @@ export const createAttendanceButton = (text: string, link: string): HTMLElement 
     return anchorElement;
 };
 
+export const getCameraIcon = (): HTMLUnknownElement => {
+    const iconElement: HTMLUnknownElement = document.createElement('i');
+    iconElement.className = 'fa fa-camera';
+    iconElement.style.cursor = 'pointer';
+    return iconElement;
+};
+
 export const getSendIcon = (): HTMLUnknownElement => {
     const iconElement: HTMLUnknownElement = document.createElement('i');
     iconElement.className = 'fa fa-paper-plane';
@@ -63,6 +70,26 @@ export const prependSendAttendancesButton = (attendances: Attendance[]): void =>
         sendAttendances(attendances);
     };
     sendAttendanceButton.insertAdjacentElement('afterbegin', getSendIcon());
+    toolbarElement.prepend(sendAttendanceButton);
+};
+
+export const prependSendAttendancesScreenshotButton = (): void => {
+    const toolbarElement: HTMLTableElement | null = document.querySelector(
+        'table[id="formTemplate:attend_rec_panel-title"] .ui-panel-content'
+    );
+    if (toolbarElement === null || toolbarElement.innerHTML.includes('camera') === true) {
+        log('傳送出缺勤截圖按鍵已經載入');
+        return;
+    }
+    if (HAS_LINE_MESSAGE_API_AUTH === false) {
+        return;
+    }
+    const sendAttendanceButton: HTMLElement = createAttendanceButton('', '');
+    sendAttendanceButton.style.padding = '0 10px';
+    sendAttendanceButton.onclick = async (): Promise<void> => {
+        await sendAttendancesScreenshot();
+    };
+    sendAttendanceButton.insertAdjacentElement('afterbegin', getCameraIcon());
     toolbarElement.prepend(sendAttendanceButton);
 };
 
