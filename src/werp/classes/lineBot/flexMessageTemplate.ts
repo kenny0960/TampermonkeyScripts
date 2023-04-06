@@ -552,6 +552,34 @@ export const getAttendancesFlexBubble = (attendances: Attendance[]): FlexBubble 
     };
 };
 
+export const getAttendancesScreenshotFlexBubble = (imageUrl: string): FlexBubble => {
+    return {
+        type: 'bubble',
+        size: 'giga',
+        body: {
+            spacing: 'md',
+            type: 'box',
+            layout: 'vertical',
+            contents: [
+                {
+                    type: 'text',
+                    text: '當週出缺勤狀況截圖',
+                    size: 'xl',
+                    weight: 'bold',
+                },
+                {
+                    type: 'image',
+                    size: 'full',
+                    aspectMode: 'fit',
+                    url: imageUrl,
+                    animated: true,
+                    aspectRatio: '16:9',
+                },
+            ],
+        },
+    };
+};
+
 export const getCompanyEmployeeCountFlexBubble = (imageUrl: string): FlexBubble => {
     return {
         type: 'bubble',

@@ -10,12 +10,14 @@ import Attendance from '@/werp/interfaces/Attendance';
 import {
     getAnnualLeaveFlexBubble,
     getAttendancesFlexBubble,
+    getAttendancesScreenshotFlexBubble,
     getCompanyEmployeeCountFlexBubble,
     getLeaveNotesFlexCarousel,
     getLeaveReceiptNotesFlexCarousel,
 } from '@/werp/classes/lineBot/flexMessageTemplate';
 import { getCanvasImageUrl } from '@/werp/classes/uploader';
 import { log } from '@/common/logger';
+import * as html2canvas from 'html2canvas';
 
 export const getLinBotLeaveReceiptNotes = async (): Promise<LeaveReceiptNote[]> => {
     const leaveReceiptNotes: LeaveReceiptNote[] = [];
@@ -98,6 +100,31 @@ export const sendAttendances = (attendances: Attendance[]): void => {
             type: 'flex',
             altText: `當週出缺勤狀況`,
             contents: getAttendancesFlexBubble(attendances),
+        },
+    ]);
+};
+
+export const sendAttendancesScreenshot = async (): Promise<void> => {
+    const attendancesElement: HTMLDivElement | null = document.querySelector('#formTemplate\\:attend_rec_datatable');
+
+    if (attendancesElement === null) {
+        log('出缺勤狀元件不存在');
+        return;
+    }
+
+    const canvasElement: HTMLCanvasElement = await html2canvas(attendancesElement);
+    const canvasImageUrl: string = await getCanvasImageUrl(canvasElement);
+
+    if (canvasImageUrl === '') {
+        log('無法生成出缺勤狀況截圖');
+        return;
+    }
+
+    sendMessages([
+        {
+            type: 'flex',
+            altText: `當週出缺勤狀況截圖`,
+            contents: getAttendancesScreenshotFlexBubble(canvasImageUrl),
         },
     ]);
 };
