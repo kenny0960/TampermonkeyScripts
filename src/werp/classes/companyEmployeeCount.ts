@@ -12,7 +12,21 @@ import { sendCompanyEmployeeCountChart } from '@/werp/classes/lineBot/messagingA
 
 export const OLD_COMPANY_EMPLOYEE_COUNT: Object = {
     '2022': { '52': 1497, '53': 1497 },
-    '2023': { '1': 1498, '2': 1496, '3': 1475, '5': 1448, '6': 1401, '7': 1396 },
+    '2023': {
+        '1': 1498,
+        '2': 1496,
+        '3': 1475,
+        '5': 1448,
+        '6': 1401,
+        '7': 1396,
+        '8': 1379,
+        '9': 1365,
+        '10': 1356,
+        '11': 1353,
+        '12': 1343,
+        '13': 1330,
+        '14': 1319,
+    },
 };
 
 export const displayCompanyEmployeeCountLineChart = async (companyEmployeeCountObject: Object): Promise<void> => {
@@ -23,7 +37,7 @@ export const displayCompanyEmployeeCountLineChart = async (companyEmployeeCountO
     for (const year in completeCompanyEmployeeCountObject) {
         for (const week in completeCompanyEmployeeCountObject[year]) {
             data.push({
-                label: `${year}/${week}`,
+                label: `${year}/${week} 週`,
                 count: completeCompanyEmployeeCountObject[year][week],
             });
         }
