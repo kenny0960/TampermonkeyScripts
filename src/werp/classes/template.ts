@@ -190,9 +190,9 @@ export const getCompanyEmployeeTemplate = (): string => {
             <table id="formTemplate:j_idt319" class="ui-panelgrid ui-widget" style=" width: 100%; border: none;margin-top: 2px;margin-bottom: 2px; " role="grid"><tbody><tr class="ui-widget-content ui-panelgrid-even" role="row"><td role="gridcell" class="ui-panelgrid-cell" style="border-bottom-color: #C4C4C4;border-bottom-width: 0.5px;border-top-color: white;                                border-left-color: white;border-right-color: white;"></td></tr></tbody></table>
             <div id="formTemplate:j_idt323" class="ui-outputpanel ui-widget">
               <div class="ui-g-12 waiting-task-g">
-                <div class="title-name ui-g-4 ">公司在職人數
+                <div class="title-name" style="padding: 5px 0">公司在職人數
                 </div>
-                <div class="ui-g-8 ">
+                <div class="ui-g-12">
                   <span class="todocss">
                     <ul class="todo-ul-list">
                       <li>

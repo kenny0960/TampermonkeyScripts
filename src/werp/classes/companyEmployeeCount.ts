@@ -61,6 +61,17 @@ export const displayCompanyEmployeeCountLineChart = async (companyEmployeeCountO
                     display: false,
                 },
             },
+
+            scales: {
+                // @ts-ignore
+                x: {
+                    ticks: {
+                        font: {
+                            size: 10,
+                        },
+                    },
+                },
+            },
         },
     });
 };
