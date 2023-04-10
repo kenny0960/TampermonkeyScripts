@@ -18,6 +18,7 @@ import {
     FlexSpan,
     FlexText,
 } from '@/werp/types/lineBot';
+import Announcement from '@/werp/interfaces/Announcement';
 
 export const getFlexSeparator = (): FlexSeparator => {
     return {
@@ -602,6 +603,69 @@ export const getCompanyEmployeeCountFlexBubble = (imageUrl: string): FlexBubble 
                     url: imageUrl,
                     animated: true,
                     aspectRatio: '16:9',
+                },
+            ],
+        },
+    };
+};
+
+export const getAnnouncementFlexBubble = (announcement: Announcement): FlexBubble => {
+    const [startDatetime, endDatetime]: string[] = announcement.duration.split('～');
+    const [startDate]: string[] = startDatetime.trim().split(' ');
+    const [endDate]: string[] = endDatetime.trim().split(' ');
+    return {
+        type: 'bubble',
+        size: 'giga',
+        hero: {
+            type: 'image',
+            url: 'https://www.shutterstock.com/image-vector/megaphone-important-announcement-vector-flat-260nw-1949944333.jpg',
+            aspectMode: 'cover',
+            size: 'full',
+            aspectRatio: '16:8',
+        },
+        body: {
+            type: 'box',
+            layout: 'vertical',
+            contents: [
+                {
+                    type: 'text',
+                    text: announcement.subject,
+                    wrap: true,
+                    size: 'lg',
+                    weight: 'bold',
+                },
+                {
+                    type: 'text',
+                    text: announcement.type,
+                    align: 'end',
+                    size: 'xxs',
+                    style: 'italic',
+                },
+                {
+                    type: 'text',
+                    align: 'end',
+                    size: 'xxs',
+                    style: 'italic',
+                    contents: [
+                        {
+                            type: 'span',
+                            text: startDate,
+                        },
+                        {
+                            type: 'span',
+                            text: '~',
+                        },
+                        {
+                            type: 'span',
+                            text: endDate,
+                        },
+                    ],
+                },
+                {
+                    type: 'text',
+                    text: announcement.content,
+                    size: 'xs',
+                    wrap: true,
                 },
             ],
         },

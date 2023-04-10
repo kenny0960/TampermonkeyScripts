@@ -8,6 +8,7 @@ import { sendMessages } from '@/werp/classes/lineBot/ajax';
 import LeaveNote from '@/werp/interfaces/LeaveNote';
 import Attendance from '@/werp/interfaces/Attendance';
 import {
+    getAnnouncementFlexBubble,
     getAnnualLeaveFlexBubble,
     getAttendancesFlexBubble,
     getAttendancesScreenshotFlexBubble,
@@ -18,6 +19,7 @@ import {
 import { getCanvasImageUrl } from '@/werp/classes/uploader';
 import { log } from '@/common/logger';
 import * as html2canvas from 'html2canvas';
+import Announcement from '@/werp/interfaces/Announcement';
 
 export const getLinBotLeaveReceiptNotes = async (): Promise<LeaveReceiptNote[]> => {
     const leaveReceiptNotes: LeaveReceiptNote[] = [];
@@ -143,6 +145,16 @@ export const sendCompanyEmployeeCountChart = async (): Promise<void> => {
             type: 'flex',
             altText: `公司在職人數`,
             contents: getCompanyEmployeeCountFlexBubble(canvasImageUrl),
+        },
+    ]);
+};
+
+export const sendAnnouncement = async (announcement: Announcement): Promise<void> => {
+    sendMessages([
+        {
+            type: 'flex',
+            altText: `公告：${announcement.subject}`,
+            contents: getAnnouncementFlexBubble(announcement),
         },
     ]);
 };
