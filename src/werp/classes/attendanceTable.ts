@@ -10,7 +10,7 @@ import {
     getAttendanceSummaryTemplate,
     getLeaveNoteTemplate,
 } from '@/werp/classes/template';
-import { getCopyrightAndVersionElement } from '@/werp/classes/style';
+import { getCopyrightAndVersionElement, getSendIcon } from '@/werp/classes/style';
 import { getTodayAttendance } from '@/werp/classes/attendanceUtility';
 import { HAS_LINE_MESSAGE_API_AUTH } from '@/werp/consts/env';
 
@@ -51,11 +51,7 @@ const getAttendanceTableHeaderElement = (): HTMLTableSectionElement => {
           <th style="width:150px">
             請假/異常
             <i id="update-leave-note" class="fa fa-refresh" style="cursor: pointer;"></i>
-            ${
-                HAS_LINE_MESSAGE_API_AUTH === true
-                    ? `<i id="send-leave-note" class="fa fa-paper-plane" style="cursor: pointer;"></i>`
-                    : ''
-            }
+            ${HAS_LINE_MESSAGE_API_AUTH === true ? getSendIcon('send-leave-note').outerHTML : ''}
           </th>
         </tr>
     `;

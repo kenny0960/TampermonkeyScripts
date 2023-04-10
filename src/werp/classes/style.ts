@@ -46,8 +46,9 @@ export const getCameraIcon = (): HTMLUnknownElement => {
     return iconElement;
 };
 
-export const getSendIcon = (): HTMLUnknownElement => {
+export const getSendIcon = (id: string = ''): HTMLUnknownElement => {
     const iconElement: HTMLUnknownElement = document.createElement('i');
+    iconElement.id = id;
     iconElement.className = 'fa fa-paper-plane';
     iconElement.style.cursor = 'pointer';
     return iconElement;
