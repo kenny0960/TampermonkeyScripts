@@ -5,6 +5,7 @@ import LeaveNote from '@/werp/interfaces/LeaveNote';
 import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
 import { getPickedDate } from '@/werp/classes/momentUtility';
 import AjaxPattern from '@/werp/interfaces/AjaxPattern';
+import Announcement from '@/werp/interfaces/Announcement';
 
 export const fetchCompanyEmployeeToken = async (): Promise<string | null> => {
     return await fetch('https://cy.iwerp.net/system/hr/showEmpData.xhtml', {
@@ -75,6 +76,58 @@ export const fetchAllCompanyEmployeeCount = async (): Promise<number | null> => 
                 return null;
             }
             return Number(JSON.parse(extension.innerText.trim()).totalRecords);
+        });
+};
+
+export const fetchAnnouncement = async (SID: string): Promise<Announcement | null> => {
+    return await fetch(`https://cy.iwerp.net/anno/page/annoView/View.xhtml?sid=${SID}`, {
+        headers: {
+            accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'accept-language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7,vi;q=0.6,zh-CN;q=0.5',
+            'cache-control': 'no-cache',
+            pragma: 'no-cache',
+            'sec-ch-ua': '"Google Chrome";v="111", "Not(A:Brand";v="8", "Chromium";v="111"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"macOS"',
+            'sec-fetch-dest': 'document',
+            'sec-fetch-mode': 'navigate',
+            'sec-fetch-site': 'same-origin',
+            'sec-fetch-user': '?1',
+            'upgrade-insecure-requests': '1',
+        },
+        referrer: 'https://cy.iwerp.net/portal/page/new_home.xhtml',
+        referrerPolicy: 'strict-origin-when-cross-origin',
+        body: null,
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'include',
+    })
+        .then((response) => {
+            return response.text();
+        })
+        .then((body) => {
+            const html: HTMLHtmlElement = document.createElement('html');
+            html.innerHTML = body;
+
+            const typeElement: HTMLTableCellElement = html.querySelector(
+                "[id^='AnnoViewForm:j_idt'] > tbody > tr:nth-child(2) > td:nth-child(2)"
+            );
+            const durationElement: HTMLTableCellElement = html.querySelector(
+                "[id^='AnnoViewForm:j_idt'] > tbody > tr:nth-child(5) > td:nth-child(2) > div > div"
+            );
+            const subjectElement: HTMLTableCellElement = html.querySelector(
+                "[id^='AnnoViewForm:j_idt'] > tbody > tr:nth-child(3) > td:nth-child(2)"
+            );
+            const contentElement: HTMLTableCellElement = html.querySelector(
+                "[id^='AnnoViewForm:j_idt'] > tbody > tr:nth-child(6) > td:nth-child(2)"
+            );
+
+            return {
+                type: typeElement.innerText.trim(),
+                duration: durationElement.innerText.trim(),
+                subject: subjectElement.innerText.trim(),
+                content: contentElement.innerText.trim(),
+            };
         });
 };
 
