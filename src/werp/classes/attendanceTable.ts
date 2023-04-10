@@ -16,6 +16,7 @@ import { HAS_LINE_MESSAGE_API_AUTH } from '@/werp/consts/env';
 
 const getAttendanceTableBodyElement = (attendances: Attendance[]): HTMLTableSectionElement => {
     const tableBodyElement: HTMLTableSectionElement = document.createElement('tbody');
+    tableBodyElement.style.height = 'fit-content';
     for (let i = 1; i < attendances.length; i++) {
         const attendance: Attendance = attendances[i];
         const attendanceContentElement: HTMLTableRowElement = document.createElement('tr');
