@@ -37,6 +37,7 @@ import {
     displayCompanyEmployeeCountLineChart,
 } from '@/werp/classes/companyEmployeeCount';
 import { FUN_COMPANY_EMPLOYEE_COUNT } from '@/werp/consts/env';
+import { prependSendAnnouncementButtons } from '@/werp/classes/announcement';
 
 const getAttendanceByTr = (tr: HTMLTableRowElement): Attendance => {
     // ['09/12 (一)', '09:38', '18:41']
@@ -121,9 +122,14 @@ const taskMain = async (table: HTMLTableElement): Promise<void> => {
     }
 };
 
+const announcementMain = (tableSectionElement: HTMLTableSectionElement): void => {
+    prependSendAnnouncementButtons(tableSectionElement);
+};
+
 const main = (): void => {
     waitElementLoaded('tbody[id="formTemplate:attend_rec_datatable_data"]').then(attendanceMain);
     waitElementLoaded('.waitingTaskMClass').then(taskMain);
+    waitElementLoaded('#formTemplate\\:anno-datatable_data').then(announcementMain);
 };
 
 (function () {
