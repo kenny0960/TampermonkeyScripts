@@ -6,7 +6,9 @@
   "main": ".eslintrc.js",
   "scripts": {
     "lint": "prettier --write \"src/**/*.{js,ts}\"",
-    "build-werp": "webpack --config webpack.werp.js"
+    "build": "webpack --config webpack.werp.js && webpack --config webpack.screenshot.js",
+    "build-werp": "webpack --config webpack.werp.js",
+    "build-screenshot": "webpack --config webpack.screenshot.js"
   },
   "repository": {
     "type": "git",
