@@ -10,16 +10,14 @@ import {
     getAnnouncementFlexBubble,
     getAnnualLeaveFlexBubble,
     getAttendancesFlexBubble,
-    getAttendancesScreenshotFlexBubble,
-    getCompanyEmployeeCountFlexBubble,
     getLeaveNotesFlexCarousel,
     getLeaveReceiptNotesFlexCarousel,
 } from '@/werp/classes/lineBot/flexMessageTemplate';
-import { getCanvasImageUrl } from '@/common/uploader';
 import { log } from '@/common/logger';
-import * as html2canvas from 'html2canvas';
 import Announcement from '@/werp/interfaces/Announcement';
 import { sendMessages } from '@/common/lineBot/ajax';
+import * as html2canvas from 'html2canvas';
+import { sendCanvasElementScreenshot } from '@/common/lineBot/messagingApi';
 
 export const getLinBotLeaveReceiptNotes = async (): Promise<LeaveReceiptNote[]> => {
     const leaveReceiptNotes: LeaveReceiptNote[] = [];
@@ -108,45 +106,13 @@ export const sendAttendances = (attendances: Attendance[]): void => {
 
 export const sendAttendancesScreenshot = async (): Promise<void> => {
     const attendancesElement: HTMLDivElement | null = document.querySelector('#formTemplate\\:attend_rec_datatable');
-
-    if (attendancesElement === null) {
-        log('出缺勤狀元件不存在');
-        return;
-    }
-
     const canvasElement: HTMLCanvasElement = await html2canvas(attendancesElement);
-    const canvasImageUrl: string = await getCanvasImageUrl(canvasElement);
-
-    if (canvasImageUrl === '') {
-        log('無法生成出缺勤狀況截圖');
-        return;
-    }
-
-    sendMessages([
-        {
-            type: 'flex',
-            altText: `當週出缺勤狀況截圖`,
-            contents: getAttendancesScreenshotFlexBubble(canvasImageUrl),
-        },
-    ]);
+    await sendCanvasElementScreenshot(canvasElement, '當週出缺勤狀況');
 };
 
 export const sendCompanyEmployeeCountChart = async (): Promise<void> => {
     const canvasElement: HTMLCanvasElement = document.querySelector('#company_employee_count');
-    const canvasImageUrl: string = await getCanvasImageUrl(canvasElement);
-
-    if (canvasImageUrl === '') {
-        log('無法生成公司在職人數的圖片');
-        return;
-    }
-
-    sendMessages([
-        {
-            type: 'flex',
-            altText: `公司在職人數`,
-            contents: getCompanyEmployeeCountFlexBubble(canvasImageUrl),
-        },
-    ]);
+    await sendCanvasElementScreenshot(canvasElement, '公司在職人數');
 };
 
 export const sendAnnouncement = async (announcement: Announcement): Promise<void> => {
