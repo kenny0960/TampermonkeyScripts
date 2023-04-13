@@ -1,12 +1,12 @@
 {
   "name": "tampermonkeyscripts",
   "version": "1.0.0",
-  "wrep-version": "3.9.3",
+  "werp-version": "3.9.3",
   "description": "",
   "main": ".eslintrc.js",
   "scripts": {
     "lint": "prettier --write \"src/**/*.{js,ts}\"",
-    "build-wrep": "webpack --config webpack.wrep.js"
+    "build-werp": "webpack --config webpack.werp.js"
   },
   "repository": {
     "type": "git",

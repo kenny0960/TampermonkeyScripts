@@ -159,7 +159,7 @@ const UPDATE_LOGS: UpdateLog[] = [
     {
         version: '2.1.0',
         date: '20221006',
-        messages: ['解決每次 wrep 更新時畫面為空的問題'],
+        messages: ['解決每次 werp 更新時畫面為空的問題'],
     },
     {
         version: '2.0.0',

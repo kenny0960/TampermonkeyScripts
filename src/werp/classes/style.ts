@@ -12,7 +12,7 @@ export const stringifyUpdateLog = (updateLog: UpdateLog): string => {
 
 export const getCopyrightAndVersionElement = (): HTMLDivElement => {
     const copyRightDiv: HTMLDivElement = document.createElement('div');
-    copyRightDiv.innerText = `ⓚ design © V${PackageJson['wrep-version']}`;
+    copyRightDiv.innerText = `ⓚ design © V${PackageJson['werp-version']}`;
     copyRightDiv.style.textAlign = 'right';
     copyRightDiv.style.padding = '0.25rem 0';
     copyRightDiv.title = UPDATE_LOGS.slice(0, 5).map(stringifyUpdateLog).join('\n');
