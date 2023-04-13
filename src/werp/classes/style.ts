@@ -4,7 +4,7 @@ import UPDATE_LOGS from '@/werp/consts/UpdateLogs';
 import UpdateLog from '@/werp/interfaces/UpdateLog';
 import Attendance from '@/werp/interfaces/Attendance';
 import { sendAttendances, sendAttendancesScreenshot } from '@/werp/classes/lineBot/messagingApi';
-import { HAS_LINE_MESSAGE_API_AUTH } from '@/werp/consts/env';
+import { HAS_LINE_MESSAGE_API_AUTH } from '@/common/consts/env';
 
 export const stringifyUpdateLog = (updateLog: UpdateLog): string => {
     return `v${updateLog.version} ${updateLog.date} ${updateLog.messages}`;

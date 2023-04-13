@@ -10,7 +10,7 @@ import SessionManager from '@/common/SessionManager';
 import SessionKeys from '@/werp/enums/SessionKeys';
 import { Moment } from '@/moment';
 import { getRemainMinutes, getSummaryRemainMinutes } from '@/werp/classes/attendanceUtility';
-import { HAS_LINE_MESSAGE_API_AUTH } from '@/werp/consts/env';
+import { HAS_LINE_MESSAGE_API_AUTH } from '@/common/consts/env';
 import { getSendIcon } from '@/werp/classes/style';
 
 export const getAttendanceSummaryTemplate = (attendances: Attendance[]): string => {

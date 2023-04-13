@@ -1,7 +1,7 @@
 import { Upload, UploadedFile } from 'upload-js';
 import { FileLike } from 'upload-js/dist/FileLike';
 import { canvasToBlob } from '@/common/convas';
-import { UPLOAD_JS_TOKEN } from '@/werp/consts/env';
+import { UPLOAD_JS_TOKEN } from '@/common/consts/env';
 import { log } from '@/common/logger';
 
 export const getCanvasImageUrl = async (canvasElement: HTMLCanvasElement): Promise<string> => {

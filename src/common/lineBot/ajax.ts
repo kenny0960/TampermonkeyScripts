@@ -5,7 +5,7 @@ import {
     LINE_MESSAGING_API_ACCESS_TOKEN,
     LINE_NOTIFY_CHANNEL_ACCESS_TOKEN,
     LINE_USER_ID,
-} from '@/werp/consts/env';
+} from '@/common/consts/env';
 
 export const sendMessages = (messages: Message[]): void => {
     if (HAS_LINE_MESSAGE_API_AUTH === false) {

@@ -2,7 +2,7 @@ import { getSendIcon } from '@/werp/classes/style';
 import { fetchAnnouncement } from '@/werp/classes/ajax';
 import { sendAnnouncement } from '@/werp/classes/lineBot/messagingApi';
 import Announcement from '@/werp/interfaces/Announcement';
-import { HAS_LINE_MESSAGE_API_AUTH } from '@/werp/consts/env';
+import { HAS_LINE_MESSAGE_API_AUTH } from '@/common/consts/env';
 
 export const prependSendAnnouncementButtons = (tableSectionElement: HTMLTableSectionElement): void => {
     const trsElement: HTMLTableRowElement[] = Array.from(tableSectionElement.querySelectorAll('tr'));
