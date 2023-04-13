@@ -1,7 +1,7 @@
 import { log } from '@/common/logger';
 import * as PackageJson from '@/../package.json';
 import UPDATE_LOGS from '@/werp/consts/UpdateLogs';
-import UpdateLog from '@/werp/interfaces/UpdateLog';
+import UpdateLog from '@/common/interfaces/UpdateLog';
 import Attendance from '@/werp/interfaces/Attendance';
 import { sendAttendances, sendAttendancesScreenshot } from '@/werp/classes/lineBot/messagingApi';
 import { HAS_LINE_MESSAGE_API_AUTH } from '@/common/consts/env';

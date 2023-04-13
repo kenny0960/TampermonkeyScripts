@@ -8,7 +8,7 @@ import SessionManager from '@/common/SessionManager';
 import SessionKeys from '@/werp/enums/SessionKeys';
 import { showNotification } from '@/common/notification';
 import { log } from '@/common/logger';
-import UpdateLog from '@/werp/interfaces/UpdateLog';
+import UpdateLog from '@/common/interfaces/UpdateLog';
 import {
     GOOD_BYE_IMAGE,
     NEW_VERSION_IMAGE,

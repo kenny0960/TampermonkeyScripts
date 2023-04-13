@@ -1,4 +1,4 @@
-import UpdateLog from '@/werp/interfaces/UpdateLog';
+import UpdateLog from '@/common/interfaces/UpdateLog';
 
 const UPDATE_LOGS: UpdateLog[] = [
     {
