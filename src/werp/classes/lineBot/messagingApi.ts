@@ -3,7 +3,6 @@ import * as moment from 'moment';
 import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
 import { getAnnualLeave, getLeaveNotes, getLeaveReceiptNotes } from '@/werp/classes/sessionManager';
 import AnnualLeave from '@/werp/interfaces/AnnualLeave';
-import { sendMessages } from '@/werp/classes/lineBot/ajax';
 
 import LeaveNote from '@/werp/interfaces/LeaveNote';
 import Attendance from '@/werp/interfaces/Attendance';
@@ -16,10 +15,11 @@ import {
     getLeaveNotesFlexCarousel,
     getLeaveReceiptNotesFlexCarousel,
 } from '@/werp/classes/lineBot/flexMessageTemplate';
-import { getCanvasImageUrl } from '@/werp/classes/uploader';
+import { getCanvasImageUrl } from '@/common/uploader';
 import { log } from '@/common/logger';
 import * as html2canvas from 'html2canvas';
 import Announcement from '@/werp/interfaces/Announcement';
+import { sendMessages } from '@/common/lineBot/ajax';
 
 export const getLinBotLeaveReceiptNotes = async (): Promise<LeaveReceiptNote[]> => {
     const leaveReceiptNotes: LeaveReceiptNote[] = [];

@@ -8,16 +8,7 @@ import Attendance from '@/werp/interfaces/Attendance';
 import { formatTime, formatWeekday } from '@/werp/classes/momentUtility';
 import { getRemainMinutes, getSummaryRemainMinutes } from '@/werp/classes/attendanceUtility';
 import { convertEmptyStringToDash } from '@/werp/classes/converter';
-import {
-    FlexBox,
-    FlexBubble,
-    FlexCarousel,
-    FlexComponent,
-    FlexFiller,
-    FlexSeparator,
-    FlexSpan,
-    FlexText,
-} from '@/werp/types/lineBot';
+import { FlexBox, FlexBubble, FlexCarousel, FlexComponent, FlexFiller, FlexSeparator, FlexSpan, FlexText } from '@/lineBot';
 import Announcement from '@/werp/interfaces/Announcement';
 
 export const getFlexSeparator = (): FlexSeparator => {

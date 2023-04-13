@@ -16,8 +16,8 @@ import {
     STITCH_IN_PAINTING_IMAGE,
     WARNING_IMAGE,
 } from '@/werp/consts/Base64Image';
-import { notify } from '@/werp/classes/lineBot/ajax';
 import { sendAttendances } from '@/werp/classes/lineBot/messagingApi';
+import { notify } from '@/common/lineBot/ajax';
 
 export const showCompanyNotification = (): void => {
     const notificationElements: NodeListOf<HTMLTableRowElement> = document.querySelectorAll(

@@ -1,5 +1,5 @@
 import { log } from '@/common/logger';
-import { FlexMessage, Message } from '@/werp/types/lineBot';
+import { FlexMessage, Message } from '@/lineBot';
 import {
     HAS_LINE_MESSAGE_API_AUTH,
     LINE_MESSAGING_API_ACCESS_TOKEN,
