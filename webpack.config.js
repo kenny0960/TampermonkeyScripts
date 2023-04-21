@@ -10,7 +10,20 @@ module.exports = () => {
                     use: 'ts-loader',
                     exclude: /node_modules/,
                 },
-                ],
+                {
+                    test: /\.s[ac]ss$/i,
+                    use: [
+                        'sass-to-string', {
+                            loader: 'sass-loader',
+                            options: {
+                                sassOptions: {
+                                    outputStyle: 'compressed',
+                                },
+                            },
+                        },
+                    ],
+                },
+            ],
         },
         resolve: {
             extensions: ['.tsx', '.ts', '.js'],
