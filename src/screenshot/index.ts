@@ -57,12 +57,12 @@ export const getScreenshotFormElement = (): HTMLDivElement => {
     return form;
 };
 
-const main = async (): Promise<void> => {
+const main = (): void => {
     document.body.insertAdjacentElement('afterbegin', getScreenshotFormElement());
 };
 
-(async (): Promise<void> => {
+((): void => {
     moment.locale('zh-tw');
     GM_addStyle(styles);
-    await main();
+    main();
 })();
