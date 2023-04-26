@@ -1,32 +1,34 @@
-#screenshot-form {
+#screenshot {
     @import 'reset';
     @import 'bootstrap-icons';
 
-    position: fixed;
-    bottom: 5%;
-    left: 1%;
-    z-index: 9999;
-    width: 180px;
+    #screenshot-form {
+        position: fixed;
+        bottom: 5%;
+        left: 1%;
+        z-index: 9999;
+        width: 180px;
 
-    #input-group {
-        display: flex;
-        align-items: center;
+        #input-group {
+            display: flex;
+            align-items: center;
 
-        #selector-input {
-            width: 100%;
-            height: 30px;
-            font-size: 14px;
+            #selector-input {
+                width: 100%;
+                height: 30px;
+                font-size: 14px;
+            }
+
+            #line-button {
+                padding: 1px 5px;
+                color: green;
+                cursor: pointer;
+            }
         }
 
-        #line-button {
-            padding: 1px 5px;
-            color: green;
-            cursor: pointer;
+        #copyright-div {
+            text-align: right;
+            font-size: 12px;
         }
-    }
-
-    #copyright-div {
-        text-align: right;
-        font-size: 12px;
     }
 }

@@ -57,8 +57,15 @@ export const getScreenshotFormElement = (): HTMLDivElement => {
     return form;
 };
 
+export const getMainElement = (): HTMLDivElement => {
+    const main: HTMLDivElement = document.createElement('div');
+    main.id = 'screenshot';
+    main.appendChild(getScreenshotFormElement());
+    return main;
+};
+
 const main = (): void => {
-    document.body.insertAdjacentElement('afterbegin', getScreenshotFormElement());
+    document.body.insertAdjacentElement('afterbegin', getMainElement());
 };
 
 ((): void => {
