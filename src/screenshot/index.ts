@@ -14,15 +14,21 @@ export const getCopyrightAndVersionElement = (): HTMLDivElement => {
     return copyRightDiv;
 };
 
-export const getLineButtonElement = (): HTMLAnchorElement => {
-    const lineButton: HTMLAnchorElement = document.createElement('a');
+export const getLineIconElement = (): HTMLUnknownElement => {
+    const iconElement: HTMLUnknownElement = document.createElement('i');
+    iconElement.className = 'bi bi-line';
+    return iconElement;
+};
+
+export const getLineButtonElement = (): HTMLButtonElement => {
+    const lineButton: HTMLButtonElement = document.createElement('button');
     lineButton.id = 'line-button';
-    lineButton.className = 'bi bi-line';
     lineButton.onclick = async (): Promise<void> => {
         const selectorValue: string = getSelectorValue();
         const canvasElement: HTMLCanvasElement = await html2canvas(document.querySelector(selectorValue));
         await sendCanvasElementScreenshot(canvasElement, `${selectorValue} 的截圖`);
     };
+    lineButton.appendChild(getLineIconElement());
     return lineButton;
 };
 
@@ -37,21 +43,39 @@ export const getSelectorValue = (): string => {
 export const getSelectorInputElement = (): HTMLInputElement => {
     const selectorInput: HTMLInputElement = document.createElement('input');
     selectorInput.id = 'selector-input';
+    selectorInput.className = 'form-control';
     selectorInput.placeholder = '請輸入 Selector';
+    selectorInput.required = true;
     return selectorInput;
 };
 
 export const getScreenshotInputGroupElement = (): HTMLDivElement => {
     const inputGroupDiv: HTMLDivElement = document.createElement('div');
     inputGroupDiv.id = 'input-group';
+    inputGroupDiv.className = 'position-relative';
     inputGroupDiv.appendChild(getSelectorInputElement());
+    inputGroupDiv.appendChild(getScreenshotInputValidFeedBackElement());
+    inputGroupDiv.appendChild(getScreenshotInputInvalidFeedBackElement());
     inputGroupDiv.appendChild(getLineButtonElement());
     return inputGroupDiv;
 };
 
-export const getScreenshotFormElement = (): HTMLDivElement => {
-    const form: HTMLDivElement = document.createElement('div');
+export const getScreenshotInputValidFeedBackElement = (): HTMLDivElement => {
+    const feedBackDiv: HTMLDivElement = document.createElement('div');
+    feedBackDiv.className = 'valid-tooltip';
+    return feedBackDiv;
+};
+
+export const getScreenshotInputInvalidFeedBackElement = (): HTMLDivElement => {
+    const feedBackDiv: HTMLDivElement = document.createElement('div');
+    feedBackDiv.className = 'invalid-tooltip';
+    return feedBackDiv;
+};
+
+export const getScreenshotFormElement = (): HTMLFormElement => {
+    const form: HTMLFormElement = document.createElement('form');
     form.id = 'screenshot-form';
+    form.noValidate = true;
     form.appendChild(getScreenshotInputGroupElement());
     form.appendChild(getCopyrightAndVersionElement());
     return form;
