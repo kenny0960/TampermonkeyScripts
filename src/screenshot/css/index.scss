@@ -1,6 +1,7 @@
 #screenshot {
     @import 'reset';
     @import 'bootstrap-icons';
+    @import 'bootstrap';
 
     #screenshot-form {
         position: fixed;
@@ -8,6 +9,7 @@
         left: 1%;
         z-index: 9999;
         width: 180px;
+        background-color: transparent;
 
         #input-group {
             display: flex;
