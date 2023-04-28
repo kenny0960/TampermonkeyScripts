@@ -19,22 +19,24 @@ export const createLineIconElement = (): HTMLUnknownElement => {
     return iconElement;
 };
 
+export const handleSelectorSubmit = async (): Promise<void> => {
+    const formElement: HTMLFormElement = getScreenshotFormElement();
+    const feedBackElement: HTMLDivElement = getSelectorInvalidFeedBackElement();
+    const selectorInputElement: HTMLInputElement = getSelectorInputElement();
+    if (formElement.checkValidity() === false) {
+        formElement.classList.add('was-validated');
+        feedBackElement.innerText = selectorInputElement.validationMessage;
+        return;
+    }
+    const selectorValue: string = getSelectorInputElement().value;
+    const canvasElement: HTMLCanvasElement = await html2canvas(document.querySelector(selectorValue));
+    await sendCanvasElementScreenshot(canvasElement, `${selectorValue} 的截圖`);
+};
+
 export const createLineButtonElement = (): HTMLAnchorElement => {
     const lineButtonElement: HTMLAnchorElement = document.createElement('a');
     lineButtonElement.id = 'line-button';
-    lineButtonElement.onclick = async (): Promise<void> => {
-        const formElement: HTMLFormElement = getScreenshotFormElement();
-        const feedBackElement: HTMLDivElement = getSelectorInvalidFeedBackElement();
-        const selectorInputElement: HTMLInputElement = getSelectorInputElement();
-        if (formElement.checkValidity() === false) {
-            formElement.classList.add('was-validated');
-            feedBackElement.innerText = selectorInputElement.validationMessage;
-            return;
-        }
-        const selectorValue: string = getSelectorInputElement().value;
-        const canvasElement: HTMLCanvasElement = await html2canvas(document.querySelector(selectorValue));
-        await sendCanvasElementScreenshot(canvasElement, `${selectorValue} 的截圖`);
-    };
+    lineButtonElement.onclick = handleSelectorSubmit;
     lineButtonElement.appendChild(createLineIconElement());
     return lineButtonElement;
 };
@@ -53,7 +55,7 @@ export const createSelectorInputElement = (): HTMLInputElement => {
     selectorInputElement.className = 'form-control';
     selectorInputElement.placeholder = '請輸入 Selector';
     selectorInputElement.required = true;
-    selectorInputElement.addEventListener('input', () => {
+    selectorInputElement.addEventListener('input', (): void => {
         const formElement: HTMLFormElement = getScreenshotFormElement();
         const validator: string = selectorValidator(selectorInputElement.value);
         formElement.classList.remove('was-validated');
@@ -115,6 +117,10 @@ export const createScreenshotFormElement = (): HTMLFormElement => {
     formElement.noValidate = true;
     formElement.appendChild(createScreenshotInputGroupElement());
     formElement.appendChild(createCopyrightAndVersionElement());
+    formElement.addEventListener('submit', async (event: SubmitEvent): Promise<void> => {
+        await handleSelectorSubmit();
+        event.preventDefault();
+    });
     return formElement;
 };
 
