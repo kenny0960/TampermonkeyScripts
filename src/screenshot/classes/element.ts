@@ -3,6 +3,7 @@ import * as html2canvas from 'html2canvas';
 import * as PackageJson from '@/../package.json';
 import UPDATE_LOGS from '@/screenshot/consts/UpdateLogs';
 import { stringifyUpdateLog } from '@/werp/classes/style';
+import { selectorValidator } from '@/screenshot/classes/validator';
 
 export const createCopyrightAndVersionElement = (): HTMLDivElement => {
     const copyRightElement: HTMLDivElement = document.createElement('div');
@@ -22,6 +23,14 @@ export const createLineButtonElement = (): HTMLAnchorElement => {
     const lineButtonElement: HTMLAnchorElement = document.createElement('a');
     lineButtonElement.id = 'line-button';
     lineButtonElement.onclick = async (): Promise<void> => {
+        const formElement: HTMLFormElement = getScreenshotFormElement();
+        const feedBackElement: HTMLDivElement = getSelectorInvalidFeedBackElement();
+        const selectorInputElement: HTMLInputElement = getSelectorInputElement();
+        if (formElement.checkValidity() === false) {
+            formElement.classList.add('was-validated');
+            feedBackElement.innerText = selectorInputElement.validationMessage;
+            return;
+        }
         const selectorValue: string = getSelectorInputElement().value;
         const canvasElement: HTMLCanvasElement = await html2canvas(document.querySelector(selectorValue));
         await sendCanvasElementScreenshot(canvasElement, `${selectorValue} 的截圖`);
@@ -44,6 +53,12 @@ export const createSelectorInputElement = (): HTMLInputElement => {
     selectorInputElement.className = 'form-control';
     selectorInputElement.placeholder = '請輸入 Selector';
     selectorInputElement.required = true;
+    selectorInputElement.addEventListener('input', () => {
+        const formElement: HTMLFormElement = getScreenshotFormElement();
+        const validator: string = selectorValidator(selectorInputElement.value);
+        formElement.classList.remove('was-validated');
+        selectorInputElement.setCustomValidity(validator);
+    });
     return selectorInputElement;
 };
 
