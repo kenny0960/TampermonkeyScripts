@@ -76,7 +76,7 @@ export const getAnnualLeaveTemplate = (annualLeave: AnnualLeave | null): string 
                       <li style="text-align: end;font-size: 12px;">
                         最後更新：${lastUpdateDatetime}
                         <i id="update-annual-leave" class="fa fa-refresh" style="cursor: pointer;"></i>
-                        ${HAS_LINE_MESSAGE_API_AUTH === true ? getSendIcon('update-annual-leave').outerHTML : ''}
+                        ${HAS_LINE_MESSAGE_API_AUTH === true ? getSendIcon('send-annual-leave').outerHTML : ''}
                       </li>
                     </ul>
                   </span>
