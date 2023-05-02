@@ -47,7 +47,7 @@ export const updateLeaveNoteView = (leaveNotes: LeaveNote[] | null): void => {
 
 export const updateLeaveNote = async (): Promise<void> => {
     getUpdateLeaveNoteButton().className += ' fa-spin';
-    await sleep(3);
+    await sleep(1);
     const leaveNotes: LeaveNote[] | null = await fetchLeaveNotes();
     SessionManager.setByKey(SessionKeys.AJAX_LEAVE_NOTES, JSON.stringify(leaveNotes));
     SessionManager.setByKey(SessionKeys.AJAX_LEAVE_NOTES_TIMESTAMP, String(moment().valueOf()));

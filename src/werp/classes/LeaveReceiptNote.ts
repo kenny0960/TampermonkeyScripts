@@ -40,7 +40,7 @@ export const updateLeaveReceiptNoteView = (leaveReceiptNotes: LeaveReceiptNote[]
 
 export const updateLeaveReceiptNote = async (): Promise<void> => {
     getUpdateLeaveReceiptNoteButton().className += ' fa-spin';
-    await sleep(3);
+    await sleep(1);
     const leaveReceiptNotes: LeaveReceiptNote[] = await fetchLeaveReceiptNotes();
     SessionManager.setByKey(SessionKeys.AJAX_LEAVE_RECEIPT_NOTES, JSON.stringify(leaveReceiptNotes));
     SessionManager.setByKey(SessionKeys.AJAX_LEAVE_RECEIPT_NOTES_TIMESTAMP, String(moment().valueOf()));

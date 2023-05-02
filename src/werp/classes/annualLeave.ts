@@ -40,7 +40,7 @@ export const updateAnnualLeaveView = (annualLeave: AnnualLeave | null): void => 
 
 export const updateAnnualLeave = async (): Promise<void> => {
     getUpdateAnnualLeaveButton().className += ' fa-spin';
-    await sleep(3);
+    await sleep(1);
     const annualLeave: AnnualLeave | null = await fetchAnnualLeave();
     SessionManager.setByKey(SessionKeys.AJAX_ANNUAL_LEAVE, JSON.stringify(annualLeave));
     SessionManager.setByKey(SessionKeys.AJAX_ANNUAL_LEAVE_TIMESTAMP, String(moment().valueOf()));

@@ -107,7 +107,7 @@ export const updateCompanyEmployeeCountView = (): void => {
 
 export const updateCompanyEmployeeCount = async (): Promise<void> => {
     getUpdateCompanyEmployeeCountButton().className += ' fa-spin';
-    await sleep(3);
+    await sleep(1);
     const companyEmployeeCount: number | null = await fetchAllCompanyEmployeeCount();
     SessionManager.setByKey(SessionKeys.AJAX_COMPANY_EMPLOYEE_COUNT_TIMESTAMP, String(moment().valueOf()));
 
