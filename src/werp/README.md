@@ -4,9 +4,17 @@
 
 安裝 [tampermonkey](https://www.tampermonkey.net/)
 
-### step 2:
+### step 2-1:
+
+1. 取得 [LINE USER ID](https://raw.githubusercontent.com/kenny0960/TampermonkeyScripts/master/doc/LINE.md)
+2. 取得 [LINE_MESSAGING_API_ACCESS_TOKEN](https://raw.githubusercontent.com/kenny0960/TampermonkeyScripts/master/doc/LINE.md)
+3. 取得 [LINE_NOTIFY_CHANNEL_ACCESS_TOKEN](https://raw.githubusercontent.com/kenny0960/TampermonkeyScripts/master/doc/LINE.md)
+4. 取得 [UPLOAD_JS_TOKEN](https://raw.githubusercontent.com/kenny0960/TampermonkeyScripts/master/doc/UPLOAD_JS.md)
+
+### step 2-2:
 
 點擊 tampermonkey 中的「新增腳本」，並且在「編輯器」分頁中貼上程式碼後存檔
+
 
 ```
 // ==UserScript==
@@ -33,13 +41,23 @@
 GM_setValue('TIMER_ATTENDANCE_SECONDS', 60);
 // 調整通知視窗更新頻率
 GM_setValue('TIMER_NOTIFICATION_MINUTES', 5);
+
+
+// 選填(可不填寫)：設定 LINE USER ID (step 2-1 中取得並且替換下方空字串)
+GM_setValue('LINE_USER_ID', '');
+// 選填(可不填寫)：設定 LINE MESSAGEING API ACCESS TOKEN (step 2-1 中取得並且替換下方空字串)
+GM_setValue('LINE_MESSAGING_API_ACCESS_TOKEN', '');
+// 選填(可不填寫)：設定 LINE NOTIFY CHANNEL ACCESS TOKEN (step 2-1 中取得並且替換下方空字串)
+GM_setValue('LINE_NOTIFY_CHANNEL_ACCESS_TOKEN', '');
+// 選填(可不填寫)：設定 UPLOAD JS TOKEN (step 2-1 中取得並且替換下方空字串)
+GM_setValue('UPLOAD_JS_TOKEN', '');
 ```
 
 ![image](https://raw.githubusercontent.com/kenny0960/TampermonkeyScripts/master/dist/images/wrep-step2.png)
 
 ### step 3:
 
-繼續 step 2，點擊「編輯器」旁邊的「設定」分頁勾選檢查更新
+繼續 step 2-2，點擊「編輯器」旁邊的「設定」分頁勾選檢查更新
 
 備註：「更新網址」如果為空則貼上 https://raw.githubusercontent.com/kenny0960/TampermonkeyScripts/master/dist/werp.bundle.js
 
