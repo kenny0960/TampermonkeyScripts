@@ -2,6 +2,11 @@ import UpdateLog from '@/common/interfaces/UpdateLog';
 
 const UPDATE_LOGS: UpdateLog[] = [
     {
+        version: '4.0.0',
+        date: '20230503 1500',
+        messages: ['新增傳送訊息至 LINE 的功能'],
+    },
+    {
         version: '3.9.3',
         date: '20230331 1200',
         messages: ['新增手動設定更新「出缺勤」和「通知視窗」更新頻率的功能'],
