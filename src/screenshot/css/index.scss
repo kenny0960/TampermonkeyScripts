@@ -8,7 +8,7 @@
         bottom: 5%;
         left: 1%;
         z-index: 9999;
-        width: 180px;
+        width: 200px;
         background-color: transparent;
 
         #input-group {
@@ -24,6 +24,12 @@
             #line-button {
                 padding: 1px 5px;
                 color: green;
+                cursor: pointer;
+            }
+
+            #link-button {
+                padding: 1px 5px;
+                color: cornflowerblue;
                 cursor: pointer;
             }
         }

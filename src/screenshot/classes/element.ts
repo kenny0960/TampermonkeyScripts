@@ -4,6 +4,7 @@ import * as PackageJson from '@/../package.json';
 import UPDATE_LOGS from '@/screenshot/consts/UpdateLogs';
 import { stringifyUpdateLog } from '@/werp/classes/style';
 import { selectorValidator } from '@/screenshot/classes/validator';
+import { notify } from '@/common/lineBot/ajax';
 
 export const createCopyrightAndVersionElement = (): HTMLDivElement => {
     const copyRightElement: HTMLDivElement = document.createElement('div');
@@ -17,6 +18,12 @@ export const createLineIconElement = (): HTMLUnknownElement => {
     const iconElement: HTMLUnknownElement = document.createElement('i');
     iconElement.className = 'bi bi-line';
     return iconElement;
+};
+
+export const createLinkIconElement = (): HTMLUnknownElement => {
+    const linkElement: HTMLUnknownElement = document.createElement('i');
+    linkElement.className = 'bi bi-link';
+    return linkElement;
 };
 
 export const handleSelectorSubmit = async (): Promise<void> => {
@@ -33,12 +40,24 @@ export const handleSelectorSubmit = async (): Promise<void> => {
     await sendCanvasElementScreenshot(canvasElement, `${selectorValue} 的截圖`);
 };
 
+export const handleLinkSubmit = async (): Promise<void> => {
+    await notify(`隨意截的網址：${document.location.href}`);
+};
+
 export const createLineButtonElement = (): HTMLAnchorElement => {
     const lineButtonElement: HTMLAnchorElement = document.createElement('a');
     lineButtonElement.id = 'line-button';
     lineButtonElement.onclick = handleSelectorSubmit;
     lineButtonElement.appendChild(createLineIconElement());
     return lineButtonElement;
+};
+
+export const createLinkButtonElement = (): HTMLAnchorElement => {
+    const linkButtonElement: HTMLAnchorElement = document.createElement('a');
+    linkButtonElement.id = 'link-button';
+    linkButtonElement.onclick = handleLinkSubmit;
+    linkButtonElement.appendChild(createLinkIconElement());
+    return linkButtonElement;
 };
 
 export const getSelectorInputElement = (): HTMLInputElement => {
@@ -72,6 +91,7 @@ export const createScreenshotInputGroupElement = (): HTMLDivElement => {
     inputGroupElement.appendChild(createSelectorValidFeedBackElement());
     inputGroupElement.appendChild(createSelectorInvalidFeedBackElement());
     inputGroupElement.appendChild(createLineButtonElement());
+    inputGroupElement.appendChild(createLinkButtonElement());
     return inputGroupElement;
 };
 
