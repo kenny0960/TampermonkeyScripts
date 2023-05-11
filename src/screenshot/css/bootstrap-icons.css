@@ -20,3 +20,4 @@
 }
 
 .bi-line::before { content: "\\f660"; }
+.bi-link::before { content: "\\f471"; }
