@@ -13,7 +13,7 @@ export const prependSendAnnouncementButtons = (tableSectionElement: HTMLTableSec
 
     for (const trElement of trsElement) {
         const td: HTMLTableCellElement = trElement.querySelector('td');
-        const url: string = (trElement.querySelector('td:nth-child(3) > a') as HTMLAnchorElement).href;
+        const url: string = (trElement.querySelectorAll('td > a').item(0) as HTMLAnchorElement).href;
         const urlSearchParams: URLSearchParams = new URLSearchParams(new URL(url).search);
         const sid: string = urlSearchParams.get('sid');
         const sendIcon: HTMLUnknownElement = getSendIcon();
