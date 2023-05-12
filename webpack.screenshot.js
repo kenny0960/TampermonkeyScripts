@@ -7,6 +7,7 @@ module.exports = merge(config(), {
         filename: 'screenshot.bundle.js',
     },
     externals: {
+        bootstrap: 'bootstrap',
         moment: 'moment',
         html2canvas: 'html2canvas',
     }
