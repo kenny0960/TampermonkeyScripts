@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 
 import AnnualLeave from '@/werp/interfaces/AnnualLeave';
 import { fetchAnnualLeave } from '@/werp/classes/ajax';

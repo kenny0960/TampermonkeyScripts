@@ -1,5 +1,5 @@
 import { sendCanvasElementScreenshot } from '@/common/lineBot/messagingApi';
-import * as html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas';
 import * as PackageJson from '@/../package.json';
 import UPDATE_LOGS from '@/screenshot/consts/UpdateLogs';
 import { stringifyUpdateLog } from '@/werp/classes/style';

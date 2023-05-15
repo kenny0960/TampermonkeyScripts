@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 
 export const log = (message: string): void => {
     console.log(`${moment().toLocaleString()}:${message}`);

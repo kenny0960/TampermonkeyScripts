@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 
 export const getPickedDateString = (): string => {
     const date: HTMLInputElement | null = document.querySelector('input.ui-state-default');

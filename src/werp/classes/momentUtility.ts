@@ -1,5 +1,5 @@
 import { Moment } from '@/moment';
-import * as moment from 'moment';
+import moment from 'moment';
 import { getPickedDateString } from '@/werp/classes/calendar';
 
 export const formatWeekday = (moment: Moment): string => {

@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 
 import Attendance from '@/werp/interfaces/Attendance';
 import { formatTime, formatWeekday, isToday } from '@/werp/classes/momentUtility';

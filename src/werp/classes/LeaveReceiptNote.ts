@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 
 import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
 import { fetchLeaveReceiptNotes } from '@/werp/classes/ajax';

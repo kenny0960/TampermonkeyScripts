@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 
 import Attendance from '@/werp/interfaces/Attendance';
 import { formatAttendance, getPredictedSignOutDate, getTodayAttendance } from '@/werp/classes/attendanceUtility';

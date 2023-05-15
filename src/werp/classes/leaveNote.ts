@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 
 import LeaveNote from '@/werp/interfaces/LeaveNote';
 import { getLeaveNoteTemplate } from '@/werp/classes/template';

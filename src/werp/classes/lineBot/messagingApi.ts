@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 
 import LeaveReceiptNote from '@/werp/interfaces/LeaveReceiptNote';
 import { getAnnualLeave, getLeaveNotes, getLeaveReceiptNotes } from '@/werp/classes/sessionManager';
@@ -16,7 +16,7 @@ import {
 import { log } from '@/common/logger';
 import Announcement from '@/werp/interfaces/Announcement';
 import { sendMessages } from '@/common/lineBot/ajax';
-import * as html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas';
 import { sendCanvasElementScreenshot } from '@/common/lineBot/messagingApi';
 
 export const getLinBotLeaveReceiptNotes = async (): Promise<LeaveReceiptNote[]> => {

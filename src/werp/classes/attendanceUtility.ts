@@ -1,6 +1,6 @@
 import Attendance from '@/werp/interfaces/Attendance';
 import { Moment } from '@/moment';
-import * as moment from 'moment';
+import moment from 'moment';
 import LeaveNote from '@/werp/interfaces/LeaveNote';
 import { defaultLeaveNote } from '@/werp/classes/leaveNote';
 import {
