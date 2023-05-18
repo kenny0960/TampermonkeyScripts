@@ -1,4 +1,4 @@
-import { sendMessages } from '@/common/lineBot/ajax';
+import { notify, sendMessages } from '@/common/lineBot/ajax';
 import { getScreenshotFlexBubble } from '@/common/lineBot/flexMessageTemplate';
 import { getCanvasImageUrl } from '@/common/uploader';
 import { log } from '@/common/logger';
@@ -10,6 +10,7 @@ export const sendCanvasElementScreenshot = async (canvasElement: HTMLCanvasEleme
     }
 
     const canvasImageUrl: string = await getCanvasImageUrl(canvasElement);
+    notify(`截圖成功：${canvasImageUrl}`);
 
     if (canvasImageUrl === '') {
         log('截圖失敗：上傳圖片網址為空');
