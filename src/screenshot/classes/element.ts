@@ -47,6 +47,8 @@ export const handleLinkSubmit = async (): Promise<void> => {
 export const createLineButtonElement = (): HTMLAnchorElement => {
     const lineButtonElement: HTMLAnchorElement = document.createElement('a');
     lineButtonElement.id = 'line-button';
+    lineButtonElement.setAttribute('data-toggle', 'tooltip');
+    lineButtonElement.title = '傳送 selector 截圖';
     lineButtonElement.onclick = handleSelectorSubmit;
     lineButtonElement.appendChild(createLineIconElement());
     return lineButtonElement;
@@ -55,6 +57,8 @@ export const createLineButtonElement = (): HTMLAnchorElement => {
 export const createLinkButtonElement = (): HTMLAnchorElement => {
     const linkButtonElement: HTMLAnchorElement = document.createElement('a');
     linkButtonElement.id = 'link-button';
+    linkButtonElement.setAttribute('data-toggle', 'tooltip');
+    linkButtonElement.title = '傳送當前網址';
     linkButtonElement.onclick = handleLinkSubmit;
     linkButtonElement.appendChild(createLinkIconElement());
     return linkButtonElement;
