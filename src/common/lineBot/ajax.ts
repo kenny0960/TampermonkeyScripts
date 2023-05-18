@@ -6,6 +6,7 @@ import {
     LINE_NOTIFY_CHANNEL_ACCESS_TOKEN,
     LINE_USER_ID,
 } from '@/common/consts/env';
+import ErrorResponse = Tampermonkey.ErrorResponse;
 
 export const sendMessages = (messages: Message[]): void => {
     if (HAS_LINE_MESSAGE_API_AUTH === false) {
@@ -31,6 +32,10 @@ export const sendMessages = (messages: Message[]): void => {
                 log(`LINE 發送失敗：${response.status}`);
             }
         },
+        onerror: (response: ErrorResponse): void => {
+            log(`LINE 發送失敗：${JSON.stringify(response)}`);
+            notify(JSON.stringify(messages[0]));
+        },
     });
 };
 
@@ -54,6 +59,9 @@ export const notify = (message: string): void => {
             } else {
                 log(`LINE 通知失敗：${response.status}`);
             }
+        },
+        onerror: (response: ErrorResponse): void => {
+            log(`LINE 通知失敗：${JSON.stringify(response)}`);
         },
     });
 };
