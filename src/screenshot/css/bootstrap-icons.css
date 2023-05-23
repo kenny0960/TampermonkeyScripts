@@ -21,3 +21,5 @@
 
 .bi-line::before { content: "\\f660"; }
 .bi-link::before { content: "\\f471"; }
+.bi-arrow-up-left-square-fill::before { content: "\\f13d"; }
+.bi-arrow-up-left-square::before { content: "\\f13e"; }

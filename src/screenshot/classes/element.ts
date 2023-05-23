@@ -26,6 +26,12 @@ export const createLinkIconElement = (): HTMLUnknownElement => {
     return linkElement;
 };
 
+export const createTargetIconElement = (): HTMLUnknownElement => {
+    const linkElement: HTMLUnknownElement = document.createElement('i');
+    linkElement.className = 'bi bi-arrow-up-left-square';
+    return linkElement;
+};
+
 export const handleSelectorSubmit = async (): Promise<void> => {
     const formElement: HTMLFormElement = getScreenshotFormElement();
     const feedBackElement: HTMLDivElement = getSelectorInvalidFeedBackElement();
@@ -42,6 +48,10 @@ export const handleSelectorSubmit = async (): Promise<void> => {
 
 export const handleLinkSubmit = async (): Promise<void> => {
     await notify(`隨意截的網址：${document.location.href}`);
+};
+
+export const handleTargetModeToggle = async (): Promise<void> => {
+    // TODO 開啟自動帶入模式
 };
 
 export const createLineButtonElement = (): HTMLAnchorElement => {
@@ -62,6 +72,16 @@ export const createLinkButtonElement = (): HTMLAnchorElement => {
     linkButtonElement.onclick = handleLinkSubmit;
     linkButtonElement.appendChild(createLinkIconElement());
     return linkButtonElement;
+};
+
+export const createTargetButtonElement = (): HTMLAnchorElement => {
+    const targetButtonElement: HTMLAnchorElement = document.createElement('a');
+    targetButtonElement.id = 'target-button';
+    targetButtonElement.setAttribute('data-toggle', 'tooltip');
+    targetButtonElement.title = '開啟自動帶入模式';
+    targetButtonElement.onclick = handleTargetModeToggle;
+    targetButtonElement.appendChild(createTargetIconElement());
+    return targetButtonElement;
 };
 
 export const getSelectorInputElement = (): HTMLInputElement => {
@@ -94,6 +114,7 @@ export const createScreenshotInputGroupElement = (): HTMLDivElement => {
     inputGroupElement.appendChild(createSelectorInputElement());
     inputGroupElement.appendChild(createSelectorValidFeedBackElement());
     inputGroupElement.appendChild(createSelectorInvalidFeedBackElement());
+    inputGroupElement.appendChild(createTargetButtonElement());
     inputGroupElement.appendChild(createLineButtonElement());
     inputGroupElement.appendChild(createLinkButtonElement());
     return inputGroupElement;
