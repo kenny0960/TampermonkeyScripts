@@ -102,7 +102,8 @@ export const showAttendanceNotification = (attendances: Attendance[]): void => {
             }
         );
 
-        notify(`記得簽到：尚未有簽到的紀錄`);
+        // TODO 暫時先關閉這個通知：目前簽退後會Ｎ次發送通知
+        // notify(`記得簽到：尚未有簽到的紀錄`);
         return;
     }
 
