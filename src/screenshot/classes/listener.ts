@@ -2,7 +2,10 @@ import { sendCanvasElementScreenshot } from '@/common/lineBot/messagingApi';
 import html2canvas from 'html2canvas';
 import { getSelector } from '@/common/element';
 
-export const sendHighlightElement = async (): Promise<void> => {
+export const sendHighlightElement = async (event: MouseEvent): Promise<void> => {
+    // 避免直接點擊到鏈結而跳頁
+    event.preventDefault();
+    
     const highlightedElement: HTMLElement | null = document.querySelector('.highlight');
 
     if (highlightedElement === null) {
