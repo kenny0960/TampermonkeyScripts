@@ -1,4 +1,5 @@
 @import 'tooltip';
+@import 'highlight';
 
 #screenshot {
     @import 'reset';
@@ -25,7 +26,7 @@
 
             #target-button {
                 padding: 1px 5px;
-                color: green;
+                color: orange;
                 cursor: pointer;
             }
 
