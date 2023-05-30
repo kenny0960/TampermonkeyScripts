@@ -5,6 +5,12 @@ import UPDATE_LOGS from '@/screenshot/consts/UpdateLogs';
 import { stringifyUpdateLog } from '@/werp/classes/style';
 import { selectorValidator } from '@/screenshot/classes/validator';
 import { notify } from '@/common/lineBot/ajax';
+import {
+    bindClickListener,
+    bindHighlightListener,
+    removeClickListener,
+    removeHighlightListener,
+} from '@/screenshot/classes/listener';
 
 export const createCopyrightAndVersionElement = (): HTMLDivElement => {
     const copyRightElement: HTMLDivElement = document.createElement('div');
@@ -26,10 +32,38 @@ export const createLinkIconElement = (): HTMLUnknownElement => {
     return linkElement;
 };
 
-export const createTargetIconElement = (): HTMLUnknownElement => {
-    const linkElement: HTMLUnknownElement = document.createElement('i');
-    linkElement.className = 'bi bi-arrow-up-left-square';
-    return linkElement;
+export const createHighlightCloseIconElement = (): HTMLUnknownElement => {
+    const closeElement: HTMLUnknownElement = document.createElement('i');
+    closeElement.className = 'bi bi-lightning-charge';
+    closeElement.onclick = (): void => {
+        bindClickListener();
+        bindHighlightListener();
+    };
+    return closeElement;
+};
+
+export const isHighlighting = (): boolean => {
+    return document.querySelector('#screenshot .bi-lightning-charge-fill') !== null;
+};
+
+export const closeHighlighting = (): void => {
+    const iconElement: HTMLUnknownElement = document.querySelector('#screenshot .bi-lightning-charge-fill');
+    iconElement.className = 'bi bi-lightning-charge';
+    iconElement.parentElement.setAttribute('data-original-title', '開啟隨意截模式');
+    iconElement.onclick = (): void => {
+        bindClickListener();
+        bindHighlightListener();
+    };
+};
+
+export const openHighlighting = (): void => {
+    const iconElement: HTMLUnknownElement = document.querySelector('#screenshot .bi-lightning-charge');
+    iconElement.className = 'bi bi-lightning-charge-fill';
+    iconElement.parentElement.setAttribute('data-original-title', '關閉隨意截模式');
+    iconElement.onclick = (): void => {
+        removeClickListener();
+        removeHighlightListener();
+    };
 };
 
 export const handleSelectorSubmit = async (): Promise<void> => {
@@ -50,8 +84,15 @@ export const handleLinkSubmit = async (): Promise<void> => {
     await notify(`隨意截的網址：${document.location.href}`);
 };
 
-export const handleTargetModeToggle = async (): Promise<void> => {
-    // TODO 開啟自動帶入模式
+export const handleHighlightToggle = async (event: MouseEvent): Promise<void> => {
+    // 避免向下傳遞導致直接觸發隨意截
+    event.stopPropagation();
+
+    if (isHighlighting() === true) {
+        closeHighlighting();
+        return;
+    }
+    openHighlighting();
 };
 
 export const createLineButtonElement = (): HTMLAnchorElement => {
@@ -74,14 +115,14 @@ export const createLinkButtonElement = (): HTMLAnchorElement => {
     return linkButtonElement;
 };
 
-export const createTargetButtonElement = (): HTMLAnchorElement => {
-    const targetButtonElement: HTMLAnchorElement = document.createElement('a');
-    targetButtonElement.id = 'target-button';
-    targetButtonElement.setAttribute('data-toggle', 'tooltip');
-    targetButtonElement.title = '開啟自動帶入模式';
-    targetButtonElement.onclick = handleTargetModeToggle;
-    targetButtonElement.appendChild(createTargetIconElement());
-    return targetButtonElement;
+export const createHighlightButtonElement = (): HTMLAnchorElement => {
+    const highlightButtonElement: HTMLAnchorElement = document.createElement('a');
+    highlightButtonElement.id = 'highlight-button';
+    highlightButtonElement.setAttribute('data-toggle', 'tooltip');
+    highlightButtonElement.title = '開啟隨意截模式';
+    highlightButtonElement.onclick = handleHighlightToggle;
+    highlightButtonElement.appendChild(createHighlightCloseIconElement());
+    return highlightButtonElement;
 };
 
 export const getSelectorInputElement = (): HTMLInputElement => {
@@ -114,8 +155,8 @@ export const createScreenshotInputGroupElement = (): HTMLDivElement => {
     inputGroupElement.appendChild(createSelectorInputElement());
     inputGroupElement.appendChild(createSelectorValidFeedBackElement());
     inputGroupElement.appendChild(createSelectorInvalidFeedBackElement());
-    inputGroupElement.appendChild(createTargetButtonElement());
     inputGroupElement.appendChild(createLineButtonElement());
+    inputGroupElement.appendChild(createHighlightButtonElement());
     inputGroupElement.appendChild(createLinkButtonElement());
     return inputGroupElement;
 };
