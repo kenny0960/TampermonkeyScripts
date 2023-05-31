@@ -16,10 +16,15 @@ const triggerBootstrapTooltips = (): void => {
     });
 };
 
+const initializeDraggable = (): void => {
+    $('#screenshot-form').draggable();
+};
+
 ((): void => {
     moment.locale('zh-tw');
     GM_addStyle(styles);
     removeHighlightListener();
     main();
     triggerBootstrapTooltips();
+    initializeDraggable();
 })();
