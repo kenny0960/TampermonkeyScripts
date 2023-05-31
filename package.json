@@ -34,6 +34,8 @@
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
+    "@types/jquery": "^3.5.16",
+    "@types/jqueryui": "^1.12.17",
     "favicon-badge": "^2.0.0",
     "upload-js": "^2.11.2"
   }
