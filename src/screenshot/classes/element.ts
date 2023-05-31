@@ -38,14 +38,14 @@ export const isHighlighting = (): boolean => {
     return document.querySelector('#screenshot .bi-lightning-charge-fill') !== null;
 };
 
-export const closeHighlighting = (): void => {
+export const showHighlightCloseIcon = (): void => {
     const iconElement: HTMLUnknownElement = document.querySelector('#screenshot .bi-lightning-charge-fill');
     iconElement.className = 'bi bi-lightning-charge';
     iconElement.parentElement.setAttribute('data-original-title', '開啟隨意截模式');
     iconElement.onclick = bindHighlightListener;
 };
 
-export const openHighlighting = (): void => {
+export const showHighlightOpenIcon = (): void => {
     const iconElement: HTMLUnknownElement = document.querySelector('#screenshot .bi-lightning-charge');
     iconElement.className = 'bi bi-lightning-charge-fill';
     iconElement.parentElement.setAttribute('data-original-title', '關閉隨意截模式');
@@ -75,10 +75,10 @@ export const handleHighlightToggle = async (event: MouseEvent): Promise<void> =>
     event.stopPropagation();
 
     if (isHighlighting() === true) {
-        closeHighlighting();
+        showHighlightCloseIcon();
         return;
     }
-    openHighlighting();
+    showHighlightOpenIcon();
 };
 
 export const createLineButtonElement = (): HTMLAnchorElement => {

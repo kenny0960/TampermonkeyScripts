@@ -1,7 +1,7 @@
 import { sendCanvasElementScreenshot } from '@/common/lineBot/messagingApi';
 import html2canvas from 'html2canvas';
 import { getSelector } from '@/common/element';
-import { closeHighlighting, isHighlighting } from '@/screenshot/classes/element';
+import { showHighlightCloseIcon, isHighlighting } from '@/screenshot/classes/element';
 
 export const sendHighlightElement = async (event: MouseEvent): Promise<void> => {
     // 避免直接點擊到鏈結而跳頁
@@ -36,7 +36,7 @@ export const escapeHighlighting = (event: KeyboardEvent): void => {
         return;
     }
     if (event.key === 'Escape') {
-        closeHighlighting();
+        showHighlightCloseIcon();
         removeHighlightedElement();
         removeHighlightListener();
     }
