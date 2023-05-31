@@ -28,16 +28,10 @@ export const highlightElement = (event: MouseEvent): void => {
 
 export const bindHighlightListener = (): void => {
     document.addEventListener('mousemove', highlightElement);
+    document.addEventListener('click', sendHighlightElement);
 };
 
 export const removeHighlightListener = (): void => {
     document.removeEventListener('mousemove', highlightElement);
-};
-
-export const bindClickListener = (): void => {
-    document.addEventListener('click', sendHighlightElement);
-};
-
-export const removeClickListener = (): void => {
     document.removeEventListener('click', sendHighlightElement);
 };

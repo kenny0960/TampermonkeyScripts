@@ -5,12 +5,7 @@ import UPDATE_LOGS from '@/screenshot/consts/UpdateLogs';
 import { stringifyUpdateLog } from '@/werp/classes/style';
 import { selectorValidator } from '@/screenshot/classes/validator';
 import { notify } from '@/common/lineBot/ajax';
-import {
-    bindClickListener,
-    bindHighlightListener,
-    removeClickListener,
-    removeHighlightListener,
-} from '@/screenshot/classes/listener';
+import { bindHighlightListener, removeHighlightListener } from '@/screenshot/classes/listener';
 
 export const createCopyrightAndVersionElement = (): HTMLDivElement => {
     const copyRightElement: HTMLDivElement = document.createElement('div');
@@ -35,10 +30,7 @@ export const createLinkIconElement = (): HTMLUnknownElement => {
 export const createHighlightCloseIconElement = (): HTMLUnknownElement => {
     const closeElement: HTMLUnknownElement = document.createElement('i');
     closeElement.className = 'bi bi-lightning-charge';
-    closeElement.onclick = (): void => {
-        bindClickListener();
-        bindHighlightListener();
-    };
+    closeElement.onclick = bindHighlightListener;
     return closeElement;
 };
 
@@ -50,20 +42,14 @@ export const closeHighlighting = (): void => {
     const iconElement: HTMLUnknownElement = document.querySelector('#screenshot .bi-lightning-charge-fill');
     iconElement.className = 'bi bi-lightning-charge';
     iconElement.parentElement.setAttribute('data-original-title', '開啟隨意截模式');
-    iconElement.onclick = (): void => {
-        bindClickListener();
-        bindHighlightListener();
-    };
+    iconElement.onclick = bindHighlightListener;
 };
 
 export const openHighlighting = (): void => {
     const iconElement: HTMLUnknownElement = document.querySelector('#screenshot .bi-lightning-charge');
     iconElement.className = 'bi bi-lightning-charge-fill';
     iconElement.parentElement.setAttribute('data-original-title', '關閉隨意截模式');
-    iconElement.onclick = (): void => {
-        removeClickListener();
-        removeHighlightListener();
-    };
+    iconElement.onclick = removeHighlightListener;
 };
 
 export const handleSelectorSubmit = async (): Promise<void> => {

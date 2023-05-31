@@ -2,7 +2,7 @@ import moment from 'moment';
 import styles from '@/screenshot/css/index.scss';
 import { createMainElement } from '@/screenshot/classes/element';
 import { Tooltip } from 'bootstrap';
-import { removeClickListener, removeHighlightListener } from '@/screenshot/classes/listener';
+import { removeHighlightListener } from '@/screenshot/classes/listener';
 
 const main = (): void => {
     document.body.insertAdjacentElement('afterbegin', createMainElement());
@@ -19,7 +19,6 @@ const triggerBootstrapTooltips = (): void => {
 ((): void => {
     moment.locale('zh-tw');
     GM_addStyle(styles);
-    removeClickListener();
     removeHighlightListener();
     main();
     triggerBootstrapTooltips();
