@@ -15,12 +15,6 @@ export const createCopyrightAndVersionElement = (): HTMLDivElement => {
     return copyRightElement;
 };
 
-export const createLineIconElement = (): HTMLUnknownElement => {
-    const iconElement: HTMLUnknownElement = document.createElement('i');
-    iconElement.className = 'bi bi-line';
-    return iconElement;
-};
-
 export const createLinkIconElement = (): HTMLUnknownElement => {
     const linkElement: HTMLUnknownElement = document.createElement('i');
     linkElement.className = 'bi bi-link';
@@ -86,16 +80,6 @@ export const handleHighlightToggle = async (event: MouseEvent): Promise<void> =>
         return;
     }
     showHighlightOpenIcon();
-};
-
-export const createLineButtonElement = (): HTMLAnchorElement => {
-    const lineButtonElement: HTMLAnchorElement = document.createElement('a');
-    lineButtonElement.id = 'line-button';
-    lineButtonElement.setAttribute('data-toggle', 'tooltip');
-    lineButtonElement.title = '傳送 selector 截圖';
-    lineButtonElement.onclick = handleSelectorSubmit;
-    lineButtonElement.appendChild(createLineIconElement());
-    return lineButtonElement;
 };
 
 export const createLinkButtonElement = (): HTMLAnchorElement => {

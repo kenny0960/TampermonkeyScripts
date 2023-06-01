@@ -19,10 +19,7 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.bi-line::before { content: "\\f660"; }
 .bi-link::before { content: "\\f471"; }
-.bi-arrow-up-left-square-fill::before { content: "\\f13d"; }
-.bi-arrow-up-left-square::before { content: "\\f13e"; }
 .bi-lightning-charge-fill::before { content: "\\f46c"; }
 .bi-lightning-charge::before { content: "\\f46d"; }
 .bi-three-dots::before { content: "\\f5d4"; }
