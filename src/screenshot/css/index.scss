@@ -12,13 +12,10 @@
         bottom: 5%;
         left: 1%;
         z-index: 9999;
-        width: 250px;
+        width: 125px;
         background-color: transparent;
 
-        #input-group {
-            display: flex;
-            align-items: center;
-
+        #header {
             #selector-input {
                 width: 100%;
                 height: 30px;
@@ -26,27 +23,22 @@
             }
 
             #highlight-button {
-                padding: 1px 5px;
                 color: orange;
-                cursor: pointer;
             }
 
             #line-button {
-                padding: 1px 5px;
                 color: green;
-                cursor: pointer;
             }
 
             #link-button {
-                padding: 1px 5px;
                 color: cornflowerblue;
-                cursor: pointer;
             }
         }
 
-        #copyright-div {
-            text-align: right;
-            font-size: 12px;
+        #footer {
+            #copyright-div {
+                font-size: 12px;
+            }
         }
     }
 }

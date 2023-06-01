@@ -34,6 +34,13 @@ export const createHighlightCloseIconElement = (): HTMLUnknownElement => {
     return closeElement;
 };
 
+export const createExpandIconElement = (): HTMLUnknownElement => {
+    const expandElement: HTMLUnknownElement = document.createElement('i');
+    expandElement.className = 'bi bi-three-dots';
+    // TODO 點擊功能開合效果
+    return expandElement;
+};
+
 export const isHighlighting = (): boolean => {
     return document.querySelector('#screenshot .bi-lightning-charge-fill') !== null;
 };
@@ -94,6 +101,7 @@ export const createLineButtonElement = (): HTMLAnchorElement => {
 export const createLinkButtonElement = (): HTMLAnchorElement => {
     const linkButtonElement: HTMLAnchorElement = document.createElement('a');
     linkButtonElement.id = 'link-button';
+    linkButtonElement.className = 'btn btn-sm btn-outline-secondary';
     linkButtonElement.setAttribute('data-toggle', 'tooltip');
     linkButtonElement.title = '傳送當前網址';
     linkButtonElement.onclick = handleLinkSubmit;
@@ -104,11 +112,32 @@ export const createLinkButtonElement = (): HTMLAnchorElement => {
 export const createHighlightButtonElement = (): HTMLAnchorElement => {
     const highlightButtonElement: HTMLAnchorElement = document.createElement('a');
     highlightButtonElement.id = 'highlight-button';
+    highlightButtonElement.className = 'btn btn-sm btn-outline-secondary';
     highlightButtonElement.setAttribute('data-toggle', 'tooltip');
     highlightButtonElement.title = '開啟隨意截模式';
     highlightButtonElement.onclick = handleHighlightToggle;
     highlightButtonElement.appendChild(createHighlightCloseIconElement());
     return highlightButtonElement;
+};
+
+export const createExpandButtonElement = (): HTMLAnchorElement => {
+    const expandButtonElement: HTMLAnchorElement = document.createElement('a');
+    expandButtonElement.id = 'expand-button';
+    expandButtonElement.className = 'btn btn-sm btn-outline-secondary';
+    expandButtonElement.setAttribute('data-toggle', 'tooltip');
+    expandButtonElement.title = '功能開合';
+    // TODO 點擊功能開合效果
+    expandButtonElement.appendChild(createExpandIconElement());
+    return expandButtonElement;
+};
+
+export const createButtonGroupElement = (): HTMLDivElement => {
+    const buttonGroupElement: HTMLDivElement = document.createElement('div');
+    buttonGroupElement.className = 'btn-group';
+    buttonGroupElement.appendChild(createLinkButtonElement());
+    buttonGroupElement.appendChild(createHighlightButtonElement());
+    buttonGroupElement.appendChild(createExpandButtonElement());
+    return buttonGroupElement;
 };
 
 export const getSelectorInputElement = (): HTMLInputElement => {
@@ -134,17 +163,20 @@ export const createSelectorInputElement = (): HTMLInputElement => {
     return selectorInputElement;
 };
 
-export const createScreenshotInputGroupElement = (): HTMLDivElement => {
-    const inputGroupElement: HTMLDivElement = document.createElement('div');
-    inputGroupElement.id = 'input-group';
-    inputGroupElement.className = 'position-relative';
-    inputGroupElement.appendChild(createSelectorInputElement());
-    inputGroupElement.appendChild(createSelectorValidFeedBackElement());
-    inputGroupElement.appendChild(createSelectorInvalidFeedBackElement());
-    inputGroupElement.appendChild(createLineButtonElement());
-    inputGroupElement.appendChild(createHighlightButtonElement());
-    inputGroupElement.appendChild(createLinkButtonElement());
-    return inputGroupElement;
+export const createHeaderElement = (): HTMLDivElement => {
+    const headerElement: HTMLDivElement = document.createElement('div');
+    headerElement.id = 'header';
+    headerElement.className = 'd-flex justify-content-end align-items-center';
+    headerElement.appendChild(createButtonGroupElement());
+    return headerElement;
+};
+
+export const createFooterElement = (): HTMLDivElement => {
+    const footerElement: HTMLDivElement = document.createElement('div');
+    footerElement.id = 'footer';
+    footerElement.className = 'd-flex justify-content-end align-items-center';
+    footerElement.appendChild(createCopyrightAndVersionElement());
+    return footerElement;
 };
 
 export const getSelectorValidFeedBackElement = (): HTMLDivElement => {
@@ -187,8 +219,8 @@ export const createScreenshotFormElement = (): HTMLFormElement => {
     const formElement: HTMLFormElement = document.createElement('form');
     formElement.id = 'screenshot-form';
     formElement.noValidate = true;
-    formElement.appendChild(createScreenshotInputGroupElement());
-    formElement.appendChild(createCopyrightAndVersionElement());
+    formElement.appendChild(createHeaderElement());
+    formElement.appendChild(createFooterElement());
     formElement.addEventListener('submit', async (event: SubmitEvent): Promise<void> => {
         await handleSelectorSubmit();
         event.preventDefault();
