@@ -60,6 +60,10 @@ export const displayCompanyEmployeeCountLineChart = async (companyEmployeeCountO
                 legend: {
                     display: false,
                 },
+                tooltip: {
+                    xAlign: 'right',
+                    yAlign: 'top',
+                },
             },
 
             scales: {
