@@ -2,6 +2,11 @@ import UpdateLog from '@/common/interfaces/UpdateLog';
 
 const UPDATE_LOGS: UpdateLog[] = [
     {
+        version: '1.0.0',
+        date: '20230602 1800',
+        messages: ['簡化畫面'],
+    },
+    {
         version: '0.0.4',
         date: '20230530 1630',
         messages: ['實作隨意截功能'],
