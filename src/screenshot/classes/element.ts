@@ -24,7 +24,6 @@ export const createLinkIconElement = (): HTMLUnknownElement => {
 export const createHighlightCloseIconElement = (): HTMLUnknownElement => {
     const closeElement: HTMLUnknownElement = document.createElement('i');
     closeElement.className = 'bi bi-lightning-charge';
-    closeElement.onclick = bindHighlightListener;
     return closeElement;
 };
 
@@ -36,14 +35,12 @@ export const showHighlightCloseIcon = (): void => {
     const iconElement: HTMLUnknownElement = document.querySelector('#screenshot .bi-lightning-charge-fill');
     iconElement.className = 'bi bi-lightning-charge';
     iconElement.parentElement.setAttribute('data-original-title', '開啟隨意截模式');
-    iconElement.onclick = bindHighlightListener;
 };
 
 export const showHighlightOpenIcon = (): void => {
     const iconElement: HTMLUnknownElement = document.querySelector('#screenshot .bi-lightning-charge');
     iconElement.className = 'bi bi-lightning-charge-fill';
     iconElement.parentElement.setAttribute('data-original-title', '關閉隨意截模式');
-    iconElement.onclick = removeHighlightListener;
 };
 
 export const handleSelectorSubmit = async (): Promise<void> => {
@@ -70,9 +67,11 @@ export const handleHighlightToggle = async (event: MouseEvent): Promise<void> =>
 
     if (isHighlighting() === true) {
         showHighlightCloseIcon();
+        removeHighlightListener();
         return;
     }
     showHighlightOpenIcon();
+    bindHighlightListener();
 };
 
 export const createLinkButtonElement = (): HTMLAnchorElement => {
