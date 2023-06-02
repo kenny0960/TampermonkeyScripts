@@ -38,6 +38,13 @@ class SessionManager {
         sessionStorage.setItem(key, value);
     }
 
+    static toggleByKey(key: string): void {
+        if (SessionManager.has(key) === false) {
+            return;
+        }
+        SessionManager.setByKey(key, JSON.stringify(!JSON.parse(SessionManager.getByKey(key))));
+    }
+
     static resetByKey(key: string): void {
         if (SessionManager.has(key) === true) {
             sessionStorage.removeItem(key);
