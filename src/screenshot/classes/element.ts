@@ -77,7 +77,7 @@ export const handleHighlightToggle = async (event: MouseEvent): Promise<void> =>
 export const createLinkButtonElement = (): HTMLAnchorElement => {
     const linkButtonElement: HTMLAnchorElement = document.createElement('a');
     linkButtonElement.id = 'link-button';
-    linkButtonElement.className = 'btn btn-sm btn-outline-secondary';
+    linkButtonElement.className = 'btn btn-sm btn-outline-primary';
     linkButtonElement.setAttribute('data-toggle', 'tooltip');
     linkButtonElement.title = '傳送當前網址';
     linkButtonElement.onclick = handleLinkSubmit;
@@ -88,7 +88,7 @@ export const createLinkButtonElement = (): HTMLAnchorElement => {
 export const createHighlightButtonElement = (): HTMLAnchorElement => {
     const highlightButtonElement: HTMLAnchorElement = document.createElement('a');
     highlightButtonElement.id = 'highlight-button';
-    highlightButtonElement.className = 'btn btn-sm btn-outline-secondary';
+    highlightButtonElement.className = 'btn btn-sm btn-outline-warning';
     highlightButtonElement.setAttribute('data-toggle', 'tooltip');
     highlightButtonElement.title = '開啟隨意截模式';
     highlightButtonElement.onclick = handleHighlightToggle;
