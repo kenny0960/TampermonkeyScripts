@@ -28,13 +28,6 @@ export const createHighlightCloseIconElement = (): HTMLUnknownElement => {
     return closeElement;
 };
 
-export const createExpandIconElement = (): HTMLUnknownElement => {
-    const expandElement: HTMLUnknownElement = document.createElement('i');
-    expandElement.className = 'bi bi-three-dots';
-    // TODO 點擊功能開合效果
-    return expandElement;
-};
-
 export const isHighlighting = (): boolean => {
     return document.querySelector('#screenshot .bi-lightning-charge-fill') !== null;
 };
@@ -104,23 +97,11 @@ export const createHighlightButtonElement = (): HTMLAnchorElement => {
     return highlightButtonElement;
 };
 
-export const createExpandButtonElement = (): HTMLAnchorElement => {
-    const expandButtonElement: HTMLAnchorElement = document.createElement('a');
-    expandButtonElement.id = 'expand-button';
-    expandButtonElement.className = 'btn btn-sm btn-outline-secondary';
-    expandButtonElement.setAttribute('data-toggle', 'tooltip');
-    expandButtonElement.title = '功能開合';
-    // TODO 點擊功能開合效果
-    expandButtonElement.appendChild(createExpandIconElement());
-    return expandButtonElement;
-};
-
 export const createButtonGroupElement = (): HTMLDivElement => {
     const buttonGroupElement: HTMLDivElement = document.createElement('div');
     buttonGroupElement.className = 'btn-group';
     buttonGroupElement.appendChild(createLinkButtonElement());
     buttonGroupElement.appendChild(createHighlightButtonElement());
-    buttonGroupElement.appendChild(createExpandButtonElement());
     return buttonGroupElement;
 };
 
