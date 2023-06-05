@@ -25,7 +25,8 @@
 // @require     https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js
-// @require     https://code.jquery.com/jquery-3.2.1.slim.min.js
+// @require     https://code.jquery.com/jquery-3.6.0.min.js
+// @require     https://code.jquery.com/ui/1.13.1/jquery-ui.min.js
 // @require     https://getbootstrap.com/docs/4.0/assets/js/vendor/popper.min.js
 // @require     https://getbootstrap.com/docs/4.0/dist/js/bootstrap.min.js
 // @require     https://raw.githubusercontent.com/kenny0960/TampermonkeyScripts/master/dist/screenshot.bundle.js
