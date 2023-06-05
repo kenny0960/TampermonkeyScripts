@@ -2,6 +2,11 @@ import UpdateLog from '@/common/interfaces/UpdateLog';
 
 const UPDATE_LOGS: UpdateLog[] = [
     {
+        version: '1.0.1',
+        date: '20230602 1800',
+        messages: ['顯示 github 圖示'],
+    },
+    {
         version: '1.0.0',
         date: '20230602 1800',
         messages: ['簡化畫面'],
