@@ -15,6 +15,15 @@ export const createCopyrightAndVersionElement = (): HTMLDivElement => {
     return copyRightElement;
 };
 
+export const createGithubLink = (): HTMLAnchorElement => {
+    const githubLinkElement: HTMLAnchorElement = document.createElement('a');
+    githubLinkElement.id = 'github';
+    githubLinkElement.className = 'bi bi-github';
+    githubLinkElement.href = 'https://github.com/kenny0960/TampermonkeyScripts/tree/master/src/screenshot';
+    githubLinkElement.target = '_blank';
+    return githubLinkElement;
+};
+
 export const createLinkIconElement = (): HTMLUnknownElement => {
     const linkElement: HTMLUnknownElement = document.createElement('i');
     linkElement.className = 'bi bi-link';
@@ -140,6 +149,7 @@ export const createFooterElement = (): HTMLDivElement => {
     footerElement.id = 'footer';
     footerElement.className = 'd-flex justify-content-end align-items-center';
     footerElement.appendChild(createCopyrightAndVersionElement());
+    footerElement.appendChild(createGithubLink());
     return footerElement;
 };
 
