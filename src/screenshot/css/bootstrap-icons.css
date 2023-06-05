@@ -22,3 +22,4 @@
 .bi-link::before { content: "\\f471"; }
 .bi-lightning-charge-fill::before { content: "\\f46c"; }
 .bi-lightning-charge::before { content: "\\f46d"; }
+.bi-github::before { content: "\\f3ed"; }
