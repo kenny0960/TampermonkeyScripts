@@ -2,7 +2,7 @@
   "name": "tampermonkeyscripts",
   "version": "1.0.0",
   "screenshot-version": "1.0.0",
-  "werp-version": "4.0.0",
+  "werp-version": "4.0.1",
   "description": "",
   "main": ".eslintrc.js",
   "scripts": {

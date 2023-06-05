@@ -2,6 +2,19 @@ import UpdateLog from '@/common/interfaces/UpdateLog';
 
 const UPDATE_LOGS: UpdateLog[] = [
     {
+        version: '4.0.1',
+        date: '20230605 1130',
+        messages: [
+            '公告有「置頂」文字時可以取得公告網址',
+            '允許默認導出模組',
+            '記錄 line 傳送失敗的訊息',
+            '傳送截圖成功的通知',
+            '暫時關閉簽到提示的 LINE 通知',
+            '修改公司在職人數的提示視窗位置',
+            '補上 github 的超鏈結',
+        ],
+    },
+    {
         version: '4.0.0',
         date: '20230503 1500',
         messages: ['新增傳送訊息至 LINE 的功能'],
