@@ -10,13 +10,15 @@ export const stringifyUpdateLog = (updateLog: UpdateLog): string => {
     return `v${updateLog.version} ${updateLog.date} ${updateLog.messages}`;
 };
 
-export const getCopyrightAndVersionElement = (): HTMLDivElement => {
-    const copyRightDiv: HTMLDivElement = document.createElement('div');
-    copyRightDiv.innerText = `ⓚ design © V${PackageJson['werp-version']}`;
-    copyRightDiv.style.textAlign = 'right';
-    copyRightDiv.style.padding = '0.25rem 0';
-    copyRightDiv.title = UPDATE_LOGS.slice(0, 5).map(stringifyUpdateLog).join('\n');
-    return copyRightDiv;
+export const getCopyrightAndVersionElement = (): HTMLAnchorElement => {
+    const copyRightLink: HTMLAnchorElement = document.createElement('a');
+    copyRightLink.innerText = `ⓚ design © V${PackageJson['werp-version']}`;
+    copyRightLink.style.textAlign = 'right';
+    copyRightLink.style.padding = '0.25rem 0';
+    copyRightLink.title = UPDATE_LOGS.slice(0, 5).map(stringifyUpdateLog).join('\n');
+    copyRightLink.href = 'https://github.com/kenny0960/TampermonkeyScripts/tree/master/src/werp';
+    copyRightLink.target = '_blank';
+    return copyRightLink;
 };
 
 export const createAttendanceButton = (text: string, link: string): HTMLElement => {
