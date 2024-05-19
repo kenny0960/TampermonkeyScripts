@@ -11,6 +11,12 @@ class LoginAssistant {
         this.legalCaptchaLength = parameters.legalCaptchaLength;
     }
 
+    createInputEvent() {
+        const inputEvent = document.createEvent('Event');
+        inputEvent.initEvent('input', false, false);
+        return inputEvent;
+    };
+
     getAccountNumberInput() {
         const dom = document.querySelector(this.accountNumberSelector);
         if (dom === null) {
@@ -22,6 +28,10 @@ class LoginAssistant {
 
     typeAccountNumber() {
         this.getAccountNumberInput().value = this.accountNumber;
+    }
+
+    dispatchAccountNumberInputEvent() {
+        this.getAccountNumberInput().dispatchEvent(this.createInputEvent())
     }
 
     getAccountNameInput() {
@@ -37,6 +47,10 @@ class LoginAssistant {
         this.getAccountNameInput().value = this.accountName;
     }
 
+    dispatchAccountNameInputEvent() {
+        this.getAccountNameInput().dispatchEvent(this.createInputEvent())
+    }
+
     getPasswordInput() {
         const dom = document.querySelector(this.passwordSelector);
         if (dom === null) {
@@ -48,6 +62,10 @@ class LoginAssistant {
 
     typePassword() {
         this.getPasswordInput().value = this.password;
+    }
+
+    dispatchPasswordInputEvent() {
+        this.getPasswordInput().dispatchEvent(this.createInputEvent());
     }
 
     getCaptchaInput() {
